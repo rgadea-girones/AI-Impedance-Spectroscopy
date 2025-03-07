@@ -82,7 +82,8 @@ class VISA(object):
             else:
                 shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
                 if (self.sd.def_cfg['post_procesado']['value']==1):
-                    bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa.bit.bin"
+                    #bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa.bit.bin"
+                    bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_2025.bit.bin"
                 else:
                     bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_autoshunt3.bit.bin"                  
                 veamos = ParamikoMachine(self.host, user = "root", password="root")
