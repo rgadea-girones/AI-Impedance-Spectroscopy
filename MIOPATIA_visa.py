@@ -920,6 +920,7 @@ class VISA(object):
 
         if (self.sd.def_cfg['post_procesado']['value']==0):
             # configuramos la FPGA con diseño verilog propio de DSD
+            # adaptado para el autoshunt
 
             t0=pc()
             if self.sd.def_cfg['modelo']['value']==0:

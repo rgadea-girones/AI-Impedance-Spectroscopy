@@ -8,8 +8,8 @@ import utils.augmentation as aug
 import matplotlib.pyplot as plt
 from MIOPATIA_db import DB_management as db 
 
-filename= "COPIA_PANDAS\lomosP1P2_20240430_clasificado_experto_filtrado_automatico_meditado_trainval.hdf"
-filename2= "COPIA_PANDAS\lomosP1P2_20240430_clasificado_experto_filtrado_automatico_meditado_trainval_ampliado_mas_meditado.hdf"
+filename= "COPIA_PANDAS\hdf_lomosAgilent_trainval_filtrado_def_good.hdf"
+filename2= "COPIA_PANDAS\hdf_lomosAgilent_trainval_filtrado_def_good_ampliado_mas_meditado.hdf"
 df = pd.HDFStore(filename,'a',complib="zlib",complevel=4)
 df_ampliado=pd.HDFStore(filename2,'a',complib="zlib",complevel=4)
 

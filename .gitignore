@@ -17,10 +17,17 @@ RESULTADOS_EXCEL/
 
 Pollo_Ricardo/
 
+my_dir_optimizacion/
+
+modelos*
+
 
 *.cal
 *.hdf
 *.csv
+*.h5
+*.mat
+*.xlsx
 
 hdf_test/
 

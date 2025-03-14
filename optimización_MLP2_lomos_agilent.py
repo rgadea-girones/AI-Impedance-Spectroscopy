@@ -1,0 +1,300 @@
+import pandas as pd
+import numpy as np
+# from charset_normalizer import md__mypyc
+import tensorflow as tf
+from tensorflow.keras.datasets import imdb
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import LSTM,Bidirectional,GRU
+from tensorflow.keras.layers import Embedding
+from tensorflow.keras.preprocessing import sequence
+from tensorflow.keras.utils import to_categorical
+import datetime
+import io
+import itertools
+# import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.model_selection import train_test_split, GridSearchCV
+
+#from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
+from scikeras.wrappers import KerasClassifier
+import sys
+import os
+
+current_dir = os.getcwd()
+print(current_dir)
+
+# Construir la ruta relativa al directorio que quieres agregar
+relative_dir = os.path.join(current_dir, 'mis_pkgs/')
+
+# Agregar la ruta relativa al sys.path
+sys.path.insert(0, relative_dir)
+
+import optuna
+
+numero_muestras=401
+numero_clases=2
+entrada=slice(9,11)
+numero_entradas = entrada.stop - entrada.start
+numero_epochs=1000
+
+filename = "COPIA_PANDAS\hdf_lomosAgilent_trainval_filtrado_def_good_ampliado_the_best7.hdf"
+with pd.HDFStore(filename,complib="zlib",complevel=4) as hdf_db:
+    pre_p_e1  = hdf_db.get('data/pollos_estado')
+    pre_p_e1 = pre_p_e1.loc[pre_p_e1['Pollo'] != 0]
+    # p_e =pre_p_e1.drop_duplicates(subset = ['Pollo', 'Medida'],  keep = 'last').reset_index(drop = True)
+    t    = hdf_db.get('data/tabla')
+    X_train=np.zeros((pre_p_e1.shape[0],numero_muestras,numero_entradas))
+    y_train=np.zeros((pre_p_e1.shape[0],1))
+    x=0
+    for index, row in pre_p_e1.iterrows():   # El primer registro no se toma en cuenta porque es basura
+        Primero = int(row['Primero'])
+        Ultimo  = int(row['Ultimo'])
+        estado  = int(row['Estado'])
+        #print(Primero)
+        #print(Ultimo)
+        #print(estado)
+        if numero_clases==2:
+            if estado == 0 or estado== 1:
+                target = 0
+            else:
+                target = 1
+        else:
+            target=estado
+        pepito=np.array(t.iloc[Primero:Ultimo+1])
+        # #print(pepito.shape)
+        X_train[x]=pepito[:,entrada]
+        #X_train[x]=X_train[x].reshape(X_train[x].shape[0],-1)
+        #print(X_train[x][0:4,:])       
+        y_train[x]=target
+        y_train_to_categorical = to_categorical(y_train)
+        x=x+1
+
+
+# print(X_train.shape)
+# print(y_train_to_categorical.shape)
+# #print(X_train[0:4,:,:])
+# #print(X_train[1][0:4][:])
+# print(y_train[1:20])
+# print(y_train_to_categorical[1:20])
+# # #Aqui filtrariamos si hay filas que no nos interesan. En este caso dejo pasar todos los casos
+# print(p_e)
+# # X_train_filtrado = X_train[2:][:,:]
+# # y_train_filtrado = y_train[2:]
+X_train_filtrado = X_train
+#y_train_filtrado = y_train
+y_train_filtrado = y_train_to_categorical
+
+# print(X_train_filtrado.shape)
+# print(y_train_filtrado.shape)
+# print(X_train_filtrado[0][:,:])
+# # # Vamos a normalizar o escalar los datos
+scaler = StandardScaler()
+data_2d = X_train_filtrado.reshape(-1, X_train_filtrado.shape[-1])
+normalized_data_2d = scaler.fit_transform(data_2d)
+#para recurrentes
+#X_train_Normalizado=normalized_data_2d.reshape(X_train_filtrado.shape) #para recurrentes
+#para densas
+X_train_Normalizado=normalized_data_2d.reshape(X_train_filtrado.shape[0],-1)
+y_train_Normalizado=y_train_filtrado # los valores ya estaban normalizados
+print(y_train_Normalizado.shape)
+
+filename = "COPIA_PANDAS\hdf_lomosAgilent_test_filtrado_def_good.hdf"
+with pd.HDFStore(filename,complib="zlib",complevel=4) as hdf_db:
+    pre_p_e1  = hdf_db.get('data/pollos_estado')
+    pre_p_e1 = pre_p_e1.loc[pre_p_e1['Pollo'] != 0]
+    pre_p_e1 =pre_p_e1.drop_duplicates(subset = ['Pollo', 'Medida'],  keep = 'last').reset_index(drop = True)
+    t    = hdf_db.get('data/tabla')
+    X_test=np.zeros((pre_p_e1.shape[0],numero_muestras,numero_entradas))
+    y_test=np.zeros((pre_p_e1.shape[0],1))
+    x=0
+    for index, row in pre_p_e1.iterrows():   # El primer registro no se toma en cuenta porque es basura
+        Primero = int(row['Primero'])
+        Ultimo  = int(row['Ultimo'])
+        estado  = int(row['Estado'])
+        #print(Primero)
+        #print(Ultimo)
+        #print(estado)
+        if numero_clases==2:
+            if estado == 0 or estado== 1:
+                target = 0
+            else:
+                target = 1
+
+        else:
+            target=estado
+        pepito=np.array(t.iloc[Primero:Ultimo+1])
+        # #print(pepito.shape)
+        X_test[x]=pepito[:,entrada]
+        #print(X_train[x][0:4,:])       
+        y_test[x]=target
+        y_test_to_categorical = to_categorical(y_test)
+        x=x+1
+
+
+# print(X_train.shape)
+# print(y_train_to_categorical.shape)
+# #print(X_train[0:4,:,:])
+# #print(X_train[1][0:4][:])
+# print(y_train[1:20])
+# print(y_train_to_categorical[1:20])
+# # #Aqui filtrariamos si hay filas que no nos interesan. En este caso dejo pasar todos los casos
+# print(p_e)
+# # X_train_filtrado = X_train[2:][:,:]
+# # y_train_filtrado = y_train[2:]
+X_test_filtrado = X_test
+#y_train_filtrado = y_train
+y_test_filtrado = y_test_to_categorical
+
+print(X_test_filtrado.shape)
+print(y_test_filtrado.shape)
+# print(X_train_filtrado[0][:,:])
+# # # Vamos a normalizar o escalar los datos
+# concatenamos train y test
+#X_total=np.concatenate((X_train_filtrado,X_test_filtrado),axis=0)
+#scaler = MinMaxScaler(feature_range=(0, 1))
+#data_2d_test = X_total.reshape(-1, X_total.shape[-1])
+data_2d_test = X_test_filtrado.reshape(-1, X_test_filtrado.shape[-1])
+normalized_data_2d_test = scaler.transform(data_2d_test)
+
+
+# X_test_def=normalized_data_2d_test.reshape(X_test_filtrado.shape) 
+X_test_def=normalized_data_2d_test.reshape(X_test_filtrado.shape[0],-1) 
+# la alternativa es normalizar con el total
+# X_test_def=normalized_data_2d_test.reshape(X_test_filtrado.shape) 
+
+y_test_def=y_test_filtrado # los valores ya estaban normalizados
+X_train_def, X_val_def, y_train_def, y_val_def = train_test_split(X_train_Normalizado, y_train_Normalizado, test_size=0.25, stratify=y_train_Normalizado, random_state=42)
+
+
+
+print(X_train_def.shape)
+print(X_val_def.shape)
+print(X_test_def.shape)
+print(y_train_def.shape)
+print(y_val_def.shape)
+print(y_test_def.shape)
+
+factor_aprendizaje=0.001
+dimension_LSTM=50
+dimension_dense1=100
+dimension_dense2=50
+algoritmo='rmsprop'
+supermax=8*4
+lossfunction='categorical_crossentropy'
+
+                                                      
+
+TRIALS = 25
+
+
+# utility function to create model trials
+def create_model(trial):
+
+    nodes1 = trial.suggest_int("n_nodes1", 50, 100)
+    nodes2 = trial.suggest_int('n_nodes2', 20, 50)
+    model = Sequential()
+    # model.add(Bidirectional(GRU(dimension_LSTM, return_sequences=True, recurrent_regularizer='L2'),input_shape=(401, 8)))
+    # # model.add(GRU(50, return_sequences=True))
+    # model.add(GRU(50, return_sequences=False))
+    model.add(Dense(nodes1, activation='tanh', activity_regularizer='L2'))
+    model.add(Dense(nodes2, activation='tanh'))
+    model.add(Dense(numero_clases, activation='softmax'))
+    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+   # model.optimizer.lr=(factor_aprendizaje)
+    return model
+early_stop=tf.keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=200, verbose=2, mode='auto', baseline=None, restore_best_weights=False)
+reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                              patience=5, min_lr=0.000001)   
+# Objective function
+def objective(trial):
+    
+    # instantiate model
+    model_opt = create_model(trial)
+    
+    # fit the model
+    model_opt.fit(X_train_def,y_train_def
+                  ,epochs = numero_epochs
+                  ,batch_size=100
+                  ,shuffle=True
+                  ,validation_data=(X_val_def, y_val_def)
+                  ,verbose=0, callbacks=[early_stop,reduce_lr]
+                  )
+    
+    # calculate accuracy score
+    acc_score = model_opt.evaluate(X_test_def, y_test_def, verbose=0)[1]
+    
+    return acc_score
+
+
+# perform the optimization
+study = optuna.create_study(direction="maximize", study_name="baseline model optimization")
+study.optimize(objective, n_trials=TRIALS, n_jobs=1)
+
+
+# print out 
+print('*'*100)
+print("Number of finished trials: ", len(study.trials))
+print("Best trial:")
+trial = study.best_trial
+print("  Value: ", trial.value)
+print("Best Params:")
+print(study.best_params)
+print('*'*100)
+
+# get the optimized model
+baseline_model_opt = create_model(study.best_trial)
+baseline_model_opt.summary()
+early_stop2=tf.keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=200, verbose=2, mode='auto', baseline=None, restore_best_weights=True)
+    
+
+baseline_model_opt.fit(X_train_def, y_train_def, epochs=numero_epochs, batch_size=100, callbacks=[early_stop2], validation_data=(X_val_def, y_val_def))
+# Final evaluation of the model 
+scores = baseline_model_opt.evaluate(X_test_def, y_test_def, verbose=0)
+print("Accuracy: %.2f%%" % (scores[1]*100))
+
+y_pred = baseline_model_opt.predict(X_test_def)
+#y_pred1=y_pred[:,-1]
+y_pred2=np.argmax(y_pred,axis=1)
+#y_pred2=np.where(y_pred>0,1,0)
+#y_pred2=y_pred2[:,-1]
+y_test_def2=np.argmax(y_test_def,axis=1)
+#y_test_def2=np.where(y_test_def>0,1,0)
+print(y_pred.shape)
+print(y_pred2.shape)
+print(y_test_def2.shape)
+#print(y_test_def[25])
+print(y_pred2)
+
+#docs_infra: no_execute
+if numero_clases==2:
+    classes = [0, 1]
+else:   
+    classes = [0, 1, 2, 3, 4]
+#classes = [0, 1]
+cm=confusion_matrix(y_test_def2, y_pred2,labels=classes)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+disp.plot()
+plt.show()
+
+from sklearn.metrics import classification_report
+if numero_clases==2:
+    target_names = ['Buenos', 'Malos']
+else:   
+    target_names = ['A', 'B+', 'B', 'B-','C']
+print(classification_report(y_test_def2, y_pred2, target_names=target_names, digits=4))
+
+#model.save('idea.h5')  # creates a HDF5 file 'my_model.h5'
+
+
+# Generar una lista de los números en el rango del slice
+numbers = list(range(entrada.start, entrada.stop))
+
+# Convertir la lista a un string con los números separados por guiones
+slice_str = "-".join(map(str, numbers))
+print (study.best_params.n_nodes1)
+print (study.best_params.n_nodes2)
+experimento="LOMOS_Agilent_entradas_{}_dense1_{}_dense2_{}_clases_{}_loss_{}_lr_{}_algoritmo_{}".format(slice_str,study.best_params.nodes1,study.best_params.nodes2,numero_clases,lossfunction,factor_aprendizaje,algoritmo)
+baseline_model_opt.save('modelos\modelo_optimo_{}_{}.h5'.format(experimento,datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))) 
