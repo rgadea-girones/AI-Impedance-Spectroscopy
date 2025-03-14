@@ -19,8 +19,8 @@ interpolated_array = np.empty((220, 3))
 x_in = np.geomspace(1, 401, 401)
 x_out = np.geomspace(1, 401, 220)
 
-filename= "COPIA_PANDAS\hdf_28_06_atunes_agilent_clasificados.hdf"
-filename2= "COPIA_PANDAS\hdf_28_06_atunes_agilent_clasificados_220_puntos.hdf"
+filename= "COPIA_PANDAS\hdf_20240606_good.hdf"
+filename2= "COPIA_PANDAS\hdf_20240606_good_220_puntos.hdf"
 df = pd.HDFStore(filename,'a',complib="zlib",complevel=4)
 df_ampliado=pd.HDFStore(filename2,'a',complib="zlib",complevel=4)
 

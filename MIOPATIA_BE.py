@@ -363,7 +363,7 @@ class BACK_END(object):
                 if (data==[]):
                     self.dv.append_fit("Sujetos no encontrados en la Base de Datos")
                 else:
-                    self.dv.show_data_estado_rafa_n2(self.pw.comboBox_trazaA_4.currentIndex(),
+                    self.dv.show_data_estado_rafa_n3(self.pw.comboBox_trazaA_4.currentIndex(),
                                         data)
 
                     self.pw.canvas4.draw()                             

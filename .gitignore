@@ -17,7 +17,9 @@ RESULTADOS_EXCEL/
 
 Pollo_Ricardo/
 
+my_dir_optimizacion/
 
+*.h5
 *.cal
 *.hdf
 *.csv
