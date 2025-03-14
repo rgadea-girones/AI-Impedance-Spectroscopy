@@ -82,7 +82,8 @@ class VISA(object):
             else:
                 shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
                 if (self.sd.def_cfg['post_procesado']['value']==1):
-                    bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa.bit.bin"
+                    #bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa.bit.bin"
+                    bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_2025.bit.bin"
                 else:
                     bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_autoshunt3.bit.bin"                  
                 veamos = ParamikoMachine(self.host, user = "root", password="root")
@@ -980,7 +981,7 @@ class VISA(object):
 
 
 
-                self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
+                #self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
                 self.tx_txt('SOUR1:FUNC ARBITRARY')
                 #print("he llegado aqui1")
                 self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
@@ -1221,31 +1222,31 @@ class VISA(object):
                                 else (val*shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170 
                                 else (val*shunt[1])/16 -idea1-idea2-idea3-idea4
                                 for i, val in enumerate(my_array[0:muestras])])            
-                
-                from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
+                # atención he quitado la interpolación
+                # from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
 
-                # Identificar los índices de los escalones
-                step_indices = [20, 70, 120, 170]
+                # # Identificar los índices de los escalones
+                # step_indices = [20, 70, 120, 170]
 
-                # Identificar los valores en los índices de los escalones
-                step_values = [Z_sin_comprimir[i] for i in step_indices]
+                # # Identificar los valores en los índices de los escalones
+                # step_values = [Z_sin_comprimir[i] for i in step_indices]
 
-                # Crear una función de interpolación
-                # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
-                # Crear una función de interpolación spline cúbica
-                spline_func = PchipInterpolator(step_indices, step_values)            
+                # # Crear una función de interpolación
+                # # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
+                # # Crear una función de interpolación spline cúbica
+                # spline_func = PchipInterpolator(step_indices, step_values)            
 
-                # Aplicar la función de interpolación a todo el array
-                # Z_sin_comprimir2 = interp_func
-                Z_sin_comprimir2 = spline_func(np.arange(muestras))
-                from scipy.signal import savgol_filter
+                # # Aplicar la función de interpolación a todo el array
+                # # Z_sin_comprimir2 = interp_func
+                # Z_sin_comprimir2 = spline_func(np.arange(muestras))
+                # from scipy.signal import savgol_filter
 
-                # Definir el tamaño de la ventana y el grado del polinomio
-                window_size = 11
-                poly_degree = 3
+                # # Definir el tamaño de la ventana y el grado del polinomio
+                # window_size = 11
+                # poly_degree = 3
 
-                # Aplicar el filtro Savitzky-Golay
-                Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
+                # # Aplicar el filtro Savitzky-Golay
+                # Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
 
                 # en principio el calculo en verilog es suponiendo una resistencia de 1k. Con esto lo ajusto a la resistencia de shunt exacta
 
