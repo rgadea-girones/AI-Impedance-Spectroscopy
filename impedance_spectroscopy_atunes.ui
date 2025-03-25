@@ -2024,32 +2024,6 @@ MEDIDA</string>
               <number>6</number>
              </property>
             </widget>
-            <widget class="QRadioButton" name="radioButton_tipoanalisis">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>140</y>
-               <width>95</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>reflujo</string>
-             </property>
-            </widget>
-            <widget class="QRadioButton" name="radioButton_tipoanalisis_2">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>160</y>
-               <width>95</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>agua</string>
-             </property>
-            </widget>
             <widget class="QRadioButton" name="radioButton_tipoanalisis_3">
              <property name="geometry">
               <rect>
@@ -2230,12 +2204,12 @@ MEDIDA</string>
               <rect>
                <x>10</x>
                <y>210</y>
-               <width>95</width>
+               <width>141</width>
                <height>20</height>
               </rect>
              </property>
              <property name="text">
-              <string>reflujo_2</string>
+              <string>Descongelaciones</string>
              </property>
             </widget>
            </widget>
@@ -2256,7 +2230,7 @@ MEDIDA</string>
              <x>190</x>
              <y>510</y>
              <width>421</width>
-             <height>131</height>
+             <height>161</height>
             </rect>
            </property>
            <property name="title">
@@ -2325,6 +2299,19 @@ MEDIDA</string>
             </property>
             <property name="text">
              <string>IP redpitaya</string>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="MODELO_3">
+            <property name="geometry">
+             <rect>
+              <x>40</x>
+              <y>130</y>
+              <width>141</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>7020 con autoshunt</string>
             </property>
            </widget>
           </widget>
@@ -2576,7 +2563,7 @@ MEDIDA</string>
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>../.designer/backup/ecuacion_gompertz.gif</pixmap>
+             <pixmap>C:/Users/rgadea/.designer/.designer/backup/ecuacion_gompertz.gif</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>

@@ -319,7 +319,7 @@ class BACK_END(object):
             if (data==[]):
                 self.dv.append_fit("Sujetos no encontrados en la Base de Datos")
             else:
-                self.dv.show_data_estado_rafa_n(self.pw.comboBox_trazaA_4.currentIndex(),
+                self.dv.show_data_estado_rafa_n3_yake(self.pw.comboBox_trazaA_4.currentIndex(),
                                       data)
 
                 self.pw.canvas4.draw()     
@@ -363,7 +363,7 @@ class BACK_END(object):
                 if (data==[]):
                     self.dv.append_fit("Sujetos no encontrados en la Base de Datos")
                 else:
-                    self.dv.show_data_estado_rafa_n3(self.pw.comboBox_trazaA_4.currentIndex(),
+                    self.dv.show_data_estado_rafa_n3_descongelaciones(self.pw.comboBox_trazaA_4.currentIndex(),
                                         data)
 
                     self.pw.canvas4.draw()                             
@@ -396,15 +396,82 @@ class BACK_END(object):
                     self.dv.show_data_estado_rafa_n3(self.pw.comboBox_trazaA_4.currentIndex(),
                                         data)
 
-                    self.pw.canvas4.draw()                      
+                    self.pw.canvas4.draw()         
+    def load_h5_analisis5(self): #especificamente realizado para descongelaciones de atun
+        self.dv.append_plus("CARGA MEDIDA BASE DATOS H5")
+        file = self.sd.def_cfg['load_h5file_name']
+        try:
+            hdf_db = DB(file,self.dv)
+            #hdf_db = pd.HDFStore(file,'r',complib="zlib",complevel=4)
+            #pollos = hdf_db.get('data/index/pollos')
+            #indice_medidas = hdf_db.get('data/index/medidas')
+            #tabla = hdf_db.get('data/tabla')
+            #columns=['Freq','Z_mod','Z_Fase','Err','Eri','E_mod','E_fase','R','X']
+        except:
+            self.dv.append_plus("Fichero no encontrado\n")
+        else:
+            self.dv.append_plus(file)
+          
+            if self.sd.def_cfg['RANGO']['value']==0: 
+                pollo_sel = int(self.pw.spinBox_pollo_6.value())
+                medida_sel = int(self.pw.spinBox_medida_6.value())
+                pollos = self.sd.def_cfg['sujetos']
+                if (pollos == ''):
+                    pollos_sel = [0, 1, 2, 3, 4, 5]
+                else:
+                    pollos_sel = []
+                    for token in pollos.split(','):
+                        if '-' in token:
+                            a, b = token.strip().split('-')
+                            pollos_sel.extend(range(int(a), int(b)+1))
+                        else:
+                            pollos_sel.append(int(token))
+                data=[]
+                for x in pollos_sel: 
+                    data.append(hdf_db.lee_medida_rafa_BD_ale(pollo_sel,medida_sel,x))
+
+
+                if (data==[]):
+                    self.dv.append_fit("Sujetos no encontrados en la Base de Datos")
+                else:
+                    self.dv.show_data_estado_rafa_n3_descongelaciones(self.pw.comboBox_trazaA_4.currentIndex(),
+                                        data)
+
+                    self.pw.canvas4.draw()                             
+            else:
+                pollo_sel = int(self.pw.spinBox_pollo_6.value())
+                medida_sel = int(self.pw.spinBox_medida_6.value())
+                pollos = self.sd.def_cfg['sujetos']
+                if (pollos == ''):
+                    pollos_sel = [0, 1, 2, 3, 4, 5]
+                else:
+                    pollos_sel = []
+                    for token in pollos.split(','):
+                        if '-' in token:
+                            a, b = token.strip().split('-')
+                            pollos_sel.extend(range(int(a), int(b)+1))
+                        else:
+                            pollos_sel.append(int(token))
+                data=[]
+                for x in pollos_sel: 
+                    data.append(hdf_db.lee_medida_rafa_BD_ale(pollo_sel,medida_sel,x))
+
+
+                if (data==[]):
+                    self.dv.append_fit("Sujetos no encontrados en la Base de Datos")
+                else:
+                    self.dv.show_data_estado_rafa_n3_descongelaciones(self.pw.comboBox_trazaA_4.currentIndex(),
+                                        data)
+
+                    self.pw.canvas4.draw()                                    
 
     def  load_h5_analisis_selector(self):
         if (self.sd.def_cfg['pto_tip']['value']==0):       
-            self.load_h5_analisis()
+            self.load_h5_analisis3()
             #print("estoy aqui")
         else :
             if (self.sd.def_cfg['pto_tip']['value']==1):              
-                self.load_h5_analisis2()
+                self.load_h5_analisis5()
             else:
                 if (self.sd.def_cfg['pto_tip']['value']==2):              
                     self.load_h5_analisis3()                

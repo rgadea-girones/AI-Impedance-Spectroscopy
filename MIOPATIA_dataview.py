@@ -922,5 +922,120 @@ class DATA_VIEW(object):
             self.sd.axes['ax5'].legend()     
             self.sd.axes['ax5'].grid(True)
             # self.sd.axes['ax3'].tick_params(axis='y', colors='blue')
+    def show_data_estado_rafa_n3_descongelaciones(self, comboBox_trazaA,  data):
+        self.sd.axes['ax5'].cla()
+        # self.sd.axes['ax3'].cla()
+        traza_A=[]
+        sujeto=[]
+        medida=[]
+        estado=[]
+        instrumentos=[]
+        smooth=self.sd.def_cfg['smooth']['value']
+        k=self.sd.def_cfg['k_factor']['value']
+                  
+        for x in data: 
+            pre_traza1=self.switch({ 0:x[0]['Z_mod'],
+                                1:x[0]['Z_Fase'],
+                                2:x[0]['Err'],
+                                3:x[0]['Eri'],
+                                4:x[0]['E_mod'],
+                                5:x[0]['E_fase']},
+                                comboBox_trazaA)
+            if (smooth==0):
+                pre_traza2=pre_traza1.rolling(window=k, center=True, min_periods=1).mean()
+            else:
+                pre_traza2=pre_traza1
+            traza_A.append ( pre_traza2)
+            sujeto.append(x[0]['Pollo'][0])
+            medida.append(x[0]['Medida'][0])
+            estado.append(x[1])
+
+
+        # traza_B = self.switch({ 0:data1['Z_mod'],
+        #                          1:data1['Z_Fase'],
+        #                          2:data1['Err'],
+        #                          3:data1['Eri'],
+        #                          4:data1['E_mod'],
+        #                          5:data1['E_fase']},
+        #                          comboBox_trazaA)
+        # traza_C = self.switch({ 0:data2['Z_mod'],
+        #                          1:data2['Z_Fase'],
+        #                          2:data2['Err'],
+        #                          3:data2['Eri'],
+        #                          4:data2['E_mod'],
+        #                          5:data2['E_fase']},
+        #                          comboBox_trazaA)   
+        # traza_D = self.switch({ 0:data3['Z_mod'],
+        #                          1:data3['Z_Fase'],
+        #                          2:data3['Err'],
+        #                          3:data3['Eri'],
+        #                          4:data3['E_mod'],
+        #                          5:data3['E_fase']},
+        #                          comboBox_trazaA)               
+        # traza_E = self.switch({ 0:data4['Z_mod'],
+        #                          1:data4['Z_Fase'],
+        #                          2:data4['Err'],
+        #                          3:data4['Eri'],
+        #                          4:data4['E_mod'],
+        #                          5:data4['E_fase']},
+        #                          comboBox_trazaA)                                                                                     
+
+        if (self.sd.def_cfg['tipo_barrido']['value']==0):
+            string_A = self.switch({0:'plot', 1:'plot', 2:'plot',
+                                    3:'plot', 4:'semilogy', 5:'plot'},
+                                    comboBox_trazaA)
+            # string_B = self.switch({0:'plot', 1:'plot', 2:'plot',
+            #                         3:'plot', 4:'semilogy', 5:'plot'},
+            #                         comboBox_trazaB)
+
+            eval("self.sd.axes['ax6']." + string_A + "(data['Freq'], traza_A, color='red')")
+            self.sd.axes['ax5'].tick_params(axis='y', colors='red')
+            # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
+            self.sd.axes['ax5'].grid(True)
+            # self.sd.axes['ax3'].tick_params(axis='y',colors='blue')
+
+        elif(self.sd.def_cfg['tipo_barrido']['value']==1):
+            string_A = self.switch({0:'semilogx', 1:'semilogx', 2:'semilogx',
+                                    3:'semilogx', 4:'loglog', 5:'semilogx'},
+                                    comboBox_trazaA)
+            # string_B = self.switch({0:'semilogx', 1:'semilogx', 2:'semilogx',
+            #                         3:'semilogx', 4:'loglog', 5:'semilogx'},
+            #                         comboBox_trazaB)
+            ejex=data[0][0]['Freq']
+            for x, traza in enumerate(traza_A):
+                if estado[x] == 0:
+                    color = 'green'
+                    instrumento='congelado0'
+                elif estado[x] ==1:
+                    color = 'seagreen'
+                    instrumento='descongelado1'
+                elif estado[x] == 2:
+                    color = 'blue'
+                    instrumento='congelado1'
+                elif estado[x] == 3:
+                    color = 'purple'
+                    instrumento='descongelado2'
+                elif estado[x] == 4:
+                    color = 'red' 
+                    instrumento='congelado2'
+                elif estado[x] == 5:                
+                    color = 'orange'
+                    instrumento='descongelado3'
+                else:
+                    color = 'yellow' 
+                    instrumento='congelado3'     
+                eval("self.sd.axes['ax5']." + string_A + "(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_estado_'+ instrumento)")
+                # eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
+                # eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")
+                # eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='orange', label='1.5 %')")       
+                # eval("self.sd.axes['ax5']." + string_A + "(data4['Freq'], traza_E, color='purple', label='5.0 %')")       
+
+
+            self.sd.axes['ax5'].tick_params(axis='y',colors='red')
+            self.sd.axes['ax5'].prop_cycle=(cycler('color', ['r', 'g', 'b', 'y']) +
+                           cycler('linestyle', ['-', '--', ':', '-.']))
+            self.sd.axes['ax5'].legend()     
+            self.sd.axes['ax5'].grid(True)
+            # self.sd.axes['ax3'].tick_params(axis='y', colors='blue')            
 
         self.sd.fig4.tight_layout()            

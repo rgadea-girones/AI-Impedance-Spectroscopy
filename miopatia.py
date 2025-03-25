@@ -1,5 +1,7 @@
 import sys
 import warnings
+import matplotlib
+matplotlib.use('Qt5Agg')
 from PySide6 import QtCore, QtWidgets, QtGui
 from PySide6.QtUiTools import QUiLoader
 from MainWindow import Ui_MainWindow
@@ -19,7 +21,7 @@ from MIOPATIA_dataview import DATA_VIEW
 
 # PYINSTALLER : pyinstaller -D --specpath .\EXE miopatia.py
 
-qtCreatorFile = "impedance_spectroscopy.ui"
+qtCreatorFile = "impedance_spectroscopy_atunes.ui"
 
 
 # Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
@@ -34,7 +36,7 @@ class MyApp(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon('./pollo.jpeg'))
+        self.setWindowIcon(QtGui.QIcon('./atun1.jpg'))
         # self.showFullScreen()
         #self.resize(800,600)
         # self.showMaximized()
@@ -73,10 +75,10 @@ class MyApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.bg_DC_2       = Rbutton_group([self.radioButton_DC_ON_2, self.radioButton_DC_OFF_2])
         self.post_pro      = Rbutton_group([self.radioButton_Corre, self.radioButton_F_Corre ])   
         self.post_pro_2    = Rbutton_group([self.radioButton_Corre_2, self.radioButton_F_Corre_2 ])  
-        self.tipo_analisis = Rbutton_group([self.radioButton_tipoanalisis, self.radioButton_tipoanalisis_2, self.radioButton_tipoanalisis_3,self.radioButton_tipoanalisis_4 ])  
+        self.tipo_analisis = Rbutton_group([self.radioButton_tipoanalisis_3,self.radioButton_tipoanalisis_4 ])  
         self.sel_smooth    = Rbutton_group([self.SMOOTH_ON,self.SMOOTH_OFF ])  
         self.sel_smooth_2  = Rbutton_group([self.SMOOTH_ON_2,self.SMOOTH_OFF_2 ])     
-        self.sel_modelo    = Rbutton_group([self.MODELO_1,self.MODELO_2 ])          
+        self.sel_modelo    = Rbutton_group([self.MODELO_1,self.MODELO_2,self.MODELO_3])          
         self.sel_RANGO     = Rbutton_group([self.RANGO_OBJETO,self.RANGO_MEDIDA ])                
         
         self.bg_config_cal = Rbutton_group([self.radioButton_config_cal_1, self.radioButton_config_cal_2])
@@ -302,11 +304,11 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     myappid = 'UPV.visa.4294A.1' # arbitrary string
     # ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-    app.setWindowIcon(QtGui.QIcon('reflujo-gastroesofagico.jpg'))
+    app.setWindowIcon(QtGui.QIcon('atun1.jpg'))
 
     data = DATA(read=False)
     window = MyApp(data)
-    window.setWindowIcon(QtGui.QIcon('reflujo-gastroesofagico.jpg'))
+    window.setWindowIcon(QtGui.QIcon('atun1.jpg'))
     window.addmpl_1(data.fig1)
     window.addmpl_2(data.fig2)
     window.addmpl_3(data.fig3)

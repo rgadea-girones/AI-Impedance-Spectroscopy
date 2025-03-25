@@ -80,31 +80,55 @@ class VISA(object):
                 shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
                 self.tx_txt('RP:FPGABITREAM_DSD 0.94')
             else:
-                shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
-                if (self.sd.def_cfg['post_procesado']['value']==1):
+                if self.sd.def_cfg['modelo']['value']==1:
+                    shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
                     bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa.bit.bin"
+              
+                    veamos = ParamikoMachine(self.host, user = "root", password="root")
+                    veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
+                    veamos.cwd.chdir("/opt/redpitaya/bin")
+                    comando="./fpgautil -b " + bitstream
+                    # print (comando)
+                    r_back = veamos[comando]
+                    r_back()
+                    # sizeh1=str('-sizeh1={0}'.format(individual[0]))
+                    # sizeh2=str('-sizeh2={0}'.format(individual[1]))
+                    # epochs=str('-epochs={0}'.format(epochs))
+                    # decay=str('-decay={0}'.format(decay_value))
+                    # step=str('-step={0}'.format(learning_step))
+                    # minibatch=str('-batchsize={0}'.format(batchsize))
+                    # idea=str(r_back[epochs, sizeh1,sizeh2, minibatch,decay,step]())
+                    # for line in idea.split("\n"):
+                    #     if "error_val" in line:
+                    #     #print (line.strip())
+                    #        error_rate_float=[float(s) for s in re.findall('\d+\.\d+',line)]
+                    #        error_rate=error_rate_float[0]
+                    veamos.close()  
                 else:
-                    bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_autoshunt3.bit.bin"                  
-                veamos = ParamikoMachine(self.host, user = "root", password="root")
-                veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
-                veamos.cwd.chdir("/opt/redpitaya/bin")
-                comando="./fpgautil -b " + bitstream
-                # print (comando)
-                r_back = veamos[comando]
-                r_back()
-                # sizeh1=str('-sizeh1={0}'.format(individual[0]))
-                # sizeh2=str('-sizeh2={0}'.format(individual[1]))
-                # epochs=str('-epochs={0}'.format(epochs))
-                # decay=str('-decay={0}'.format(decay_value))
-                # step=str('-step={0}'.format(learning_step))
-                # minibatch=str('-batchsize={0}'.format(batchsize))
-                # idea=str(r_back[epochs, sizeh1,sizeh2, minibatch,decay,step]())
-                # for line in idea.split("\n"):
-                #     if "error_val" in line:
-                #     #print (line.strip())
-                #        error_rate_float=[float(s) for s in re.findall('\d+\.\d+',line)]
-                #        error_rate=error_rate_float[0]
-                veamos.close()            
+                    shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
+                    # opcion que me ha funcionado correctamente
+                    # bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_autoshunt3.bit.bin"              
+                    bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_2025.bit.bin"    #opcion con mejoras de analisis temporal estático y cuantización de senoide    
+                    veamos = ParamikoMachine(self.host, user = "root", password="root")
+                    veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
+                    veamos.cwd.chdir("/opt/redpitaya/bin")
+                    comando="./fpgautil -b " + bitstream
+                    # print (comando)
+                    r_back = veamos[comando]
+                    r_back()
+                    # sizeh1=str('-sizeh1={0}'.format(individual[0]))
+                    # sizeh2=str('-sizeh2={0}'.format(individual[1]))
+                    # epochs=str('-epochs={0}'.format(epochs))
+                    # decay=str('-decay={0}'.format(decay_value))
+                    # step=str('-step={0}'.format(learning_step))
+                    # minibatch=str('-batchsize={0}'.format(batchsize))
+                    # idea=str(r_back[epochs, sizeh1,sizeh2, minibatch,decay,step]())
+                    # for line in idea.split("\n"):
+                    #     if "error_val" in line:
+                    #     #print (line.strip())
+                    #        error_rate_float=[float(s) for s in re.findall('\d+\.\d+',line)]
+                    #        error_rate=error_rate_float[0]
+                    veamos.close()  
             print('conexion establecida con redpitaya')
             self.dv.append_plus("CONECTADO a redpitaya ="+ str(host))  
 
@@ -917,436 +941,10 @@ class VISA(object):
 
         # Establecer un temporizador de 5 segundos
         signal.alarm(5)
-
-        if (self.sd.def_cfg['post_procesado']['value']==0):
+        if (self.sd.def_cfg)['modelo']['value']==1:
+            shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
             # configuramos la FPGA con diseño verilog propio de DSD
-            # adaptado para el autoshunt
-
-            t0=pc()
-            if self.sd.def_cfg['modelo']['value']==0:
-                shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
-            else:
-                shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
-            
-
-
-            R_shunt_k = self.sd.def_cfg['shunt']['value'] #elijo 1000 
-
-            frecuencia_min = np.log10(self.sd.def_cfg['f_inicial']['value'])
-            frecuencia_max= np.log10(self.sd.def_cfg['f_final']['value'])
-            puntos_decada= self.sd.def_cfg['n_puntos']['value']
-            numero_valores=int((frecuencia_max-frecuencia_min)*puntos_decada)
-            # numero_valores=256
-            ##configuramos las frecuencias y enviamos un listado de incrementos a la memoria de incrementos de la FPGA
-            if (self.sd.def_cfg['tipo_barrido']['value']==0):
-                self.sd.freq = np.linspace(self.sd.def_cfg['f_inicial']['value'],
-                                        self.sd.def_cfg['f_final']['value'],
-                                        self.sd.def_cfg['n_puntos']['value'])
-            elif(self.sd.def_cfg['tipo_barrido']['value']==1):
-                self.sd.freq = np.logspace(np.log10(self.sd.def_cfg['f_inicial']['value']),
-                                        np.log10(self.sd.def_cfg['f_final']['value']),
-                                        numero_valores,base=10)
-                
-            try:
-                self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->state2  0->state1
-            except BrokenPipeError:
-                print("Broken pipe error occurred.")
-                self.dv.append_plus("Algo pasa con la conexión")
-                error=1
-            #recortamos a 40 Hz
-            else:
-                frecuencias=self.sd.freq[self.sd.freq>40]
-                numero_valores=len(frecuencias)
-                
-                print(numero_valores)
-                incrementos2=np.ones(256-numero_valores)*34360000.0
-                incrementos1= (frecuencias*(2**32))/125e6
-                incrementos=np.concatenate((incrementos1, incrementos2), axis=None)
-                #print(str(incrementos))
-                s = io.BytesIO()
-                np.savetxt(s, [incrementos], fmt='%1.1f', delimiter=', ')
-                outStr = s.getvalue().decode('UTF-8')
-                # print(outStr)
-                self.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
-            #    self.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
-            #    self.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
-            #   self.tx_txt('SOUR1:BURS:NCYC 0')  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
-            #   self.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
-                # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
-            #    self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
-            #    self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
-
-
-
-
-
-
-                self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
-                self.tx_txt('SOUR1:FUNC ARBITRARY')
-                #print("he llegado aqui1")
-                self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
-                #print("he llegado aqui2")            
-                self.tx_txt('OUTPUT:STATE ON') 
-                #  quitar estas 5 lineas al terminar de debugear 
-            # self.tx_txt('ACQ:RESULT2:DATA?')
-            # buff_string3 = self.rx_txt()
-            # buff_string3 = buff_string3.strip('{}\n\r').replace("  ", "").split(',')
-            # buff3 = list(map(float, buff_string3))
-            # my_array3 = np.asarray(buff3)
-
-                ## 
-                # self.tx_txt('SOUR1:TRAC:DATA:DATA 2, 0.1, 0.1, 0.1, 0.2, 0.3, 0.3, 0.3,-0.2')
-                muestras=numero_valores
-
-                decimation=1
-                #umbral_horizontal_detector_cero=150*puntos_decada/50
-
-                #umbral_vertical_detector_cero=200*puntos_decada/50     
-                umbral_horizontal_detector_cero=0
-
-                umbral_vertical_detector_cero=0        
-                procedimiento_fase=2
-
-                #configuramos el shunt
-                self.tx_txt('DIG:PIN:DIR OUT,DIO0_N')
-                self.tx_txt('DIG:PIN:DIR OUT,DIO1_N')
-                self.tx_txt('DIG:PIN:DIR OUT,DIO2_N')
-                self.tx_txt('DIG:PIN:DIR OUT,DIO3_N')
-                self.tx_txt('DIG:PIN:DIR OUT,DIO4_N')
-                self.tx_txt('DIG:PIN:DIR OUT,DIO5_N')
-                self.tx_txt('DIG:PIN:DIR OUT,DIO6_N')
-                self.tx_txt('DIG:PIN:DIR OUT,DIO7_N')
-
-
-
-                # if (R_shunt_k==0):
-                #     # elegimos 90.9 
-                #     # activo a nivel bajo: activo
-                #     self.tx_txt('DIG:PIN DIO0_N,0') 
-                #     # activo a nivel bajo: desactivo
-                #     self.tx_txt('DIG:PIN DIO1_N,1')
-                #     # activo a nivel alto: desactivo            
-                #     self.tx_txt('DIG:PIN DIO2_N,0')
-                #     # activo a nivel alto: activo                
-                #     self.tx_txt('DIG:PIN DIO3_N,1')
-                # else:
-                #     if (R_shunt_k==1):
-                #         # elegimos 100 
-                #         # activo a nivel bajo: desactivo
-                #         self.tx_txt('DIG:PIN DIO0_N,1') 
-                #         # activo a nivel bajo: desactivo
-                #         self.tx_txt('DIG:PIN DIO1_N,1')
-                #         # activo a nivel alto: desactivo            
-                #         self.tx_txt('DIG:PIN DIO2_N,0')
-                #         # activo a nivel alto: activo                
-                #         self.tx_txt('DIG:PIN DIO3_N,1')
-                #     else:
-                #         if (R_shunt_k==2):
-                #             # elegimos 900.9 
-                #             # activo a nivel bajo: activo
-                #             self.tx_txt('DIG:PIN DIO0_N,0') 
-                #             # activo a nivel bajo: activo
-                #             self.tx_txt('DIG:PIN DIO1_N,0')
-                #             # activo a nivel alto: activo            
-                #             self.tx_txt('DIG:PIN DIO2_N,1')
-                #             # activo a nivel alto: desactivo                
-                #             self.tx_txt('DIG:PIN DIO3_N,0')
-                #         else:
-                #             if (R_shunt_k==3):
-                #                 # #elegimos 1K
-                #                 # #activo a nivel bajo: activo
-                #                 self.tx_txt('DIG:PIN DIO0_N,0') 
-                #                 # #activo a nivel bajo: desactivo
-                #                 self.tx_txt('DIG:PIN DIO1_N,1')
-                #                 # #activo a nivel alto: desactivo            
-                #                 self.tx_txt('DIG:PIN DIO2_N,0')
-                #                 # #activo a nivel alto: desactivo                
-                #                 self.tx_txt('DIG:PIN DIO3_N,0')  
-                #             else:
-                #                 if (R_shunt_k==4):
-                #                     # elegimos 10K
-                #                     # activo a nivel bajo: desactivo
-                #                     self.tx_txt('DIG:PIN DIO0_N,1') 
-                #                     # activo a nivel bajo: activo
-                #                     self.tx_txt('DIG:PIN DIO1_N,0')
-                #                     # activo a nivel alto: desactivo            
-                #                     self.tx_txt('DIG:PIN DIO2_N,0')
-                #                     # activo a nivel alto: desactivo                
-                #                     self.tx_txt('DIG:PIN DIO3_N,0')
-                #                 else:
-                #                     # k==4 y K==0 y K==5
-                #                     # elegimos 100K
-                #                     # activo a nivel bajo: desactivo
-                #                     self.tx_txt('DIG:PIN DIO0_N,1') 
-                #                     # activo a nivel bajo: desactivo
-                #                     self.tx_txt('DIG:PIN DIO1_N,1')
-                #                     # activo a nivel alto: activo            
-                #                     self.tx_txt('DIG:PIN DIO2_N,1')
-                #                     # activo a nivel alto: desactivo                
-                #                     self.tx_txt('DIG:PIN DIO3_N,0')
-                
-
-                #elegimos el cable rojo , conector j1
-                #activo a nivel bajo: desactivo    
-                self.tx_txt('DIG:PIN DIO4_N,1')
-                #activo a nivel alto: activo    
-                self.tx_txt('DIG:PIN DIO5_N,1')
-                #activo a nivel alto: desactivo                
-                self.tx_txt('DIG:PIN DIO6_N,0')
-                #activo a nivel bajo: desactivo                
-                self.tx_txt('DIG:PIN DIO7_N,1')
-
-                # #elegimos el cable amarillo , conector j3
-                # #activo a nivel bajo: desactivo    
-                # self.tx_txt('DIG:PIN DIO4_N,1')
-                # #activo a nivel alto: desactivo    
-                # self.tx_txt('DIG:PIN DIO5_N,0')
-                # #activo a nivel alto: desactivo                
-                # self.tx_txt('DIG:PIN DIO6_N,0')
-                # #activo a nivel bajo: activo                
-                # self.tx_txt('DIG:PIN DIO7_N,0')
-
-
-                # #elegimos el cable verde , conector j2
-                # #activo a nivel bajo: activo    
-                # self.tx_txt('DIG:PIN DIO4_N,0')
-                # #activo a nivel alto: desactivo    
-                # self.tx_txt('DIG:PIN DIO5_N,0')
-                # #activo a nivel alto: desactivo                
-                # self.tx_txt('DIG:PIN DIO6_N,0')
-                # #activo a nivel bajo: desactivo                
-                # self.tx_txt('DIG:PIN DIO7_N,1')
-
-                # #elegimos el cable azul , conector j4
-                # #activo a nivel bajo: desactivo    
-                # self.tx_txt('DIG:PIN DIO4_N,1')
-                # #activo a nivel alto: desactivo    
-                # self.tx_txt('DIG:PIN DIO5_N,0')
-                # #activo a nivel alto: activo                
-                # self.tx_txt('DIG:PIN DIO6_N,1')
-                # #activo a nivel bajo: desactivo                
-                # self.tx_txt('DIG:PIN DIO7_N,1')
-
-                # muestras=10
-                frecuencias=frecuencias[0:muestras]
-                muestras_ampliadas=muestras+1
-                # configuraciones  varias
-                self.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
-                self.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
-                self.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
-                self.tx_txt('SOUR1:BURS:NCYC ' + str(self.sd.def_cfg['n_ciclos']['value']))  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
-                self.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
-                # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
-                self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
-                self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
-
-
-                self.tx_txt('DIG:PIN LED'+str(2)+','+str(procedimiento_fase))  # desbloqueo finalizacion state1, tambien genera inicio
-                self.tx_txt('DIG:PIN LED'+str(3)+','+str(1))  #activacion del led3 absolutamente necesario para que el numero de ciclos sea configurable y el numero de frecuencias y los umbrales
-
-
-                self.dv.append_plus("Midiendo Z=R+iX")
-                t1=pc()
-                self.tx_txt('CHIRP ON')
-                try:
-                    while 1 :
-                        #    rp_s.tx_txt('FIN:RAF:STAT? 1')
-                        self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
-                        state = self.rx_txt()
-                        if state == '1':
-                            break
-                except Exception as e:
-                    print(e)
-                    error=1
-                # Cancelar el temporizador
-                signal.alarm(0)                
-            #    # print(rp_s.rx_txt())
-                # rp_s.tx_txt('DIG:PIN? DIO'+str(7)+'_N')
-                # state = rp_s.rx_txt()
-                print(state)
-                # EMPEZAMOS CON LA ADQUISION
-
-                self.tx_txt('CHIRP OFF')
-                self.tx_txt('ACQ:RESULT1:DATA?')
-                t3=pc()
-
-                buff_string = self.rx_txt()
-                buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
-                buff = list(map(float, buff_string))
-                t4=pc()
-                my_array = np.asarray(buff)
-                my_array =my_array[:-decimation:decimation]
-                # super_buffer.append(buff)
-                # super_buffer_flat=sum(super_buffer, [])
-                self.tx_txt('ACQ:RESULT2:DATA?')
-                buff_string2 = self.rx_txt()
-                buff_string2 = buff_string2.strip('{}\n\r').replace("  ", "").split(',')
-                buff2 = list(map(float, buff_string2))
-                my_array2 = np.asarray(buff2)
-                my_array2 =my_array2[:-decimation:decimation]
-                muestras=round(muestras/decimation)
-                t5=pc()
-                print('t5-t1:',t5-t1)
-
-
-                smooth=self.sd.def_cfg['smooth']['value']
-                k=self.sd.def_cfg['k_factor']['value']
-
-
-                #Enable output
-                iteracion=1
-                # ZA=interp1d(frecuencias[0:muestras],my_array[0:muestras])
-                # ZB=interp1d(frecuencias,my_array[256: 256+225])
-                # Z=(ZA(frecuencias))*shunt[R_shunt_k]/32
-                ## solucion con shunt fija
-                #Z_sin_comprimir=(my_array[0:muestras]*shunt[R_shunt_k])/16
-
-                idea1=(my_array[20]*shunt[4])/16  -(my_array[19]*shunt[5])/16
-                idea2=(my_array[70]*shunt[3])/16  -(my_array[69]*shunt[4])/16
-                idea3=(my_array[120]*shunt[2])/16  -(my_array[119]*shunt[3])/16
-                idea4=(my_array[170]*shunt[1])/16  -(my_array[169]*shunt[2])/16
-
-                # idea1=0
-                # idea2=0
-                # idea3=0
-                # idea4=0
-                # Z_sin_comprimir = np.array([(val*shunt[5])/16+idea1 if i < 20 
-                #                 else (val*shunt[4])/16  if 20 <= i < 70 
-                #                 else (val*shunt[3])/16 -idea2 if 70 <= i < 120 
-                #                 else (val*shunt[2])/16  if 120 <= i < 170 
-                #                 else (val*shunt[1])/16 -idea4 
-                #                 for i, val in enumerate(my_array[0:muestras])])
-                Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
-                                else (val*shunt[4])/16 -idea1 if 20 <= i < 70 
-                                else (val*shunt[3])/16 -idea2-idea1 if 70 <= i < 120 
-                                else (val*shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170 
-                                else (val*shunt[1])/16 -idea1-idea2-idea3-idea4
-                                for i, val in enumerate(my_array[0:muestras])])            
-                
-                from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
-
-                # Identificar los índices de los escalones
-                step_indices = [20, 70, 120, 170]
-
-                # Identificar los valores en los índices de los escalones
-                step_values = [Z_sin_comprimir[i] for i in step_indices]
-
-                # Crear una función de interpolación
-                # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
-                # Crear una función de interpolación spline cúbica
-                spline_func = PchipInterpolator(step_indices, step_values)            
-
-                # Aplicar la función de interpolación a todo el array
-                # Z_sin_comprimir2 = interp_func
-                Z_sin_comprimir2 = spline_func(np.arange(muestras))
-                from scipy.signal import savgol_filter
-
-                # Definir el tamaño de la ventana y el grado del polinomio
-                window_size = 11
-                poly_degree = 3
-
-                # Aplicar el filtro Savitzky-Golay
-                Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
-
-                # en principio el calculo en verilog es suponiendo una resistencia de 1k. Con esto lo ajusto a la resistencia de shunt exacta
-
-
-                # PhaseA=interp1d(frecuencias[0:muestras],my_array2[0:muestras])
-                # Phase_check=PhaseA(frecuencias)*frecuencias*360/125e6
-                # Phase_radianes=PhaseA(frecuencias)*frecuencias*2*np.pi/125e6
-
-                    # tangentea=my_array2[0:muestras]/(1024*64)
-                    # tangenteb=my_array2[256:256+muestras]/(1024*64)
-                    # arcoa=np.arctan(tangentea) 
-                    # arcob=np.arctan(tangenteb) 
-                    # Phase_radianes=(arcoa-arcob)
-                # Phase_escalada=-my_array2[0:muestras]/(2**29) 
-                Phase_escalada=-my_array2[0:muestras]/2 # porque las fases las calculo multiplicads por 2
-                #Phase_radianes=Phase_escalada*np.pi           
-                #Phase_check=Phase_radianes*360/(2*np.pi)
-
-                Phase_radianes=Phase_escalada*np.pi/180           
-                Phase_check=Phase_escalada            
-                PHASE_sin_comprimir_grados=np.zeros(muestras)
-                for fases in range(len(Phase_check)):
-                    if (Phase_check[fases]<=-90):
-                        PHASE_sin_comprimir_grados[fases]=Phase_check[fases]+180
-                    else:
-                        if (Phase_check[fases] >=90):
-                            PHASE_sin_comprimir_grados[fases]=Phase_check[fases]-180
-                        else:
-                            PHASE_sin_comprimir_grados[fases]=Phase_check[fases]                
-                # PHASE=my_array[256: 256+225]*frecuencias*360/125e6
-                # PHASE= Phase_check
-                PHASE_sin_comprimir=PHASE_sin_comprimir_grados*np.pi/180
-                PHASE=np.ma.masked_where((Z_sin_comprimir==0.0),PHASE_sin_comprimir) 
-                self.sd.freq=np.ma.masked_where((Z_sin_comprimir==0.0),frecuencias) 
-                Z = np.ma.masked_where((Z_sin_comprimir==0.0),Z_sin_comprimir) 
-
-                ##ATENCION NO HAGO NINGUNA INTERPOLACION DE LOS DATOS, SOLO LOS COMPRIMO
-
-                prePHASE=PHASE.compressed()
-                self.sd.freq=self.sd.freq.compressed()
-                preZ = Z.compressed()
-
-                            # ahora aplico una forma de smooth; pero mejor hacerlo en la imagen , no sobre los datos
-                # if (smooth==0):
-                #     PHASE = np.cumsum(prePHASE, dtype=float)
-                #     Z=np.cumsum(preZ, dtype=float)
-                #     PHASE[k:] = PHASE[k:] - PHASE[:-k]
-                #     Z[k:] = Z[k:] - Z[:-k]
-                #     PHASE=PHASE[k - 1:] / k
-
-                #     Z=Z[k - 1:] / k
-                #     self.sd.freq=self.sd.freq[k-1:]
-                # else:
-                #     PHASE=prePHASE
-                # # self.sd.freq=frecuencias
-                #     Z = preZ
-
-                PHASE=prePHASE
-                Z=preZ
-
-                t10=pc()
-                self.sd.R_data = Z*np.cos(PHASE*np.pi/180)
-                self.sd.X_data = Z*np.sin(PHASE*np.pi/180)
-
-                # Compute Err, Eri, Er_mod, Er_fase_data
-                # First create frequency array based on actual gui conditions
-                # The freq array will not be changed until next data acquisition even if GUI changes
-
-
-                complex_aux         = self.sd.R_data + self.sd.X_data*1j
-                self.sd.Z_mod_data  = Z
-                self.sd.Z_fase_data = PHASE
-                # las proximas lineas deben de descomentarse cuando haya eliminado los outliers
-                admitance_aux       = 1./complex_aux
-                G_data              = np.real(admitance_aux)
-                Cp_data             = np.imag(admitance_aux)/(2*np.pi*self.sd.freq)
-                self.sd.Err_data    = Cp_data/self.sd.Co
-                self.sd.Eri_data    = G_data/(self.sd.Co*(2*np.pi*self.sd.freq));
-                E_data              = self.sd.Err_data + -1*self.sd.Eri_data*1j;
-
-                self.sd.Er_mod_data  = np.abs(E_data);
-                self.sd.Er_fase_data = np.angle(E_data);
-                t11=pc()
-
-                total=t11-t1
-                print ('total:',total)
-                absolute_val_array = np.abs(self.sd.freq - 1000)
-                smallest_difference_index = absolute_val_array.argmin()
-                print ('R_data =', self.sd.R_data[smallest_difference_index])        
-                print ('X_data=', self.sd.X_data[smallest_difference_index])
-                print ('resistencia shunt=', shunt[R_shunt_k])
-                self.dv.append_plus("He finalizado de medir")
-                self.dv.append_plus("tiempo transcurrido:" + str(total))  
-                self.dv.append_plus("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
-                self.dv.append_plus("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
-                self.dv.append_plus("resistencia shunt ="+ str(shunt[R_shunt_k]))         
-          
-
-        elif (self.sd.def_cfg['post_procesado']['value']==1):
-            # configuramos la FPGA con diseño verilog propio de DSD
+            #este modo debería funcionar para version sin autoshunt
 
             t0=pc()
             if self.sd.def_cfg['modelo']['value']==0:
@@ -1706,6 +1304,861 @@ class VISA(object):
             self.dv.append_plus("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
             self.dv.append_plus("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
             self.dv.append_plus("resistencia shunt ="+ str(shunt[R_shunt_k]))         
+
+        else: #con esto cubrimos el modelo 2 (7020 con autoshunt) y el modelo 0 (7010)
+
+            if (self.sd.def_cfg['post_procesado']['value']==0):
+                # configuramos la FPGA con diseño verilog propio de DSD
+                # adaptado para el autoshunt
+
+                t0=pc()
+                if self.sd.def_cfg['modelo']['value']==0:
+                    shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
+                else:
+                    shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
+                
+
+
+                R_shunt_k = self.sd.def_cfg['shunt']['value'] #elijo 1000 
+
+                frecuencia_min = np.log10(self.sd.def_cfg['f_inicial']['value'])
+                frecuencia_max= np.log10(self.sd.def_cfg['f_final']['value'])
+                puntos_decada= self.sd.def_cfg['n_puntos']['value']
+                numero_valores=int((frecuencia_max-frecuencia_min)*puntos_decada)
+                # numero_valores=256
+                ##configuramos las frecuencias y enviamos un listado de incrementos a la memoria de incrementos de la FPGA
+                if (self.sd.def_cfg['tipo_barrido']['value']==0):
+                    self.sd.freq = np.linspace(self.sd.def_cfg['f_inicial']['value'],
+                                            self.sd.def_cfg['f_final']['value'],
+                                            self.sd.def_cfg['n_puntos']['value'])
+                elif(self.sd.def_cfg['tipo_barrido']['value']==1):
+                    self.sd.freq = np.logspace(np.log10(self.sd.def_cfg['f_inicial']['value']),
+                                            np.log10(self.sd.def_cfg['f_final']['value']),
+                                            numero_valores,base=10)
+                    
+                try:
+                    self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->state2  0->state1
+                except BrokenPipeError:
+                    print("Broken pipe error occurred.")
+                    self.dv.append_plus("Algo pasa con la conexión")
+                    error=1
+                #recortamos a 40 Hz
+                else:
+                    frecuencias=self.sd.freq[self.sd.freq>40]
+                    numero_valores=len(frecuencias)
+                    
+                    print(numero_valores)
+                    incrementos2=np.ones(256-numero_valores)*34360000.0
+                    incrementos1= (frecuencias*(2**32))/125e6
+                    incrementos=np.concatenate((incrementos1, incrementos2), axis=None)
+                    #print(str(incrementos))
+                    s = io.BytesIO()
+                    np.savetxt(s, [incrementos], fmt='%1.1f', delimiter=', ')
+                    outStr = s.getvalue().decode('UTF-8')
+                    # print(outStr)
+                    self.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
+                #    self.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
+                #    self.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
+                #   self.tx_txt('SOUR1:BURS:NCYC 0')  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
+                #   self.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
+                    # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
+                #    self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
+                #    self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
+
+
+
+
+
+
+                    self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
+                    self.tx_txt('SOUR1:FUNC ARBITRARY')
+                    #print("he llegado aqui1")
+                    self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
+                    #print("he llegado aqui2")            
+                    self.tx_txt('OUTPUT:STATE ON') 
+                    #  quitar estas 5 lineas al terminar de debugear 
+                # self.tx_txt('ACQ:RESULT2:DATA?')
+                # buff_string3 = self.rx_txt()
+                # buff_string3 = buff_string3.strip('{}\n\r').replace("  ", "").split(',')
+                # buff3 = list(map(float, buff_string3))
+                # my_array3 = np.asarray(buff3)
+
+                    ## 
+                    # self.tx_txt('SOUR1:TRAC:DATA:DATA 2, 0.1, 0.1, 0.1, 0.2, 0.3, 0.3, 0.3,-0.2')
+                    muestras=numero_valores
+
+                    decimation=1
+                    #umbral_horizontal_detector_cero=150*puntos_decada/50
+
+                    #umbral_vertical_detector_cero=200*puntos_decada/50     
+                    umbral_horizontal_detector_cero=0
+
+                    umbral_vertical_detector_cero=0        
+                    procedimiento_fase=2
+
+                    #configuramos el shunt
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO0_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO1_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO2_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO3_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO4_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO5_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO6_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO7_N')
+
+
+
+                    # if (R_shunt_k==0):
+                    #     # elegimos 90.9 
+                    #     # activo a nivel bajo: activo
+                    #     self.tx_txt('DIG:PIN DIO0_N,0') 
+                    #     # activo a nivel bajo: desactivo
+                    #     self.tx_txt('DIG:PIN DIO1_N,1')
+                    #     # activo a nivel alto: desactivo            
+                    #     self.tx_txt('DIG:PIN DIO2_N,0')
+                    #     # activo a nivel alto: activo                
+                    #     self.tx_txt('DIG:PIN DIO3_N,1')
+                    # else:
+                    #     if (R_shunt_k==1):
+                    #         # elegimos 100 
+                    #         # activo a nivel bajo: desactivo
+                    #         self.tx_txt('DIG:PIN DIO0_N,1') 
+                    #         # activo a nivel bajo: desactivo
+                    #         self.tx_txt('DIG:PIN DIO1_N,1')
+                    #         # activo a nivel alto: desactivo            
+                    #         self.tx_txt('DIG:PIN DIO2_N,0')
+                    #         # activo a nivel alto: activo                
+                    #         self.tx_txt('DIG:PIN DIO3_N,1')
+                    #     else:
+                    #         if (R_shunt_k==2):
+                    #             # elegimos 900.9 
+                    #             # activo a nivel bajo: activo
+                    #             self.tx_txt('DIG:PIN DIO0_N,0') 
+                    #             # activo a nivel bajo: activo
+                    #             self.tx_txt('DIG:PIN DIO1_N,0')
+                    #             # activo a nivel alto: activo            
+                    #             self.tx_txt('DIG:PIN DIO2_N,1')
+                    #             # activo a nivel alto: desactivo                
+                    #             self.tx_txt('DIG:PIN DIO3_N,0')
+                    #         else:
+                    #             if (R_shunt_k==3):
+                    #                 # #elegimos 1K
+                    #                 # #activo a nivel bajo: activo
+                    #                 self.tx_txt('DIG:PIN DIO0_N,0') 
+                    #                 # #activo a nivel bajo: desactivo
+                    #                 self.tx_txt('DIG:PIN DIO1_N,1')
+                    #                 # #activo a nivel alto: desactivo            
+                    #                 self.tx_txt('DIG:PIN DIO2_N,0')
+                    #                 # #activo a nivel alto: desactivo                
+                    #                 self.tx_txt('DIG:PIN DIO3_N,0')  
+                    #             else:
+                    #                 if (R_shunt_k==4):
+                    #                     # elegimos 10K
+                    #                     # activo a nivel bajo: desactivo
+                    #                     self.tx_txt('DIG:PIN DIO0_N,1') 
+                    #                     # activo a nivel bajo: activo
+                    #                     self.tx_txt('DIG:PIN DIO1_N,0')
+                    #                     # activo a nivel alto: desactivo            
+                    #                     self.tx_txt('DIG:PIN DIO2_N,0')
+                    #                     # activo a nivel alto: desactivo                
+                    #                     self.tx_txt('DIG:PIN DIO3_N,0')
+                    #                 else:
+                    #                     # k==4 y K==0 y K==5
+                    #                     # elegimos 100K
+                    #                     # activo a nivel bajo: desactivo
+                    #                     self.tx_txt('DIG:PIN DIO0_N,1') 
+                    #                     # activo a nivel bajo: desactivo
+                    #                     self.tx_txt('DIG:PIN DIO1_N,1')
+                    #                     # activo a nivel alto: activo            
+                    #                     self.tx_txt('DIG:PIN DIO2_N,1')
+                    #                     # activo a nivel alto: desactivo                
+                    #                     self.tx_txt('DIG:PIN DIO3_N,0')
+                    
+
+                    #elegimos el cable rojo , conector j1
+                    #activo a nivel bajo: desactivo    
+                    self.tx_txt('DIG:PIN DIO4_N,1')
+                    #activo a nivel alto: activo    
+                    self.tx_txt('DIG:PIN DIO5_N,1')
+                    #activo a nivel alto: desactivo                
+                    self.tx_txt('DIG:PIN DIO6_N,0')
+                    #activo a nivel bajo: desactivo                
+                    self.tx_txt('DIG:PIN DIO7_N,1')
+
+                    # #elegimos el cable amarillo , conector j3
+                    # #activo a nivel bajo: desactivo    
+                    # self.tx_txt('DIG:PIN DIO4_N,1')
+                    # #activo a nivel alto: desactivo    
+                    # self.tx_txt('DIG:PIN DIO5_N,0')
+                    # #activo a nivel alto: desactivo                
+                    # self.tx_txt('DIG:PIN DIO6_N,0')
+                    # #activo a nivel bajo: activo                
+                    # self.tx_txt('DIG:PIN DIO7_N,0')
+
+
+                    # #elegimos el cable verde , conector j2
+                    # #activo a nivel bajo: activo    
+                    # self.tx_txt('DIG:PIN DIO4_N,0')
+                    # #activo a nivel alto: desactivo    
+                    # self.tx_txt('DIG:PIN DIO5_N,0')
+                    # #activo a nivel alto: desactivo                
+                    # self.tx_txt('DIG:PIN DIO6_N,0')
+                    # #activo a nivel bajo: desactivo                
+                    # self.tx_txt('DIG:PIN DIO7_N,1')
+
+                    # #elegimos el cable azul , conector j4
+                    # #activo a nivel bajo: desactivo    
+                    # self.tx_txt('DIG:PIN DIO4_N,1')
+                    # #activo a nivel alto: desactivo    
+                    # self.tx_txt('DIG:PIN DIO5_N,0')
+                    # #activo a nivel alto: activo                
+                    # self.tx_txt('DIG:PIN DIO6_N,1')
+                    # #activo a nivel bajo: desactivo                
+                    # self.tx_txt('DIG:PIN DIO7_N,1')
+
+                    # muestras=10
+                    frecuencias=frecuencias[0:muestras]
+                    muestras_ampliadas=muestras+1
+                    # configuraciones  varias
+                    self.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
+                    self.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
+                    self.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
+                    self.tx_txt('SOUR1:BURS:NCYC ' + str(self.sd.def_cfg['n_ciclos']['value']))  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
+                    self.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
+                    # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
+                    self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
+                    self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
+
+
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(procedimiento_fase))  # desbloqueo finalizacion state1, tambien genera inicio
+                    self.tx_txt('DIG:PIN LED'+str(3)+','+str(1))  #activacion del led3 absolutamente necesario para que el numero de ciclos sea configurable y el numero de frecuencias y los umbrales
+
+
+                    self.dv.append_plus("Midiendo Z=R+iX")
+                    t1=pc()
+                    self.tx_txt('CHIRP ON')
+                    try:
+                        while 1 :
+                            #    rp_s.tx_txt('FIN:RAF:STAT? 1')
+                            self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
+                            state = self.rx_txt()
+                            if state == '1':
+                                break
+                    except Exception as e:
+                        print(e)
+                        error=1
+                    # Cancelar el temporizador
+                    signal.alarm(0)                
+                #    # print(rp_s.rx_txt())
+                    # rp_s.tx_txt('DIG:PIN? DIO'+str(7)+'_N')
+                    # state = rp_s.rx_txt()
+                    print(state)
+                    # EMPEZAMOS CON LA ADQUISION
+
+                    self.tx_txt('CHIRP OFF')
+                    self.tx_txt('ACQ:RESULT1:DATA?')
+                    t3=pc()
+
+                    buff_string = self.rx_txt()
+                    buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
+                    buff = list(map(float, buff_string))
+                    t4=pc()
+                    my_array = np.asarray(buff)
+                    my_array =my_array[:-decimation:decimation]
+                    # super_buffer.append(buff)
+                    # super_buffer_flat=sum(super_buffer, [])
+                    self.tx_txt('ACQ:RESULT2:DATA?')
+                    buff_string2 = self.rx_txt()
+                    buff_string2 = buff_string2.strip('{}\n\r').replace("  ", "").split(',')
+                    buff2 = list(map(float, buff_string2))
+                    my_array2 = np.asarray(buff2)
+                    my_array2 =my_array2[:-decimation:decimation]
+                    muestras=round(muestras/decimation)
+                    t5=pc()
+                    print('t5-t1:',t5-t1)
+
+
+                    smooth=self.sd.def_cfg['smooth']['value']
+                    k=self.sd.def_cfg['k_factor']['value']
+
+
+                    #Enable output
+                    iteracion=1
+                    # ZA=interp1d(frecuencias[0:muestras],my_array[0:muestras])
+                    # ZB=interp1d(frecuencias,my_array[256: 256+225])
+                    # Z=(ZA(frecuencias))*shunt[R_shunt_k]/32
+                    ## solucion con shunt fija
+                    #Z_sin_comprimir=(my_array[0:muestras]*shunt[R_shunt_k])/16
+
+                    idea1=(my_array[20]*shunt[4])/16  -(my_array[19]*shunt[5])/16
+                    idea2=(my_array[70]*shunt[3])/16  -(my_array[69]*shunt[4])/16
+                    idea3=(my_array[120]*shunt[2])/16  -(my_array[119]*shunt[3])/16
+                    idea4=(my_array[170]*shunt[1])/16  -(my_array[169]*shunt[2])/16
+
+                    # idea1=0
+                    # idea2=0
+                    # idea3=0
+                    # idea4=0
+                    # Z_sin_comprimir = np.array([(val*shunt[5])/16+idea1 if i < 20 
+                    #                 else (val*shunt[4])/16  if 20 <= i < 70 
+                    #                 else (val*shunt[3])/16 -idea2 if 70 <= i < 120 
+                    #                 else (val*shunt[2])/16  if 120 <= i < 170 
+                    #                 else (val*shunt[1])/16 -idea4 
+                    #                 for i, val in enumerate(my_array[0:muestras])])
+                    Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
+                                    else (val*shunt[4])/16 -idea1 if 20 <= i < 70 
+                                    else (val*shunt[3])/16 -idea2-idea1 if 70 <= i < 120 
+                                    else (val*shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170 
+                                    else (val*shunt[1])/16 -idea1-idea2-idea3-idea4
+                                    for i, val in enumerate(my_array[0:muestras])])            
+                    
+                    from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
+
+                    # Identificar los índices de los escalones
+                    step_indices = [20, 70, 120, 170]
+
+                    # Identificar los valores en los índices de los escalones
+                    step_values = [Z_sin_comprimir[i] for i in step_indices]
+
+                    # Crear una función de interpolación
+                    # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
+                    # Crear una función de interpolación spline cúbica
+                    spline_func = PchipInterpolator(step_indices, step_values)            
+
+                    # Aplicar la función de interpolación a todo el array
+                    # Z_sin_comprimir2 = interp_func
+                    Z_sin_comprimir2 = spline_func(np.arange(muestras))
+                    from scipy.signal import savgol_filter
+
+                    # Definir el tamaño de la ventana y el grado del polinomio
+                    window_size = 11
+                    poly_degree = 3
+
+                    # Aplicar el filtro Savitzky-Golay
+                    Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
+
+                    # en principio el calculo en verilog es suponiendo una resistencia de 1k. Con esto lo ajusto a la resistencia de shunt exacta
+
+
+                    # PhaseA=interp1d(frecuencias[0:muestras],my_array2[0:muestras])
+                    # Phase_check=PhaseA(frecuencias)*frecuencias*360/125e6
+                    # Phase_radianes=PhaseA(frecuencias)*frecuencias*2*np.pi/125e6
+
+                        # tangentea=my_array2[0:muestras]/(1024*64)
+                        # tangenteb=my_array2[256:256+muestras]/(1024*64)
+                        # arcoa=np.arctan(tangentea) 
+                        # arcob=np.arctan(tangenteb) 
+                        # Phase_radianes=(arcoa-arcob)
+                    # Phase_escalada=-my_array2[0:muestras]/(2**29) 
+                    Phase_escalada=-my_array2[0:muestras]/2 # porque las fases las calculo multiplicads por 2
+                    #Phase_radianes=Phase_escalada*np.pi           
+                    #Phase_check=Phase_radianes*360/(2*np.pi)
+
+                    Phase_radianes=Phase_escalada*np.pi/180           
+                    Phase_check=Phase_escalada            
+                    PHASE_sin_comprimir_grados=np.zeros(muestras)
+                    for fases in range(len(Phase_check)):
+                        if (Phase_check[fases]<=-90):
+                            PHASE_sin_comprimir_grados[fases]=Phase_check[fases]+180
+                        else:
+                            if (Phase_check[fases] >=90):
+                                PHASE_sin_comprimir_grados[fases]=Phase_check[fases]-180
+                            else:
+                                PHASE_sin_comprimir_grados[fases]=Phase_check[fases]                
+                    # PHASE=my_array[256: 256+225]*frecuencias*360/125e6
+                    # PHASE= Phase_check
+                    PHASE_sin_comprimir=PHASE_sin_comprimir_grados*np.pi/180
+                    PHASE=np.ma.masked_where((Z_sin_comprimir==0.0),PHASE_sin_comprimir) 
+                    self.sd.freq=np.ma.masked_where((Z_sin_comprimir==0.0),frecuencias) 
+                    Z = np.ma.masked_where((Z_sin_comprimir==0.0),Z_sin_comprimir) 
+
+                    ##ATENCION NO HAGO NINGUNA INTERPOLACION DE LOS DATOS, SOLO LOS COMPRIMO
+
+                    prePHASE=PHASE.compressed()
+                    self.sd.freq=self.sd.freq.compressed()
+                    preZ = Z.compressed()
+
+                                # ahora aplico una forma de smooth; pero mejor hacerlo en la imagen , no sobre los datos
+                    # if (smooth==0):
+                    #     PHASE = np.cumsum(prePHASE, dtype=float)
+                    #     Z=np.cumsum(preZ, dtype=float)
+                    #     PHASE[k:] = PHASE[k:] - PHASE[:-k]
+                    #     Z[k:] = Z[k:] - Z[:-k]
+                    #     PHASE=PHASE[k - 1:] / k
+
+                    #     Z=Z[k - 1:] / k
+                    #     self.sd.freq=self.sd.freq[k-1:]
+                    # else:
+                    #     PHASE=prePHASE
+                    # # self.sd.freq=frecuencias
+                    #     Z = preZ
+
+                    PHASE=prePHASE
+                    Z=preZ
+
+                    t10=pc()
+                    self.sd.R_data = Z*np.cos(PHASE*np.pi/180)
+                    self.sd.X_data = Z*np.sin(PHASE*np.pi/180)
+
+                    # Compute Err, Eri, Er_mod, Er_fase_data
+                    # First create frequency array based on actual gui conditions
+                    # The freq array will not be changed until next data acquisition even if GUI changes
+
+
+                    complex_aux         = self.sd.R_data + self.sd.X_data*1j
+                    self.sd.Z_mod_data  = Z
+                    self.sd.Z_fase_data = PHASE
+                    # las proximas lineas deben de descomentarse cuando haya eliminado los outliers
+                    admitance_aux       = 1./complex_aux
+                    G_data              = np.real(admitance_aux)
+                    Cp_data             = np.imag(admitance_aux)/(2*np.pi*self.sd.freq)
+                    self.sd.Err_data    = Cp_data/self.sd.Co
+                    self.sd.Eri_data    = G_data/(self.sd.Co*(2*np.pi*self.sd.freq));
+                    E_data              = self.sd.Err_data + -1*self.sd.Eri_data*1j;
+
+                    self.sd.Er_mod_data  = np.abs(E_data);
+                    self.sd.Er_fase_data = np.angle(E_data);
+                    t11=pc()
+
+                    total=t11-t1
+                    print ('total:',total)
+                    absolute_val_array = np.abs(self.sd.freq - 1000)
+                    smallest_difference_index = absolute_val_array.argmin()
+                    print ('R_data =', self.sd.R_data[smallest_difference_index])        
+                    print ('X_data=', self.sd.X_data[smallest_difference_index])
+                    print ('resistencia shunt=', shunt[R_shunt_k])
+                    self.dv.append_plus("He finalizado de medir")
+                    self.dv.append_plus("tiempo transcurrido:" + str(total))  
+                    self.dv.append_plus("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
+                    self.dv.append_plus("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
+                    self.dv.append_plus("resistencia shunt ="+ str(shunt[R_shunt_k]))         
+            
+
+            elif (self.sd.def_cfg['post_procesado']['value']==1):
+               # configuramos la FPGA con diseño verilog propio de DSD
+                # adaptado para el autoshunt
+
+                t0=pc()
+                if self.sd.def_cfg['modelo']['value']==0:
+                    shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
+                else:
+                    shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
+                
+
+
+                R_shunt_k = self.sd.def_cfg['shunt']['value'] #elijo 1000 
+
+                frecuencia_min = np.log10(self.sd.def_cfg['f_inicial']['value'])
+                frecuencia_max= np.log10(self.sd.def_cfg['f_final']['value'])
+                puntos_decada= self.sd.def_cfg['n_puntos']['value']
+                numero_valores=int((frecuencia_max-frecuencia_min)*puntos_decada)
+                # numero_valores=256
+                ##configuramos las frecuencias y enviamos un listado de incrementos a la memoria de incrementos de la FPGA
+                if (self.sd.def_cfg['tipo_barrido']['value']==0):
+                    self.sd.freq = np.linspace(self.sd.def_cfg['f_inicial']['value'],
+                                            self.sd.def_cfg['f_final']['value'],
+                                            self.sd.def_cfg['n_puntos']['value'])
+                elif(self.sd.def_cfg['tipo_barrido']['value']==1):
+                    self.sd.freq = np.logspace(np.log10(self.sd.def_cfg['f_inicial']['value']),
+                                            np.log10(self.sd.def_cfg['f_final']['value']),
+                                            numero_valores,base=10)
+                    
+                try:
+                    self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->state2  0->state1
+                except BrokenPipeError:
+                    print("Broken pipe error occurred.")
+                    self.dv.append_plus("Algo pasa con la conexión")
+                    error=1
+                #recortamos a 40 Hz
+                else:
+                    frecuencias=self.sd.freq[self.sd.freq>40]
+                    numero_valores=len(frecuencias)
+                    
+                    print(numero_valores)
+                    incrementos2=np.ones(256-numero_valores)*34360000.0
+                    incrementos1= (frecuencias*(2**32))/125e6
+                    incrementos=np.concatenate((incrementos1, incrementos2), axis=None)
+                    #print(str(incrementos))
+                    s = io.BytesIO()
+                    np.savetxt(s, [incrementos], fmt='%1.1f', delimiter=', ')
+                    outStr = s.getvalue().decode('UTF-8')
+                    # print(outStr)
+                    self.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
+                #    self.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
+                #    self.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
+                #   self.tx_txt('SOUR1:BURS:NCYC 0')  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
+                #   self.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
+                    # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
+                #    self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
+                #    self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
+
+
+
+
+
+
+                    self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
+                    self.tx_txt('SOUR1:FUNC ARBITRARY')
+                    #print("he llegado aqui1")
+                    self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
+                    #print("he llegado aqui2")            
+                    self.tx_txt('OUTPUT:STATE ON') 
+                    #  quitar estas 5 lineas al terminar de debugear 
+                # self.tx_txt('ACQ:RESULT2:DATA?')
+                # buff_string3 = self.rx_txt()
+                # buff_string3 = buff_string3.strip('{}\n\r').replace("  ", "").split(',')
+                # buff3 = list(map(float, buff_string3))
+                # my_array3 = np.asarray(buff3)
+
+                    ## 
+                    # self.tx_txt('SOUR1:TRAC:DATA:DATA 2, 0.1, 0.1, 0.1, 0.2, 0.3, 0.3, 0.3,-0.2')
+                    muestras=numero_valores
+
+                    decimation=1
+                    #umbral_horizontal_detector_cero=150*puntos_decada/50
+
+                    #umbral_vertical_detector_cero=200*puntos_decada/50     
+                    umbral_horizontal_detector_cero=0
+
+                    umbral_vertical_detector_cero=0        
+                    procedimiento_fase=2
+
+                    #configuramos el shunt
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO0_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO1_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO2_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO3_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO4_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO5_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO6_N')
+                    self.tx_txt('DIG:PIN:DIR OUT,DIO7_N')
+
+
+
+                    # if (R_shunt_k==0):
+                    #     # elegimos 90.9 
+                    #     # activo a nivel bajo: activo
+                    #     self.tx_txt('DIG:PIN DIO0_N,0') 
+                    #     # activo a nivel bajo: desactivo
+                    #     self.tx_txt('DIG:PIN DIO1_N,1')
+                    #     # activo a nivel alto: desactivo            
+                    #     self.tx_txt('DIG:PIN DIO2_N,0')
+                    #     # activo a nivel alto: activo                
+                    #     self.tx_txt('DIG:PIN DIO3_N,1')
+                    # else:
+                    #     if (R_shunt_k==1):
+                    #         # elegimos 100 
+                    #         # activo a nivel bajo: desactivo
+                    #         self.tx_txt('DIG:PIN DIO0_N,1') 
+                    #         # activo a nivel bajo: desactivo
+                    #         self.tx_txt('DIG:PIN DIO1_N,1')
+                    #         # activo a nivel alto: desactivo            
+                    #         self.tx_txt('DIG:PIN DIO2_N,0')
+                    #         # activo a nivel alto: activo                
+                    #         self.tx_txt('DIG:PIN DIO3_N,1')
+                    #     else:
+                    #         if (R_shunt_k==2):
+                    #             # elegimos 900.9 
+                    #             # activo a nivel bajo: activo
+                    #             self.tx_txt('DIG:PIN DIO0_N,0') 
+                    #             # activo a nivel bajo: activo
+                    #             self.tx_txt('DIG:PIN DIO1_N,0')
+                    #             # activo a nivel alto: activo            
+                    #             self.tx_txt('DIG:PIN DIO2_N,1')
+                    #             # activo a nivel alto: desactivo                
+                    #             self.tx_txt('DIG:PIN DIO3_N,0')
+                    #         else:
+                    #             if (R_shunt_k==3):
+                    #                 # #elegimos 1K
+                    #                 # #activo a nivel bajo: activo
+                    #                 self.tx_txt('DIG:PIN DIO0_N,0') 
+                    #                 # #activo a nivel bajo: desactivo
+                    #                 self.tx_txt('DIG:PIN DIO1_N,1')
+                    #                 # #activo a nivel alto: desactivo            
+                    #                 self.tx_txt('DIG:PIN DIO2_N,0')
+                    #                 # #activo a nivel alto: desactivo                
+                    #                 self.tx_txt('DIG:PIN DIO3_N,0')  
+                    #             else:
+                    #                 if (R_shunt_k==4):
+                    #                     # elegimos 10K
+                    #                     # activo a nivel bajo: desactivo
+                    #                     self.tx_txt('DIG:PIN DIO0_N,1') 
+                    #                     # activo a nivel bajo: activo
+                    #                     self.tx_txt('DIG:PIN DIO1_N,0')
+                    #                     # activo a nivel alto: desactivo            
+                    #                     self.tx_txt('DIG:PIN DIO2_N,0')
+                    #                     # activo a nivel alto: desactivo                
+                    #                     self.tx_txt('DIG:PIN DIO3_N,0')
+                    #                 else:
+                    #                     # k==4 y K==0 y K==5
+                    #                     # elegimos 100K
+                    #                     # activo a nivel bajo: desactivo
+                    #                     self.tx_txt('DIG:PIN DIO0_N,1') 
+                    #                     # activo a nivel bajo: desactivo
+                    #                     self.tx_txt('DIG:PIN DIO1_N,1')
+                    #                     # activo a nivel alto: activo            
+                    #                     self.tx_txt('DIG:PIN DIO2_N,1')
+                    #                     # activo a nivel alto: desactivo                
+                    #                     self.tx_txt('DIG:PIN DIO3_N,0')
+                    
+
+                    #elegimos el cable rojo , conector j1
+                    #activo a nivel bajo: desactivo    
+                    self.tx_txt('DIG:PIN DIO4_N,1')
+                    #activo a nivel alto: activo    
+                    self.tx_txt('DIG:PIN DIO5_N,1')
+                    #activo a nivel alto: desactivo                
+                    self.tx_txt('DIG:PIN DIO6_N,0')
+                    #activo a nivel bajo: desactivo                
+                    self.tx_txt('DIG:PIN DIO7_N,1')
+
+                    # #elegimos el cable amarillo , conector j3
+                    # #activo a nivel bajo: desactivo    
+                    # self.tx_txt('DIG:PIN DIO4_N,1')
+                    # #activo a nivel alto: desactivo    
+                    # self.tx_txt('DIG:PIN DIO5_N,0')
+                    # #activo a nivel alto: desactivo                
+                    # self.tx_txt('DIG:PIN DIO6_N,0')
+                    # #activo a nivel bajo: activo                
+                    # self.tx_txt('DIG:PIN DIO7_N,0')
+
+
+                    # #elegimos el cable verde , conector j2
+                    # #activo a nivel bajo: activo    
+                    # self.tx_txt('DIG:PIN DIO4_N,0')
+                    # #activo a nivel alto: desactivo    
+                    # self.tx_txt('DIG:PIN DIO5_N,0')
+                    # #activo a nivel alto: desactivo                
+                    # self.tx_txt('DIG:PIN DIO6_N,0')
+                    # #activo a nivel bajo: desactivo                
+                    # self.tx_txt('DIG:PIN DIO7_N,1')
+
+                    # #elegimos el cable azul , conector j4
+                    # #activo a nivel bajo: desactivo    
+                    # self.tx_txt('DIG:PIN DIO4_N,1')
+                    # #activo a nivel alto: desactivo    
+                    # self.tx_txt('DIG:PIN DIO5_N,0')
+                    # #activo a nivel alto: activo                
+                    # self.tx_txt('DIG:PIN DIO6_N,1')
+                    # #activo a nivel bajo: desactivo                
+                    # self.tx_txt('DIG:PIN DIO7_N,1')
+
+                    # muestras=10
+                    frecuencias=frecuencias[0:muestras]
+                    muestras_ampliadas=muestras+1
+                    # configuraciones  varias
+                    self.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
+                    self.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
+                    self.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
+                    self.tx_txt('SOUR1:BURS:NCYC ' + str(self.sd.def_cfg['n_ciclos']['value']))  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
+                    self.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
+                    # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
+                    self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
+                    self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
+
+
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(procedimiento_fase))  # desbloqueo finalizacion state1, tambien genera inicio
+                    self.tx_txt('DIG:PIN LED'+str(3)+','+str(1))  #activacion del led3 absolutamente necesario para que el numero de ciclos sea configurable y el numero de frecuencias y los umbrales
+
+
+                    self.dv.append_plus("Midiendo Z=R+iX")
+                    t1=pc()
+                    self.tx_txt('CHIRP ON')
+                    try:
+                        while 1 :
+                            #    rp_s.tx_txt('FIN:RAF:STAT? 1')
+                            self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
+                            state = self.rx_txt()
+                            if state == '1':
+                                break
+                    except Exception as e:
+                        print(e)
+                        error=1
+                    # Cancelar el temporizador
+                    signal.alarm(0)                
+                #    # print(rp_s.rx_txt())
+                    # rp_s.tx_txt('DIG:PIN? DIO'+str(7)+'_N')
+                    # state = rp_s.rx_txt()
+                    print(state)
+                    # EMPEZAMOS CON LA ADQUISION
+
+                    self.tx_txt('CHIRP OFF')
+                    self.tx_txt('ACQ:RESULT1:DATA?')
+                    t3=pc()
+
+                    buff_string = self.rx_txt()
+                    buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
+                    buff = list(map(float, buff_string))
+                    t4=pc()
+                    my_array = np.asarray(buff)
+                    my_array =my_array[:-decimation:decimation]
+                    # super_buffer.append(buff)
+                    # super_buffer_flat=sum(super_buffer, [])
+                    self.tx_txt('ACQ:RESULT2:DATA?')
+                    buff_string2 = self.rx_txt()
+                    buff_string2 = buff_string2.strip('{}\n\r').replace("  ", "").split(',')
+                    buff2 = list(map(float, buff_string2))
+                    my_array2 = np.asarray(buff2)
+                    my_array2 =my_array2[:-decimation:decimation]
+                    muestras=round(muestras/decimation)
+                    t5=pc()
+                    print('t5-t1:',t5-t1)
+
+
+                    smooth=self.sd.def_cfg['smooth']['value']
+                    k=self.sd.def_cfg['k_factor']['value']
+
+
+                    #Enable output
+                    iteracion=1
+                    # ZA=interp1d(frecuencias[0:muestras],my_array[0:muestras])
+                    # ZB=interp1d(frecuencias,my_array[256: 256+225])
+                    # Z=(ZA(frecuencias))*shunt[R_shunt_k]/32
+                    ## solucion con shunt fija
+                    #Z_sin_comprimir=(my_array[0:muestras]*shunt[R_shunt_k])/16
+
+                    idea1=(my_array[20]*shunt[4])/16  -(my_array[19]*shunt[5])/16
+                    idea2=(my_array[70]*shunt[3])/16  -(my_array[69]*shunt[4])/16
+                    idea3=(my_array[120]*shunt[2])/16  -(my_array[119]*shunt[3])/16
+                    idea4=(my_array[170]*shunt[1])/16  -(my_array[169]*shunt[2])/16
+
+                    # idea1=0
+                    # idea2=0
+                    # idea3=0
+                    # idea4=0
+                    Z_sin_comprimir = np.array([(val*shunt[5])/16+idea1 if i < 20 
+                                    else (val*shunt[4])/16  if 20 <= i < 70 
+                                    else (val*shunt[3])/16 -idea2 if 70 <= i < 120 
+                                    else (val*shunt[2])/16  if 120 <= i < 170 
+                                    else (val*shunt[1])/16 -idea4 
+                                    for i, val in enumerate(my_array[0:muestras])])
+                    # Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
+                    #                 else (val*shunt[4])/16 -idea1 if 20 <= i < 70 
+                    #                 else (val*shunt[3])/16 -idea2-idea1 if 70 <= i < 120 
+                    #                 else (val*shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170 
+                    #                 else (val*shunt[1])/16 -idea1-idea2-idea3-idea4
+                    #                 for i, val in enumerate(my_array[0:muestras])])            
+                    
+                    from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
+
+                    # Identificar los índices de los escalones
+                    step_indices = [20, 70, 120, 170]
+
+                    # Identificar los valores en los índices de los escalones
+                    step_values = [Z_sin_comprimir[i] for i in step_indices]
+
+                    # Crear una función de interpolación
+                    # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
+                    # Crear una función de interpolación spline cúbica
+                    spline_func = PchipInterpolator(step_indices, step_values)            
+
+                    # Aplicar la función de interpolación a todo el array
+                    # Z_sin_comprimir2 = interp_func
+                    Z_sin_comprimir2 = spline_func(np.arange(muestras))
+                    from scipy.signal import savgol_filter
+
+                    # Definir el tamaño de la ventana y el grado del polinomio
+                    window_size = 11
+                    poly_degree = 3
+
+                    # Aplicar el filtro Savitzky-Golay
+                    Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
+
+                    # en principio el calculo en verilog es suponiendo una resistencia de 1k. Con esto lo ajusto a la resistencia de shunt exacta
+
+
+                    # PhaseA=interp1d(frecuencias[0:muestras],my_array2[0:muestras])
+                    # Phase_check=PhaseA(frecuencias)*frecuencias*360/125e6
+                    # Phase_radianes=PhaseA(frecuencias)*frecuencias*2*np.pi/125e6
+
+                        # tangentea=my_array2[0:muestras]/(1024*64)
+                        # tangenteb=my_array2[256:256+muestras]/(1024*64)
+                        # arcoa=np.arctan(tangentea) 
+                        # arcob=np.arctan(tangenteb) 
+                        # Phase_radianes=(arcoa-arcob)
+                    # Phase_escalada=-my_array2[0:muestras]/(2**29) 
+                    Phase_escalada=-my_array2[0:muestras]/2 # porque las fases las calculo multiplicads por 2
+                    #Phase_radianes=Phase_escalada*np.pi           
+                    #Phase_check=Phase_radianes*360/(2*np.pi)
+
+                    Phase_radianes=Phase_escalada*np.pi/180           
+                    Phase_check=Phase_escalada            
+                    PHASE_sin_comprimir_grados=np.zeros(muestras)
+                    for fases in range(len(Phase_check)):
+                        if (Phase_check[fases]<=-90):
+                            PHASE_sin_comprimir_grados[fases]=Phase_check[fases]+180
+                        else:
+                            if (Phase_check[fases] >=90):
+                                PHASE_sin_comprimir_grados[fases]=Phase_check[fases]-180
+                            else:
+                                PHASE_sin_comprimir_grados[fases]=Phase_check[fases]                
+                    # PHASE=my_array[256: 256+225]*frecuencias*360/125e6
+                    # PHASE= Phase_check
+                    PHASE_sin_comprimir=PHASE_sin_comprimir_grados*np.pi/180
+                    PHASE=np.ma.masked_where((Z_sin_comprimir==0.0),PHASE_sin_comprimir) 
+                    self.sd.freq=np.ma.masked_where((Z_sin_comprimir==0.0),frecuencias) 
+                    Z = np.ma.masked_where((Z_sin_comprimir==0.0),Z_sin_comprimir) 
+
+                    ##ATENCION NO HAGO NINGUNA INTERPOLACION DE LOS DATOS, SOLO LOS COMPRIMO
+
+                    prePHASE=PHASE.compressed()
+                    self.sd.freq=self.sd.freq.compressed()
+                    preZ = Z.compressed()
+
+                                # ahora aplico una forma de smooth; pero mejor hacerlo en la imagen , no sobre los datos
+                    # if (smooth==0):
+                    #     PHASE = np.cumsum(prePHASE, dtype=float)
+                    #     Z=np.cumsum(preZ, dtype=float)
+                    #     PHASE[k:] = PHASE[k:] - PHASE[:-k]
+                    #     Z[k:] = Z[k:] - Z[:-k]
+                    #     PHASE=PHASE[k - 1:] / k
+
+                    #     Z=Z[k - 1:] / k
+                    #     self.sd.freq=self.sd.freq[k-1:]
+                    # else:
+                    #     PHASE=prePHASE
+                    # # self.sd.freq=frecuencias
+                    #     Z = preZ
+
+                    PHASE=prePHASE
+                    Z=preZ
+
+                    t10=pc()
+                    self.sd.R_data = Z*np.cos(PHASE*np.pi/180)
+                    self.sd.X_data = Z*np.sin(PHASE*np.pi/180)
+
+                    # Compute Err, Eri, Er_mod, Er_fase_data
+                    # First create frequency array based on actual gui conditions
+                    # The freq array will not be changed until next data acquisition even if GUI changes
+
+
+                    complex_aux         = self.sd.R_data + self.sd.X_data*1j
+                    self.sd.Z_mod_data  = Z
+                    self.sd.Z_fase_data = PHASE
+                    # las proximas lineas deben de descomentarse cuando haya eliminado los outliers
+                    admitance_aux       = 1./complex_aux
+                    G_data              = np.real(admitance_aux)
+                    Cp_data             = np.imag(admitance_aux)/(2*np.pi*self.sd.freq)
+                    self.sd.Err_data    = Cp_data/self.sd.Co
+                    self.sd.Eri_data    = G_data/(self.sd.Co*(2*np.pi*self.sd.freq));
+                    E_data              = self.sd.Err_data + -1*self.sd.Eri_data*1j;
+
+                    self.sd.Er_mod_data  = np.abs(E_data);
+                    self.sd.Er_fase_data = np.angle(E_data);
+                    t11=pc()
+
+                    total=t11-t1
+                    print ('total:',total)
+                    absolute_val_array = np.abs(self.sd.freq - 1000)
+                    smallest_difference_index = absolute_val_array.argmin()
+                    print ('R_data =', self.sd.R_data[smallest_difference_index])        
+                    print ('X_data=', self.sd.X_data[smallest_difference_index])
+                    print ('resistencia shunt=', shunt[R_shunt_k])
+                    self.dv.append_plus("He finalizado de medir")
+                    self.dv.append_plus("tiempo transcurrido:" + str(total))  
+                    self.dv.append_plus("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
+                    self.dv.append_plus("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
+                    self.dv.append_plus("resistencia shunt ="+ str(shunt[R_shunt_k]))       
           
         return error
 

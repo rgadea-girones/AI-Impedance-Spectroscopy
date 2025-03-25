@@ -116,6 +116,7 @@ class DB_management(object):
     def lee_medida_rafa_BD(self, pollo, medida):
         # Devuelve los datos de la tabla correspondientes con el pollo y la medida en formato DataFrame
         # rafa: modificado para que incluya tambien el estado y poder graficar conociendo el estado
+        #tiene fallos que modifique pero que perdi
         try:
             with pd.HDFStore(self.filename,complib="zlib",complevel=4) as hdf_db:
                 #rafa: si hay duplicados cogera el último
@@ -141,7 +142,35 @@ class DB_management(object):
             return_value = -1
 
         return return_value
-    
+    def lee_medida_rafa_BD_ale(self, pollo, medida,estado):
+        # la base de datos de alejandra puede tener un mismo sujeto y medida varias veces
+        # Devuelve los datos de la tabla correspondientes con el pollo y la medida en formato DataFrame
+        # rafa: modificado para que incluya tambien el estado y poder graficar conociendo el estado
+        try:
+            with pd.HDFStore(self.filename,complib="zlib",complevel=4) as hdf_db:
+                #rafa: si hay duplicados cogera el último; pero ese filtro lo he quitado por lo explicado anteriormente
+                p_e  = hdf_db.get('data/pollos_estado')
+                #pre_p_e  = hdf_db.get('data/pollos_estado')
+                #p_e =pre_p_e.drop_duplicates(subset = ['Pollo', 'Medida'],  keep = 'last').reset_index(drop = True)
+                t    = hdf_db.get('data/tabla')
+                #extracto = p_e[(p_e['Pollo']==str(pollo))&(p_e['Medida']==str(medida))]
+                extracto = p_e[(p_e['Pollo'] == str(pollo)) & (p_e['Medida'] == str(medida)) & (p_e['Estado'] == str(estado))]
+                if (np.array(extracto).size==0):
+                    self.dv.append_plus("Medida %d no encontrada de sujeto %d"% (medida, pollo))
+                    ceros = pd.DataFrame(0, index=np.arange(200), columns=['Pollo','Medida','Freq','Z_mod',
+                                                    'Z_Fase','Err','Eri','E_mod','E_fase','R','X'])
+                    #return_value = pd.DataFrame([])
+                    return_value = ceros
+                else:
+                    Primero = extracto['Primero'].to_numpy(dtype='int')[0]
+                    Ultimo  = extracto['Ultimo'].to_numpy(dtype='int')[0]
+                    Estado = extracto['Estado'].to_numpy(dtype='int')[0]
+                    return_value = t.iloc[Primero:Ultimo+1],Estado
+        except EnvironmentError:
+            self.dv.append_plus("Base de Datos no encontrada")
+            return_value = -1
+
+        return return_value   
     def lee_estado_BD(self, pollo, medida):
         # Devuelve los datos de la tabla correspondientes con el pollo y la medida en formato DataFrame
         try:
