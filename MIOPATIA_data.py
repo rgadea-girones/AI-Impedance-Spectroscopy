@@ -37,7 +37,7 @@ class DATA(object):
                             'tipo_barrido':{'value':1, 'limits':[0,1],'type':'int'},
                             'DC_bias':{'value':0, 'limits':[0,1],'type':'int'},
                             'smooth':{'value':1, 'limits':[0,1],'type':'int'},
-                            'modelo':{'value':1, 'limits':[0,1],'type':'int'},       
+                            'modelo':{'value':1, 'limits':[0,2],'type':'int'},       
                             'RANGO':{'value':0, 'limits':[0,1],'type':'int'},                                                                                    
                             'k_factor':{'value':9, 'limits':[1,9],'type':'int'},                            
                             'nivel_DC':{'value':0.016, 'limits':[-40.0,40.0],'type':'float'},

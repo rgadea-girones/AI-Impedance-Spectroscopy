@@ -75,7 +75,7 @@
         "value": 1,
         "limits": [
             0,
-            1
+            2
         ],
         "type": "int"
     },
