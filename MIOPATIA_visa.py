@@ -108,7 +108,7 @@ class VISA(object):
                     shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
                     # opcion que me ha funcionado correctamente
                     # bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_autoshunt3.bit.bin"              
-                    bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_2025.bit.bin"    #opcion con mejoras de analisis temporal estático y cuantización de senoide    
+                    bitstream="/opt/redpitaya/fpga/fpga_2025.bit.bin"    #opcion con mejoras de analisis temporal estático y cuantización de senoide    
                     veamos = ParamikoMachine(self.host, user = "root", password="root")
                     veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
                     veamos.cwd.chdir("/opt/redpitaya/bin")
@@ -1370,7 +1370,7 @@ class VISA(object):
 
 
 
-                    self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
+                    #self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
                     self.tx_txt('SOUR1:FUNC ARBITRARY')
                     #print("he llegado aqui1")
                     self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
@@ -1797,7 +1797,7 @@ class VISA(object):
 
 
 
-                    self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
+                    #self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
                     self.tx_txt('SOUR1:FUNC ARBITRARY')
                     #print("he llegado aqui1")
                     self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
