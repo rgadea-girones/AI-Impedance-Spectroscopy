@@ -78,7 +78,7 @@ class MyApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tipo_analisis = Rbutton_group([self.radioButton_tipoanalisis_3,self.radioButton_tipoanalisis_4 ])  
         self.sel_smooth    = Rbutton_group([self.SMOOTH_ON,self.SMOOTH_OFF ])  
         self.sel_smooth_2  = Rbutton_group([self.SMOOTH_ON_2,self.SMOOTH_OFF_2 ])     
-        self.sel_modelo    = Rbutton_group([self.MODELO_1,self.MODELO_2,self.MODELO_3])          
+        self.sel_modelo    = Rbutton_group([self.MODELO_1,self.MODELO_2,self.MODELO_3,self.MODELO_4])          
         self.sel_RANGO     = Rbutton_group([self.RANGO_OBJETO,self.RANGO_MEDIDA ])                
         
         self.bg_config_cal = Rbutton_group([self.radioButton_config_cal_1, self.radioButton_config_cal_2])
