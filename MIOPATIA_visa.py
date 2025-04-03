@@ -70,6 +70,14 @@ class VISA(object):
         port    = self.port
         timeout= self.timeout
 
+        veamos = ParamikoMachine(self.host, user = "root", password="root")
+        veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
+        veamos.cwd.chdir("/opt/redpitaya/bin")
+        comando="./systemctl start redpitaya_scpi &" 
+        r_back = veamos[comando]
+        r_back()
+        veamos.close()
+
         try:
             self._socket = None
             self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)            
@@ -165,7 +173,7 @@ class VISA(object):
                         shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
                         # opcion que me ha funcionado correctamente
                         # bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_autoshunt3.bit.bin"              
-                        bitstream="/opt/redpitaya/fpga/fpga_2025.bit.bin"    #opcion con mejoras de analisis temporal estático y cuantización de senoide    
+                        bitstream="/opt/redpitaya/fpga/fpga_2025_ampliado.bit.bin"    #opcion con mejoras de analisis temporal estático y cuantización de senoide    
                         veamos = ParamikoMachine(self.host, user = "root", password="root")
                         veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
                         veamos.cwd.chdir("/opt/redpitaya/bin")
@@ -1662,11 +1670,11 @@ class VISA(object):
                     idea2=0
                     idea3=0
                     idea4=0
-                    Z_sin_comprimir = np.array([(val*shunt[5])/16+idea1 if i < 20 
+                    Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
                                     else (val*shunt[4])/16  if 20 <= i < 70 
-                                    else (val*shunt[3])/16 -idea2 if 70 <= i < 120 
+                                    else (val*shunt[3])/16  if 70 <= i < 120 
                                     else (val*shunt[2])/16  if 120 <= i < 170 
-                                    else (val*shunt[1])/16 -idea4 
+                                    else (val*shunt[1])/16 
                                     for i, val in enumerate(my_array[0:muestras])])
                     # Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
                     #                 else (val*shunt[4])/16 -idea1 if 20 <= i < 70 
@@ -1838,11 +1846,11 @@ class VISA(object):
                     numero_valores=len(frecuencias)
                     
                     print(numero_valores)
-                    incrementos2=np.ones(512-numero_valores*2)*34360000.0
+                    incrementos2=np.ones(256-numero_valores)*34360000.0
                     incrementos1= (frecuencias*(2**32))/125e6
                     # Duplicar el array y añadir los valores invertidos
                     incrementos1_duplicado = np.concatenate((incrementos1, np.flip(incrementos1)))
-                    incrementos=np.concatenate((incrementos1_duplicado, incrementos2), axis=None)
+                    incrementos=np.concatenate((incrementos1, incrementos2), axis=None)
                     #print(str(incrementos))
                     s = io.BytesIO()
                     np.savetxt(s, [incrementos], fmt='%1.1f', delimiter=', ')
@@ -2285,29 +2293,38 @@ class VISA(object):
 
                     IP=self.host
                     rp = scpi.scpi(IP)
-                    channel = rp.RP_CH_1        # rp.RP_CH_2
-                    channel2 = rp.RP_CH_2
-                    waveform = rp.RP_WAVEFORM_ARBITRARY
+                    
+                    #channel = rp.RP_CH_1        # rp.RP_CH_2
+                    #channel2 = rp.RP_CH_2
+                    wave_form = 'arbitrary'
                     freq = 10000
                     ampl = 1
 
                     N = 16384       # Number of samples in the buffer
 
                     ##### Custom waveform setup #####
-                    x = rp.arbBuffer(N)                             # Defining buffers
-                    y = rp.arbBuffer(N)
+                    #x = rp.arbBuffer(N)                             # Defining buffers
+                    #y = rp.arbBuffer(N)
 
                     t = np.linspace(0, 1, N)*2*np.pi                # "time axis"
 
                     x_temp = np.sin(t) + 1/3*np.sin(3*t)            # First custom signal
                     y_temp = 1/2*np.sin(t) + 1/4*np.sin(4*t)        # Second custom signal
 
-                    for i in range(0, N, 1):
-                        x[i] = float(x_temp[i])                     # Copying signals to buffers
-                        y[i] = float(y_temp[i])
+                    #for i in range(0, N, 1):
+                    #   x[i] = float(x_temp[i])                     # Copying signals to buffers
+                    #   y[i] = float(y_temp[i])
                     # Reset generator
-                    rp.rp_GenReset()
+                    rp.tx_txt('GEN:RST')
+                    rp.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
+                    rp.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
+                    rp.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
+                    rp.tx_txt('SOUR1:BURS:NCYC ' + str(self.sd.def_cfg['n_ciclos']['value']))  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
+                    #rp.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
+                    #rp.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
 
+                    rp.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr) #controlo el numero de ciclos de ancho del deteccor de cero
+                    #rp.sour_set(1,wave_form, ampl,freq, data=x_temp)
                     ###### Generation #####
                     # rp.rp_GenWaveform(channel, waveform)
                     # rp.rp_GenArbWaveform(channel, x.cast(), N)      # Defining the custom signal (writing to the FPGA buffer)
@@ -2360,21 +2377,25 @@ class VISA(object):
                                             numero_valores,base=10)
                     
                 try:
-                    self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->state2  0->state1
+                    self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->sweep on  0->sweep off
                 except BrokenPipeError:
                     print("Broken pipe error occurred.")
                     self.dv.append_plus("Algo pasa con la conexión")
                     error=1
                 #recortamos a 40 Hz
                 else:
-                    frecuencias=self.sd.freq[self.sd.freq>40]
-                    numero_valores=len(frecuencias)
+                    frecuencias2=self.sd.freq[self.sd.freq>40]
+                    numero_valores=len(frecuencias2)*2
                     
                     print(numero_valores)
-                    incrementos2=np.ones(512-numero_valores*2)*34360000.0
-                    incrementos1= (frecuencias*(2**32))/125e6
+                    incrementos2=np.ones(512-numero_valores)*34360000.0
+                    incrementos1= (frecuencias2*(2**32))/125e6
+
                     # Duplicar el array y añadir los valores invertidos
+                    frecuencias=np.concatenate((frecuencias2,np.flip(frecuencias2)))
+                    #frecuencias = frecuencias[::2] # Duplicar el array y añadir los valores invertidos
                     incrementos1_duplicado = np.concatenate((incrementos1, np.flip(incrementos1)))
+                    #incrementos1_diezmados=incrementos1_duplicado[::2]  # Duplicar el array y añadir los valores invertidos
                     incrementos=np.concatenate((incrementos1_duplicado, incrementos2), axis=None)
                     #print(str(incrementos))
                     s = io.BytesIO()
@@ -2398,7 +2419,7 @@ class VISA(object):
                     #self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
                     self.tx_txt('SOUR1:FUNC ARBITRARY')
                     #print("he llegado aqui1")
-                    self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
+                    self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
                     #print("he llegado aqui2")            
                     self.tx_txt('OUTPUT:STATE ON') 
                     #  quitar estas 5 lineas al terminar de debugear 
@@ -2620,15 +2641,20 @@ class VISA(object):
                     idea3=(my_array[120]*shunt[2])/16  -(my_array[119]*shunt[3])/16
                     idea4=(my_array[170]*shunt[1])/16  -(my_array[169]*shunt[2])/16
 
-                    # idea1=0
-                    # idea2=0
-                    # idea3=0
-                    # idea4=0
-                    Z_sin_comprimir = np.array([(val*shunt[5])/16+idea1 if i < 20 
+                    idea1=0
+                    idea2=0
+                    idea3=0
+                    idea4=0
+                    Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
                                     else (val*shunt[4])/16  if 20 <= i < 70 
-                                    else (val*shunt[3])/16 -idea2 if 70 <= i < 120 
+                                    else (val*shunt[3])/16  if 70 <= i < 120 
                                     else (val*shunt[2])/16  if 120 <= i < 170 
-                                    else (val*shunt[1])/16 -idea4 
+                                    else (val*shunt[1])/16  if 170 <= i < 270
+                                    else (val*shunt[2])/16  if 270 <= i < 320
+                                    else (val*shunt[3])/16  if 320 <= i < 370
+                                    else (val*shunt[4])/16  if 370 <= i < 420
+                                    else (val*shunt[5])/16  
+
                                     for i, val in enumerate(my_array[0:muestras])])
                     # Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
                     #                 else (val*shunt[4])/16 -idea1 if 20 <= i < 70 
