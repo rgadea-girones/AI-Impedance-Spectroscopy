@@ -173,7 +173,7 @@ class VISA(object):
                         shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
                         # opcion que me ha funcionado correctamente
                         # bitstream="/opt/redpitaya/fpga/red_pitaya_top_rafa_autoshunt3.bit.bin"              
-                        bitstream="/opt/redpitaya/fpga/fpga_2025_ampliado.bit.bin"    #opcion con mejoras de analisis temporal estático y cuantización de senoide    
+                        bitstream="/opt/redpitaya/fpga/fpga_2025_ampliado2.bit.bin"    #opcion con mejoras de analisis temporal estático y cuantización de senoide    
                         veamos = ParamikoMachine(self.host, user = "root", password="root")
                         veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
                         veamos.cwd.chdir("/opt/redpitaya/bin")
@@ -2264,6 +2264,7 @@ class VISA(object):
                     
                 try:
                     self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->state2  0->state1
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # 1->state2  0->state1
                 except BrokenPipeError:
                     print("Broken pipe error occurred.")
                     self.dv.append_plus("Algo pasa con la conexión")
@@ -2315,16 +2316,19 @@ class VISA(object):
                     #   x[i] = float(x_temp[i])                     # Copying signals to buffers
                     #   y[i] = float(y_temp[i])
                     # Reset generator
+                    muestras_ampliadas=220
                     rp.tx_txt('GEN:RST')
-                    rp.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
-                    rp.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
+                    rp.tx_txt('SOUR2:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
+                    rp.tx_txt('SOUR2:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
                     rp.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
-                    rp.tx_txt('SOUR1:BURS:NCYC ' + str(self.sd.def_cfg['n_ciclos']['value']))  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
-                    #rp.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
+                    rp.tx_txt('SOUR2:BURS:NCYC ' + str(self.sd.def_cfg['n_ciclos']['value']))  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
+                    rp.tx_txt('SOUR2:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
                     #rp.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
 
-                    rp.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr) #controlo el numero de ciclos de ancho del deteccor de cero
-                    #rp.sour_set(1,wave_form, ampl,freq, data=x_temp)
+                    #rp.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr) #controlo el numero de ciclos de ancho del deteccor de cero
+                    rp.sour_set(2,wave_form, ampl,freq, data=x_temp)
+                    rp.tx_txt('OUTPUT:STATE ON')
+                    rp.tx_txt('SOUR:TRIg:INT')
                     ###### Generation #####
                     # rp.rp_GenWaveform(channel, waveform)
                     # rp.rp_GenArbWaveform(channel, x.cast(), N)      # Defining the custom signal (writing to the FPGA buffer)
@@ -2377,7 +2381,9 @@ class VISA(object):
                                             numero_valores,base=10)
                     
                 try:
-                    self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->sweep on  0->sweep off
+                    self.tx_txt('DIG:PIN LED'+str(1)+','+str(1))  # 1->sweep on  0->sweep off
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # 1->debugueo memoria de incrementos 0->no debugueo
+
                 except BrokenPipeError:
                     print("Broken pipe error occurred.")
                     self.dv.append_plus("Algo pasa con la conexión")
@@ -2417,9 +2423,9 @@ class VISA(object):
 
 
                     #self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
-                    self.tx_txt('SOUR1:FUNC ARBITRARY')
+                    self.tx_txt('SOUR2:FUNC ARBITRARY')
                     #print("he llegado aqui1")
-                    self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
+                    self.tx_txt('SOUR2:TRAC:DATA:DATA' + outStr)
                     #print("he llegado aqui2")            
                     self.tx_txt('OUTPUT:STATE ON') 
                     #  quitar estas 5 lineas al terminar de debugear 
@@ -3242,6 +3248,7 @@ class VISA(object):
                     
                 try:
                     self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->state2  0->state1
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # 1->state2  0->state1
                 except BrokenPipeError:
                     print("Broken pipe error occurred.")
                     self.dv.append_plus("Algo pasa con la conexión")
