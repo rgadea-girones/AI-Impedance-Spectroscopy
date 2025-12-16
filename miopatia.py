@@ -21,6 +21,10 @@ from MIOPATIA_dataview import DATA_VIEW
 
 # PYINSTALLER : pyinstaller -D --specpath .\EXE miopatia.py
 
+#version septiembre 2025
+#  pyinstaller --onefile --hidden-import xarray miopatia.py
+
+
 qtCreatorFile = "impedance_spectroscopy_atunes.ui"
 
 

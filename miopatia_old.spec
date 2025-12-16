@@ -5,7 +5,7 @@ a = Analysis(
     ['miopatia.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('miopatia.json', '.')],  
     hiddenimports=['xarray'],
     hookspath=[],
     hooksconfig={},
@@ -15,6 +15,8 @@ a = Analysis(
     optimize=0,
 )
 pyz = PYZ(a.pure)
+
+
 
 exe = EXE(
     pyz,

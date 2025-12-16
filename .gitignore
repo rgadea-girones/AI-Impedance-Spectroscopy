@@ -3,6 +3,8 @@ EXE/
 
 dist/
 
+dist_old/
+
 logs/
 
 modelos/
