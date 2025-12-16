@@ -1,5 +1,5 @@
 import sys
-import redpitaya_scpi as scpi
+import redpitaya_scpi_old as scpi
 import numpy as np
 from time import perf_counter as pc
 from time import sleep

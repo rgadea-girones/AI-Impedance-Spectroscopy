@@ -3,7 +3,7 @@
 __author__ = 'infused'
 
 import sys
-import redpitaya_scpi as scpi
+import redpitaya_scpi_old as scpi
 import array
 import matplotlib.pyplot as plt
 

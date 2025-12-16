@@ -1,6 +1,6 @@
 import sys
 import time
-import redpitaya_scpi as scpi
+import redpitaya_scpi_old as scpi
 
 rp_s = scpi.scpi(sys.argv[1])
 

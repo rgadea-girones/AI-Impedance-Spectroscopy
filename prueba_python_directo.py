@@ -2,7 +2,7 @@
 
 import sys
 import time
-import redpitaya_scpi as scpi
+import redpitaya_scpi_old as scpi
 
 IP = 'rp-f09cef.local'
 rp = scpi.scpi(IP)

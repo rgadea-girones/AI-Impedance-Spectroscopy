@@ -1,5 +1,5 @@
 import sys
-import redpitaya_scpi as scpi
+import redpitaya_scpi_old as scpi
 import numpy as np
 from scipy.fft import fft, fftfreq
 import matplotlib.pyplot as plt
