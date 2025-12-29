@@ -72,7 +72,7 @@
         "type": "int"
     },
     "modelo": {
-        "value": 1,
+        "value": 0,
         "limits": [
             0,
             3
@@ -104,7 +104,7 @@
         "type": "float"
     },
     "post_procesado": {
-        "value": 0,
+        "value": 1,
         "limits": [
             0,
             1
@@ -135,7 +135,7 @@
         ],
         "type": "int"
     },
-    "direccion_redpitaya": "169.254.240.106",
+    "direccion_redpitaya": "158.42.33.88",
     "sujetos": "0-0",
     "load_mfile_name": "./COPIA_EXCELS/medida.csv",
     "save_mfile_name": "./COPIA_EXCELS/medida.csv",

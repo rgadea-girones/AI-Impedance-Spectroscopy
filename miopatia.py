@@ -1,8 +1,18 @@
 import sys
+import os
 import warnings
+
+# Fuerza a matplotlib a usar PySide6 en lugar de PyQt5 para evitar el import fallido en debugpy
+os.environ.setdefault("QT_API", "pyside6")
+os.environ.setdefault("MPLBACKEND", "QtAgg")
+
 import matplotlib
-matplotlib.use('Qt5Agg')
+matplotlib.use('QtAgg')
 from PySide6 import QtCore, QtWidgets, QtGui
+# Compat: algunos hooks de debugpy/ipython buscan QtGui.QApplication (Qt4 style)
+# En PySide6 está en QtWidgets; exponemos alias para evitar AttributeError.
+if not hasattr(QtGui, "QApplication"):
+    QtGui.QApplication = QtWidgets.QApplication
 from PySide6.QtUiTools import QUiLoader
 from MainWindow import Ui_MainWindow
 

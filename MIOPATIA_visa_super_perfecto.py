@@ -3331,10 +3331,10 @@ class VISA(object):
         else: #esta seria la plataforma 0
             #aquí vamos a intentar cosas nuevas intentando que no haga falta modificar scpi_server
             if (self.sd.def_cfg['post_procesado']['value']==0):
-               # configuramos la FPGA con diseño verilog propio de DSD
+                # configuramos la FPGA con diseño verilog propio de DSD ampliado3
                 # adaptado para el autoshunt
-                self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
-                state = self.rx_txt()
+                # vamos a trabajar intentando utilizar comandos de rp_scpiserver
+
                 t0=pc()
                 if self.sd.def_cfg['modelo']['value']==0:
                     shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
@@ -3362,74 +3362,54 @@ class VISA(object):
                     
                 try:
                     self.tx_txt('DIG:PIN LED'+str(1)+','+str(1))  # 1->sweep on  0->sweep off
-                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # 1->debugueo memoria de incrementos 0->no debugueo
-                    self.tx_txt('DIG:PIN LED'+str(3)+','+str(1))  # 1->debugueo memoria de incrementos 0->no debugueo
-                    
-                    self.tx_txt('SOUR1:FUNC ARBITRARY')
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # 1->debugueo memoria de incrementos 0->no debugueo
+
                 except BrokenPipeError:
                     print("Broken pipe error occurred.")
                     self.dv.append_plus("Algo pasa con la conexión")
                     error=1
                 #recortamos a 40 Hz
                 else:
-                    # Ejecutar cálculo en ARM (RedPitaya) con C++ y escribir en FPGA
-                    remote_incr_loaded = False
-                    f1 = float(self.sd.def_cfg['f_inicial']['value'])
-                    f2 = float(self.sd.def_cfg['f_final']['value'])
-                    modo = int(self.sd.def_cfg['tipo_barrido']['value'])  # 0 lineal, 1 log
-                    num_puntos = int(self.sd.def_cfg['n_puntos']['value'])
-                    fm = 125000000.0
-                    try:
-                        veamos = self._get_ssh()
-                        veamos.cwd.chdir("/root/nuevas_aplicaciones_2026")
-                        cmd = "./raf_incr_writer_sweep {:.6f} {:.6f} {} {} {:.6f} {}".format(f1, f2, modo, num_puntos, fm, "on")
-                        salida = veamos[cmd]()
-                        if salida.strip().rfind("OK") == 0:
-                            remote_incr_loaded = True
-                            self.dv.append_plus("Incrementos calculados en ARM y escritos en FPGA")
-                        else:
-                            self.dv.append_plus("ARM error: " + salida.strip())
-                    except Exception as e:
-                        self.dv.append_plus("Fallo ejecutando en ARM: " + str(e))
-
-                    outStr = None
                     frecuencias2=self.sd.freq[self.sd.freq>40]
+
+                    #numero_valores=len(frecuencias2)*1
                     numero_valores=len(frecuencias2)*2
+                    
+                    print(numero_valores)
+
+                    #incrementos2=np.ones(256-numero_valores)*34360000.0
+                    incrementos2=np.ones(512-numero_valores)*34360000.0
+
+                    incrementos1= (frecuencias2*(2**32))/125e6
+
+                    # Duplicar el array y añadir los valores invertidos
+                    #frecuencias=frecuencias2
                     frecuencias=np.concatenate((frecuencias2,np.flip(frecuencias2)))
-                    if not remote_incr_loaded:
-                        # Fallback local: reproducir cálculo Python y enviar traza
-                        frecuencias2=self.sd.freq[self.sd.freq>40]
-                        numero_valores=len(frecuencias2)*2
-                        incrementos2=np.ones(256-numero_valores)*34360000.0
-                        incrementos1= (frecuencias2*(2**32))/125e6
-                        incrementos=np.concatenate((incrementos1, incrementos2), axis=None)
-                        s = io.BytesIO()
-                        np.savetxt(s, [incrementos], fmt='%1.1f', delimiter=', ')
-                        outStr = s.getvalue().decode('UTF-8')
 
+
+                    #frecuencias = frecuencias[::2] # Duplicar el array y añadir los valores invertidos
+                    incrementos1_duplicado = np.concatenate((incrementos1, np.flip(incrementos1)))
+
+                    #incrementos1_diezmados=incrementos1_duplicado[::2]  # Duplicar el array y añadir los valores invertidos
+
+                    #incrementos=np.concatenate((incrementos1, incrementos2), axis=None)                    
+                    incrementos=np.concatenate((incrementos1_duplicado, incrementos2), axis=None)
+
+                    #print(str(incrementos))
+                    s = io.BytesIO()
+                    np.savetxt(s, [incrementos], fmt='%1.1f', delimiter=', ')
+                    outStr = s.getvalue().decode('UTF-8')
+                    #print(outStr)
                     self.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
-                #    self.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
-                #    self.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
-                #   self.tx_txt('SOUR1:BURS:NCYC 0')  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
-                #   self.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
-                    # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
-                #    self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
-                #    self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
-
-
-
 
 
 
                     #self.tx_txt('SOUR1:TRAC:DATA:DATA ' + outStr)
-
-                    if remote_incr_loaded:
-                        # Ya está escrito por el ARM en la memoria de la FPGA
-                        self.tx_txt('OUTPUT:STATE ON')
-                    else:
-                        # Envío local de la traza si el cálculo remoto no ha sido posible
-                        self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
-                        self.tx_txt('OUTPUT:STATE ON') 
+                    self.tx_txt('SOUR1:FUNC ARBITRARY')
+                    #print("he llegado aqui1")
+                    self.tx_txt('SOUR1:TRAC:DATA:DATA_rafa ' + outStr)
+                    #print("he llegado aqui2")            
+                    self.tx_txt('OUTPUT:STATE ON') 
                     #  quitar estas 5 lineas al terminar de debugear 
                 # self.tx_txt('ACQ:RESULT2:DATA?')
                 # buff_string3 = self.rx_txt()
@@ -3462,8 +3442,6 @@ class VISA(object):
 
 
 
-                    #self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
-                    #state = self.rx_txt()
 
                     
 
@@ -3515,15 +3493,8 @@ class VISA(object):
                     self.tx_txt('SOUR1:VOLT ' +str(self.sd.def_cfg['vosc']['value']))
                     self.tx_txt('SOUR1:VOLT:OFFS 0.00') # esto lo utilizo para cambiar el offset de canal b
                     self.tx_txt('SOUR2:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal b
-                    # Escribir n_ciclos en memoria vía monitor
-                    veamos = self._get_ssh()
-                    n_ciclos_hex = f"0x{int(self.sd.def_cfg['n_ciclos']['value']):08X}"
-                    veamos["monitor"]("0x40200018", n_ciclos_hex)
-                    # Escribir muestras_ampliadas en memoria vía monitor
-                    muestras_ampliadas_hex = f"0x{int(muestras_ampliadas):08X}"
-                    veamos["monitor"]("0x4020001C", muestras_ampliadas_hex)
-                    self.tx_txt('SOUR1:BURS:NOR?')
-                    cuantas_muestras= self.rx_txt()                   
+                    self.tx_txt('SOUR1:BURS:NCYC ' + str(self.sd.def_cfg['n_ciclos']['value']))  # solo funciona si led3 esta activado, numero de ciclos por frecuencia
+                    self.tx_txt('SOUR1:BURS:NOR ' +str(muestras_ampliadas)) # solo funciona si led3 esta activado, numero de frecuencias
                     # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
                     self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
                     self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
@@ -3535,9 +3506,7 @@ class VISA(object):
 
                     self.dv.append_plus("Midiendo Z=R+iX")
                     t1=pc()
-                    #ya no utilizo chip on sino el control[0] como start
-             #       self.tx_txt('CHIRP ON')
-                    self.tx_txt('DIG:PIN LED'+str(0)+','+str(1)) #activo el start
+                    self.tx_txt('CHIRP ON')
                     try:
                         while 1 :
                             #    rp_s.tx_txt('FIN:RAF:STAT? 1')
@@ -3549,38 +3518,29 @@ class VISA(object):
                         print(e)
                         error=1
                     # Cancelar el temporizador
-                    # signal.alarm(0)                lo he comentado porque en windows no existe esta alarma
+                    signal.alarm(0)                
                 #    # print(rp_s.rx_txt())
                     # rp_s.tx_txt('DIG:PIN? DIO'+str(7)+'_N')
                     # state = rp_s.rx_txt()
                     print(state)
                     # EMPEZAMOS CON LA ADQUISION
-                    #cambio 2026 : ya no utilizo chip on y off
-                    # self.tx_txt('CHIRP OFF')
 
-                    self.tx_txt('DIG:PIN LED'+str(0)+','+str(0)) #dseactivo el start
-                     # Lectura directa de memoria desde 0x40210000
+                    self.tx_txt('CHIRP OFF')
+                    self.tx_txt('ACQ:RESULT1:DATA?')
                     t3=pc()
-                    # cambio 2026 : ya no utilizo SCPI normal sino lectura directa de memoria
-                    # self.tx_txt('ACQ:RESULT1:DATA?')
-                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # activo debug memoria de incrementos
-                    buff = self.read_memory_direct_fast(address=0x40210000, num_samples=512)
-                    #self.tx_txt('SOUR1:TRAC:DATA:DATA?')
-                    #buff_string = self.rx_txt()
-                    #buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
-                    #buff = list(map(float, buff_string))                   
+
+                    buff_string = self.rx_txt()
+                    buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
+                    buff = list(map(float, buff_string))
                     t4=pc()
-                    my_array = buff
+                    my_array = np.asarray(buff)
                     my_array =my_array[:-decimation:decimation]
                     # super_buffer.append(buff)
                     # super_buffer_flat=sum(super_buffer, [])
-                    # Recupero RESULT2 con el comando SCPI habitual
-                    buff2 = self.read_memory_direct_fast(address=0x40220000, num_samples=512)
-
-                    #self.tx_txt('ACQ:RESULT2:DATA?')
-                    #buff_string2 = self.rx_txt()
-                    #buff_string2 = buff_string2.strip('{}\n\r').replace("  ", "").split(',')
-                    #buff2 = list(map(float, buff_string2))
+                    self.tx_txt('ACQ:RESULT2:DATA?')
+                    buff_string2 = self.rx_txt()
+                    buff_string2 = buff_string2.strip('{}\n\r').replace("  ", "").split(',')
+                    buff2 = list(map(float, buff_string2))
                     my_array2 = np.asarray(buff2)
                     my_array2 =my_array2[:-decimation:decimation]
                     muestras=round(muestras/decimation)
@@ -3735,7 +3695,7 @@ class VISA(object):
                     self.sd.Er_fase_data = np.angle(E_data);
                     t11=pc()
 
-                    total=t11-t0
+                    total=t11-t1
                     print ('total:',total)
                     absolute_val_array = np.abs(self.sd.freq - 1000)
                     smallest_difference_index = absolute_val_array.argmin()
@@ -3746,7 +3706,7 @@ class VISA(object):
                     self.dv.append_plus("tiempo transcurrido:" + str(total))  
                     self.dv.append_plus("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
                     self.dv.append_plus("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
-                    self.dv.append_plus("resistencia shunt ="+ str(shunt[R_shunt_k]))       
+                    self.dv.append_plus("resistencia shunt ="+ str(shunt[R_shunt_k])) 
             
 
             elif (self.sd.def_cfg['post_procesado']['value']==1):
@@ -3799,7 +3759,7 @@ class VISA(object):
                     try:
                         veamos = self._get_ssh()
                         veamos.cwd.chdir("/root/nuevas_aplicaciones_2026")
-                        cmd = "./raf_incr_writer_sweep {:.6f} {:.6f} {} {} {:.6f} {}".format(f1, f2, modo, num_puntos, fm, "off")
+                        cmd = "./raf_incr_writer {:.6f} {:.6f} {} {} {:.6f}".format(f1, f2, modo, num_puntos, fm)
                         salida = veamos[cmd]()
                         if salida.strip().rfind("OK") == 0:
                             remote_incr_loaded = True
