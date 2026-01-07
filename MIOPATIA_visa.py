@@ -3336,7 +3336,7 @@ class VISA(object):
                 self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
                 state = self.rx_txt()
                 t0=pc()
-                if self.sd.def_cfg['modelo']['value']==0:
+                if self.sd.def_cfg['modelo']['value']==1:
                     shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
                 else:
                     shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
@@ -3362,7 +3362,7 @@ class VISA(object):
                     
                 try:
                     self.tx_txt('DIG:PIN LED'+str(1)+','+str(1))  # 1->sweep on  0->sweep off
-                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # 1->debugueo memoria de incrementos 0->no debugueo
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # 1->debugueo memoria de incrementos 0->no debugueo
                     self.tx_txt('DIG:PIN LED'+str(3)+','+str(1))  # 1->debugueo memoria de incrementos 0->no debugueo
                     
                     self.tx_txt('SOUR1:FUNC ARBITRARY')
@@ -3563,7 +3563,7 @@ class VISA(object):
                     t3=pc()
                     # cambio 2026 : ya no utilizo SCPI normal sino lectura directa de memoria
                     # self.tx_txt('ACQ:RESULT1:DATA?')
-                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # activo debug memoria de incrementos
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # activo debug memoria de incrementos
                     buff = self.read_memory_direct_fast(address=0x40210000, num_samples=512)
                     #self.tx_txt('SOUR1:TRAC:DATA:DATA?')
                     #buff_string = self.rx_txt()
@@ -3755,7 +3755,7 @@ class VISA(object):
                 self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
                 state = self.rx_txt()
                 t0=pc()
-                if self.sd.def_cfg['modelo']['value']==0:
+                if self.sd.def_cfg['modelo']['value']==1:
                     shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
                 else:
                     shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]
@@ -3781,7 +3781,7 @@ class VISA(object):
                     
                 try:
                     self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->sweep on  0->sweep off
-                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # 1->debugueo memoria de incrementos 0->no debugueo
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # 1->debugueo memoria de incrementos 0->no debugueo
                     self.tx_txt('SOUR1:FUNC ARBITRARY')
                 except BrokenPipeError:
                     print("Broken pipe error occurred.")
@@ -3972,7 +3972,7 @@ class VISA(object):
                     t3=pc()
                     # cambio 2026 : ya no utilizo SCPI normal sino lectura directa de memoria
                     # self.tx_txt('ACQ:RESULT1:DATA?')
-                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(1))  # activo debug memoria de incrementos
+                    self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # activo debug memoria de incrementos
                     buff = self.read_memory_direct_fast(address=0x40210000, num_samples=256)
                     #self.tx_txt('SOUR1:TRAC:DATA:DATA?')
                     #buff_string = self.rx_txt()
