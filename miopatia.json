@@ -135,7 +135,7 @@
         ],
         "type": "int"
     },
-    "direccion_redpitaya": "158.42.33.88",
+    "direccion_redpitaya": "169.254.58.98",
     "sujetos": "0-0",
     "load_mfile_name": "./COPIA_EXCELS/medida.csv",
     "save_mfile_name": "./COPIA_EXCELS/medida.csv",
