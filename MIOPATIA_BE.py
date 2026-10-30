@@ -363,7 +363,7 @@ class BACK_END(object):
                 if (data==[]):
                     self.dv.append_fit("Sujetos no encontrados en la Base de Datos")
                 else:
-                    self.dv.show_data_estado_rafa_n3_descongelaciones(self.pw.comboBox_trazaA_4.currentIndex(),
+                    self.dv.show_data_estado_rafa_n3(self.pw.comboBox_trazaA_4.currentIndex(),
                                         data)
 
                     self.pw.canvas4.draw()                             
@@ -467,7 +467,7 @@ class BACK_END(object):
 
     def  load_h5_analisis_selector(self):
         if (self.sd.def_cfg['pto_tip']['value']==0):       
-            self.load_h5_analisis3()
+            self.load_h5_analisis4()
             #print("estoy aqui")
         else :
             if (self.sd.def_cfg['pto_tip']['value']==1):              

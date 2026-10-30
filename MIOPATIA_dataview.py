@@ -725,7 +725,9 @@ class DATA_VIEW(object):
                                 2:x[0]['Err'],
                                 3:x[0]['Eri'],
                                 4:x[0]['E_mod'],
-                                5:x[0]['E_fase']},
+                                5:x[0]['E_fase'],
+                                6:x[0]['R'],
+                                7:x[0]['X']},
                                 comboBox_trazaA)
             if (smooth==0):
                 pre_traza2=pre_traza1.rolling(window=k, center=True, min_periods=1).mean()
@@ -768,7 +770,8 @@ class DATA_VIEW(object):
 
         if (self.sd.def_cfg['tipo_barrido']['value']==0):
             string_A = self.switch({0:'plot', 1:'plot', 2:'plot',
-                                    3:'plot', 4:'semilogy', 5:'plot'},
+                                    3:'plot', 4:'semilogy', 5:'plot',
+                                    6:'plot', 7:'plot'},
                                     comboBox_trazaA)
             # string_B = self.switch({0:'plot', 1:'plot', 2:'plot',
             #                         3:'plot', 4:'semilogy', 5:'plot'},
@@ -782,23 +785,23 @@ class DATA_VIEW(object):
 
         elif(self.sd.def_cfg['tipo_barrido']['value']==1):
             string_A = self.switch({0:'semilogx', 1:'semilogx', 2:'semilogx',
-                                    3:'semilogx', 4:'loglog', 5:'semilogx'},
+                                    3:'semilogx', 4:'loglog', 5:'semilogx',
+                                    6:'semilogx', 7:'semilogx'},
                                     comboBox_trazaA)
             # string_B = self.switch({0:'semilogx', 1:'semilogx', 2:'semilogx',
             #                         3:'semilogx', 4:'loglog', 5:'semilogx'},
             #                         comboBox_trazaB)
+            import matplotlib.cm as cm
             ejex=data[0][0]['Freq']
+            
+            min_medida = min(medida) if medida else 0
+            max_medida = max(medida) if medida else 1
+            if max_medida == min_medida:
+                max_medida = min_medida + 1
+            colormap = cm.get_cmap('viridis')
+
             for x, traza in enumerate(traza_A):
-                if medida[x] < 10:
-                    color = 'green'
-                elif medida[x] <12:
-                    color = 'seagreen'
-                elif medida[x] < 14:
-                    color = 'blue'
-                elif medida[x] < 16:
-                    color = 'purple'
-                else:
-                    color = 'red'          
+                color = colormap((medida[x] - min_medida) / (max_medida - min_medida))
                 eval("self.sd.axes['ax5']." + string_A + "(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_estado_'+str(estado[x]))")
                 # eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")

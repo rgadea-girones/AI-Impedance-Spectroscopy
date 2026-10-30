@@ -135,7 +135,7 @@
         ],
         "type": "int"
     },
-    "direccion_redpitaya": "169.254.58.98",
+    "direccion_redpitaya": "192.168.137.200",
     "sujetos": "0-0",
     "load_mfile_name": "./COPIA_EXCELS/medida.csv",
     "save_mfile_name": "./COPIA_EXCELS/medida.csv",
@@ -183,7 +183,9 @@
         "E'r",
         "E''r",
         "|Er|",
-        "F.Er"
+        "F.Er",
+        "R",
+        "X"
     ],
     "comboxB": [
         "F.Z",
@@ -191,7 +193,9 @@
         "E'r",
         "E''r",
         "|Er|",
-        "F.Er"
+        "F.Er",
+        "R",
+        "X"
     ],
     "combox_fit": [
         "lm",

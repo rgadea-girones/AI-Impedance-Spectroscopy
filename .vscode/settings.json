@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "/home/rgadea/anaconda3/python.exe"
+    "python.pythonPath": "/home/rgadea/anaconda3/python.exe",
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda"
 }

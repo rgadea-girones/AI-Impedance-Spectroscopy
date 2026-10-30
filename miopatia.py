@@ -1,6 +1,7 @@
 import sys
 import os
 import warnings
+import numpy as np
 
 # Fuerza a matplotlib a usar PySide6 en lugar de PyQt5 para evitar el import fallido en debugpy
 os.environ.setdefault("QT_API", "pyside6")
@@ -14,11 +15,13 @@ from PySide6 import QtCore, QtWidgets, QtGui
 if not hasattr(QtGui, "QApplication"):
     QtGui.QApplication = QtWidgets.QApplication
 from PySide6.QtUiTools import QUiLoader
-from MainWindow import Ui_MainWindow
+from PanelPrincipal import Ui_Form as Ui_PanelPrincipal
+from qfluentwidgets import FluentWindow, FluentIcon, NavigationItemPosition
 
 from matplotlib.backends.backend_qt5agg import (
     FigureCanvasQTAgg as FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar)
+from matplotlib.figure import Figure
 from PySide6.QtWidgets import QMessageBox
 from collections import OrderedDict
 import ctypes
@@ -45,16 +48,12 @@ warnings.filterwarnings("ignore", message="Attempted to set non-positive left xl
 # WERG Filter out RuntimeWarnings. 
 warnings.filterwarnings('ignore',category=RuntimeWarning)
 
-class MyApp(QtWidgets.QMainWindow, Ui_MainWindow):
+class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
     def __init__(self,data):
-        QtWidgets.QMainWindow.__init__(self)
-        Ui_MainWindow.__init__(self)
+        super().__init__()
         self.setupUi(self)
-        self.setWindowIcon(QtGui.QIcon('./atun1.jpg'))
-        # self.showFullScreen()
-        #self.resize(800,600)
-        # self.showMaximized()
-        self.show()
+        self.setObjectName("LogicPanel")
+        
         # Shared data
         self.sd = data
         # Classes Instantiation
@@ -243,17 +242,6 @@ class MyApp(QtWidgets.QMainWindow, Ui_MainWindow):
             eval("self." + self.paths[i] + "." + 'editingFinished').connect(self.be.store_data)
 
 
-    # Close Window event treatment
-    def closeEvent(self, event):
-        quit_msg = "¿Seguro que quiere salir del programa?"
-        reply = QMessageBox.question(self, 'Cuidado!',
-                         quit_msg, QMessageBox.Yes, QMessageBox.No)
-
-        if reply == QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
-
     # MatplotLib Widgets
     def addmpl_1(self, fig):
         # Matplotlib constructor
@@ -312,6 +300,81 @@ class MyApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.sd.axes['ax5'].tick_params(axis="x", labelsize=8)
         self.sd.axes['ax5'].tick_params(axis="y", labelsize=8)
 
+class ConfigPanel(QtWidgets.QWidget):
+    def __init__(self, data):
+        super().__init__()
+        self.setObjectName("ConfigPanel")
+        self.sd = data
+
+        # 1. Crear el Layout Vertical (la "estantería" invisible)
+        self.vLayout = QtWidgets.QVBoxLayout(self)
+
+        # 2. Añadir Elemento 1: Título
+        self.label_titulo = QtWidgets.QLabel("Panel de Configuración y Pruebas")
+        self.label_titulo.setStyleSheet("font-size: 16pt; font-weight: bold; color: #555;")
+        self.label_titulo.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.vLayout.addWidget(self.label_titulo)
+        
+        # 3. Añadir Elemento 2: Botón
+        self.btn_entrenar = QtWidgets.QPushButton("Entrenar Modelo (Demo)")
+        self.btn_entrenar.setMinimumHeight(40)
+        self.btn_entrenar.clicked.connect(self.simular_entrenamiento)
+        self.vLayout.addWidget(self.btn_entrenar)
+
+        # 4. Añadir Elemento 3: Gráfica
+        self.fig = Figure(figsize=(5, 4), dpi=100)
+        self.canvas = FigureCanvas(self.fig)
+        self.ax = self.fig.add_subplot(111)
+        self.ax.plot([0, 1, 2, 3, 4], [10, 1, 20, 3, 40], label='Pérdida')
+        self.ax.set_title("Gráfica de Entrenamiento")
+        self.ax.legend()
+        self.vLayout.addWidget(self.canvas)
+
+    def simular_entrenamiento(self):
+        # Función simple para demostrar interactividad
+        self.ax.clear()
+        datos = np.random.rand(10)
+        self.ax.plot(datos, 'g-', label='Nueva Pérdida')
+        self.ax.set_title("Entrenamiento Simulado")
+        self.ax.legend()
+        self.canvas.draw()
+
+class MyApp(FluentWindow):
+    def __init__(self,data):
+        super().__init__()
+        self.setWindowIcon(QtGui.QIcon('./atun1.jpg'))
+        self.setWindowTitle("Interfaz Redpitaya")
+        
+        self.panel = LogicPanel(data)
+        self.config_panel = ConfigPanel(data)
+
+        self.addSubInterface(self.panel, FluentIcon.HOME, "Principal")
+        self.addSubInterface(self.config_panel, FluentIcon.SETTING, "Configuración", position=NavigationItemPosition.BOTTOM)
+        self.showFullScreen()
+
+    # Close Window event treatment
+    def closeEvent(self, event):
+        quit_msg = "¿Seguro que quiere salir del programa?"
+        reply = QMessageBox.question(self, 'Cuidado!',
+                         quit_msg, QMessageBox.Yes, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
+
+    # MatplotLib Widgets Proxies
+    def addmpl_1(self, fig):
+        self.panel.addmpl_1(fig)
+
+    def addmpl_2(self, fig):
+        self.panel.addmpl_2(fig)
+
+    def addmpl_3(self, fig):
+        self.panel.addmpl_3(fig)
+
+    def addmpl_4(self, fig):
+        self.panel.addmpl_4(fig)
 
 if __name__ == "__main__":
 
@@ -320,7 +383,8 @@ if __name__ == "__main__":
     # ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     app.setWindowIcon(QtGui.QIcon('atun1.jpg'))
 
-    data = DATA(read=False)
+    config_exists = os.path.isfile("miopatia.json")
+    data = DATA(read=config_exists)
     window = MyApp(data)
     window.setWindowIcon(QtGui.QIcon('atun1.jpg'))
     window.addmpl_1(data.fig1)
