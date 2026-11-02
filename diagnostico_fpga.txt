@@ -1,0 +1,246 @@
+2026-11-02T11:31:01.949999 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:31:29.895050 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:31:53.786451 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:32:17.808370 | fpgautil: 'Time taken to load BIN is 292.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:32:50.625328 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:33:13.405125 | fpgautil: 'Time taken to load BIN is 295.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:33:15.458565 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:33:30.955340 | fpgautil: 'Time taken to load BIN is 295.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:33:54.677876 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:41:39.707032 | fpgautil: 'Time taken to load BIN is 295.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:41:46.026422 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:42:06.978888 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:42:11.827020 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:42:34.252637 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:45:43.228873 | fpgautil: 'Time taken to load BIN is 295.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:45:56.102632 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:46:29.919012 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:46:51.394506 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:47:13.790002 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:47:32.954565 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:48:49.203354 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:49:11.331053 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:50:02.499127 | fpgautil: 'Time taken to load BIN is 292.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:50:36.233085 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:50:58.344541 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:51:41.724901 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:51:46.290346 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:52:07.738567 | fpgautil: 'Time taken to load BIN is 292.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:52:17.620891 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:52:40.394504 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:52:45.116380 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:53:07.277932 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:53:21.613326 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T11:53:28.246387 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:53:37.117110 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:53:48.519702 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:53:52.691539 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:00.186281 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:08.178807 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:15.565005 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:19.765509 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:28.164121 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:33.994676 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:41.283491 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:45.545227 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:54:57.237241 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:55:06.245403 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:55:10.682945 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:55:20.688422 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:55:30.215913 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:55:38.504990 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:55:46.185719 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:55:53.180192 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:55:59.450151 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:56:07.692317 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:56:20.275917 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:56:24.598876 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:56:38.410006 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T11:56:53.781309 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:39:36.655875 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:39:42.478847 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:39:49.231285 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:42:32.971046 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:42:38.483736 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:44:09.775712 | fpgautil: 'Time taken to load BIN is 292.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T12:44:23.894309 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:44:28.805322 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:44:35.643964 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:44:57.108074 | fpgautil: 'Time taken to load BIN is 295.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T12:45:04.105516 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:45:10.998816 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:45:18.239891 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:45:39.486802 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T12:45:51.825433 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:45:59.304137 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:46:11.691623 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:46:24.592981 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:46:47.124300 | fpgautil: 'Time taken to load BIN is 297.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T12:46:55.099656 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-02T12:47:17.746198 | TIMEOUT | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-02T12:47:23.102061 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-02T12:47:45.287664 | TIMEOUT | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-02T12:47:49.795551 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T12:48:05.043775 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-02T12:48:15.809053 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-02T12:48:29.507800 | fpgautil: 'Time taken to load BIN is 295.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T12:48:36.880699 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:48:50.210573 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:48:55.735001 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:49:05.252439 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:49:09.904861 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:49:21.009342 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:49:25.121203 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:49:33.520646 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:49:37.481266 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:49:43.090060 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:49:50.209244 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:50:13.150415 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:50:17.416912 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:50:23.187622 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:50:27.436143 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:50:37.316563 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:50:41.547173 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:50:45.645635 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:56:00.687256 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T12:56:09.186650 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:56:23.208159 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:56:28.052629 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T12:59:47.651461 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T12:59:55.336150 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:02:46.748266 | fpgautil: 'Time taken to load BIN is 292.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T13:03:17.117941 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:03:26.637908 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:03:30.956872 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:03:36.466956 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:03:40.517106 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:09:35.211992 | fpgautil: 'Time taken to load BIN is 295.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T13:09:43.528300 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:09:45.114340 | barrido | t1-t2=1.575s consultas=5 media=314.9ms max=347.7ms
+2026-11-02T13:10:37.213456 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:10:38.762026 | barrido | t1-t2=1.554s consultas=6 media=259.0ms max=307.5ms
+2026-11-02T13:10:41.762663 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:10:42.959707 | barrido | t1-t2=1.198s consultas=24 media=49.9ms max=95.5ms
+2026-11-02T13:10:45.526731 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:10:46.736495 | barrido | t1-t2=1.203s consultas=24 media=50.1ms max=104.7ms
+2026-11-02T13:10:49.289320 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:10:50.483950 | barrido | t1-t2=1.193s consultas=24 media=49.7ms max=93.3ms
+2026-11-02T13:10:52.919573 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:10:54.126680 | barrido | t1-t2=1.204s consultas=24 media=50.2ms max=100.8ms
+2026-11-02T13:10:56.630377 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:10:58.221399 | barrido | t1-t2=1.588s consultas=8 media=198.5ms max=307.3ms
+2026-11-02T13:11:03.752147 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:04.974638 | barrido | t1-t2=1.224s consultas=6 media=204.0ms max=307.9ms
+2026-11-02T13:11:07.398615 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:08.609219 | barrido | t1-t2=1.207s consultas=24 media=50.3ms max=107.7ms
+2026-11-02T13:11:11.205965 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:12.428965 | barrido | t1-t2=1.217s consultas=23 media=52.9ms max=105.1ms
+2026-11-02T13:11:14.768614 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:15.947082 | barrido | t1-t2=1.177s consultas=21 media=56.0ms max=91.9ms
+2026-11-02T13:11:18.281689 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:19.722001 | barrido | t1-t2=1.443s consultas=10 media=144.3ms max=321.2ms
+2026-11-02T13:11:24.951928 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:26.479717 | barrido | t1-t2=1.531s consultas=5 media=306.1ms max=307.6ms
+2026-11-02T13:11:29.865614 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:31.387495 | barrido | t1-t2=1.533s consultas=6 media=255.4ms max=307.9ms
+2026-11-02T13:11:33.722239 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:34.933538 | barrido | t1-t2=1.210s consultas=24 media=50.4ms max=107.2ms
+2026-11-02T13:11:37.404458 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:11:38.607691 | barrido | t1-t2=1.204s consultas=24 media=50.2ms max=101.3ms
+2026-11-02T13:17:16.343684 | fpgautil: 'Time taken to load BIN is 292.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-02T13:17:23.747099 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:17:24.981867 | barrido | t1-t2=1.233s consultas=6 media=205.5ms max=311.3ms
+2026-11-02T13:17:25.750148 | tramos | barrido(t1-t2)=1.233 lecturaRES1(t3-t4)=0.348 lecturaRES2(t4-t5)=0.382 calculo(t5-t10)=0.048 final(t10-t11)=0.000 total=2.012
+2026-11-02T13:17:28.825397 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:17:30.508641 | barrido | t1-t2=1.681s consultas=6 media=280.1ms max=339.0ms
+2026-11-02T13:17:31.241055 | tramos | barrido(t1-t2)=1.681 lecturaRES1(t3-t4)=0.350 lecturaRES2(t4-t5)=0.380 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.414
+2026-11-02T13:17:34.801422 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:17:36.344358 | barrido | t1-t2=1.544s consultas=5 media=308.8ms max=315.2ms
+2026-11-02T13:17:37.065143 | tramos | barrido(t1-t2)=1.544 lecturaRES1(t3-t4)=0.324 lecturaRES2(t4-t5)=0.390 calculo(t5-t10)=0.002 final(t10-t11)=0.000 total=2.262
+2026-11-02T13:17:40.647965 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:17:42.181095 | barrido | t1-t2=1.534s consultas=7 media=219.1ms max=307.6ms
+2026-11-02T13:17:42.915243 | tramos | barrido(t1-t2)=1.534 lecturaRES1(t3-t4)=0.339 lecturaRES2(t4-t5)=0.389 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.264
+2026-11-02T13:17:45.564608 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:17:46.781861 | barrido | t1-t2=1.220s consultas=5 media=244.1ms max=307.3ms
+2026-11-02T13:17:47.499070 | tramos | barrido(t1-t2)=1.220 lecturaRES1(t3-t4)=0.341 lecturaRES2(t4-t5)=0.368 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.931
+2026-11-02T13:17:49.277693 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:17:50.465170 | barrido | t1-t2=1.185s consultas=23 media=51.5ms max=98.8ms
+2026-11-02T13:17:51.182216 | tramos | barrido(t1-t2)=1.185 lecturaRES1(t3-t4)=0.337 lecturaRES2(t4-t5)=0.379 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.903
+2026-11-02T13:17:52.632037 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:17:53.832417 | barrido | t1-t2=1.192s consultas=23 media=51.8ms max=91.6ms
+2026-11-02T13:17:54.531814 | tramos | barrido(t1-t2)=1.192 lecturaRES1(t3-t4)=0.331 lecturaRES2(t4-t5)=0.378 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.903
+2026-11-02T13:17:55.949976 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:17:57.131796 | barrido | t1-t2=1.182s consultas=23 media=51.4ms max=96.4ms
+2026-11-02T13:17:57.865108 | tramos | barrido(t1-t2)=1.182 lecturaRES1(t3-t4)=0.339 lecturaRES2(t4-t5)=0.400 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.924
+2026-11-02T13:17:59.198274 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:18:00.398254 | barrido | t1-t2=1.199s consultas=23 media=52.1ms max=100.0ms
+2026-11-02T13:18:01.131610 | tramos | barrido(t1-t2)=1.199 lecturaRES1(t3-t4)=0.338 lecturaRES2(t4-t5)=0.395 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.934
+2026-11-02T13:19:00.210224 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:01.746423 | barrido | t1-t2=1.537s consultas=6 media=256.1ms max=309.9ms
+2026-11-02T13:19:02.471898 | tramos | barrido(t1-t2)=1.537 lecturaRES1(t3-t4)=0.344 lecturaRES2(t4-t5)=0.379 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.262
+2026-11-02T13:19:04.233085 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:05.431289 | barrido | t1-t2=1.198s consultas=23 media=52.1ms max=110.6ms
+2026-11-02T13:19:06.163810 | tramos | barrido(t1-t2)=1.198 lecturaRES1(t3-t4)=0.349 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.930
+2026-11-02T13:19:07.724654 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:08.913612 | barrido | t1-t2=1.184s consultas=23 media=51.5ms max=106.8ms
+2026-11-02T13:19:09.630325 | tramos | barrido(t1-t2)=1.184 lecturaRES1(t3-t4)=0.338 lecturaRES2(t4-t5)=0.389 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.913
+2026-11-02T13:19:10.930336 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:12.163631 | barrido | t1-t2=1.224s consultas=24 media=51.0ms max=91.4ms
+2026-11-02T13:19:12.896850 | tramos | barrido(t1-t2)=1.224 lecturaRES1(t3-t4)=0.337 lecturaRES2(t4-t5)=0.400 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.963
+2026-11-02T13:19:14.544080 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:15.763480 | barrido | t1-t2=1.212s consultas=19 media=63.8ms max=174.9ms
+2026-11-02T13:19:16.480212 | tramos | barrido(t1-t2)=1.212 lecturaRES1(t3-t4)=0.339 lecturaRES2(t4-t5)=0.388 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.941
+2026-11-02T13:19:17.880863 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:19.080270 | barrido | t1-t2=1.192s consultas=23 media=51.8ms max=107.6ms
+2026-11-02T13:19:19.813422 | tramos | barrido(t1-t2)=1.192 lecturaRES1(t3-t4)=0.349 lecturaRES2(t4-t5)=0.382 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.926
+2026-11-02T13:19:21.280130 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:22.480163 | barrido | t1-t2=1.200s consultas=23 media=52.2ms max=97.4ms
+2026-11-02T13:19:23.193531 | tramos | barrido(t1-t2)=1.200 lecturaRES1(t3-t4)=0.341 lecturaRES2(t4-t5)=0.369 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.913
+2026-11-02T13:19:24.529614 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:25.713828 | barrido | t1-t2=1.184s consultas=23 media=51.5ms max=101.3ms
+2026-11-02T13:19:26.463764 | tramos | barrido(t1-t2)=1.184 lecturaRES1(t3-t4)=0.347 lecturaRES2(t4-t5)=0.401 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.935
+2026-11-02T13:19:27.782090 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:28.963628 | barrido | t1-t2=1.176s consultas=23 media=51.1ms max=92.2ms
+2026-11-02T13:19:29.692918 | tramos | barrido(t1-t2)=1.176 lecturaRES1(t3-t4)=0.338 lecturaRES2(t4-t5)=0.388 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.903
+2026-11-02T13:19:31.196883 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:32.413184 | barrido | t1-t2=1.204s consultas=23 media=52.3ms max=96.8ms
+2026-11-02T13:19:33.129884 | tramos | barrido(t1-t2)=1.204 lecturaRES1(t3-t4)=0.327 lecturaRES2(t4-t5)=0.390 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.923
+2026-11-02T13:19:34.658417 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:19:35.879559 | barrido | t1-t2=1.222s consultas=23 media=53.1ms max=104.7ms
+2026-11-02T13:19:36.629746 | tramos | barrido(t1-t2)=1.222 lecturaRES1(t3-t4)=0.349 lecturaRES2(t4-t5)=0.397 calculo(t5-t10)=0.002 final(t10-t11)=0.000 total=1.971
+2026-11-02T13:19:58.579835 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:00.114987 | barrido | t1-t2=1.534s consultas=6 media=255.7ms max=307.7ms
+2026-11-02T13:20:00.848986 | tramos | barrido(t1-t2)=1.534 lecturaRES1(t3-t4)=0.355 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.273
+2026-11-02T13:20:03.774751 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:05.330788 | barrido | t1-t2=1.548s consultas=5 media=309.6ms max=352.0ms
+2026-11-02T13:20:06.069175 | tramos | barrido(t1-t2)=1.548 lecturaRES1(t3-t4)=0.344 lecturaRES2(t4-t5)=0.389 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.283
+2026-11-02T13:20:07.479858 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:08.663039 | barrido | t1-t2=1.183s consultas=23 media=51.4ms max=102.1ms
+2026-11-02T13:20:09.382104 | tramos | barrido(t1-t2)=1.183 lecturaRES1(t3-t4)=0.337 lecturaRES2(t4-t5)=0.391 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.914
+2026-11-02T13:20:11.116636 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:12.329456 | barrido | t1-t2=1.200s consultas=23 media=52.2ms max=100.0ms
+2026-11-02T13:20:13.054063 | tramos | barrido(t1-t2)=1.200 lecturaRES1(t3-t4)=0.331 lecturaRES2(t4-t5)=0.391 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.924
+2026-11-02T13:20:14.608596 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:15.812674 | barrido | t1-t2=1.204s consultas=20 media=60.2ms max=137.9ms
+2026-11-02T13:20:16.596544 | tramos | barrido(t1-t2)=1.204 lecturaRES1(t3-t4)=0.371 lecturaRES2(t4-t5)=0.423 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.000
+2026-11-02T13:20:18.418092 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:20.071580 | barrido | t1-t2=1.664s consultas=11 media=151.2ms max=309.8ms
+2026-11-02T13:20:20.930998 | tramos | barrido(t1-t2)=1.664 lecturaRES1(t3-t4)=0.347 lecturaRES2(t4-t5)=0.510 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.523
+2026-11-02T13:20:23.748609 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:24.998669 | barrido | t1-t2=1.237s consultas=6 media=206.2ms max=320.0ms
+2026-11-02T13:20:25.712488 | tramos | barrido(t1-t2)=1.237 lecturaRES1(t3-t4)=0.334 lecturaRES2(t4-t5)=0.389 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.963
+2026-11-02T13:20:28.085144 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:29.295034 | barrido | t1-t2=1.198s consultas=23 media=52.1ms max=119.1ms
+2026-11-02T13:20:30.023423 | tramos | barrido(t1-t2)=1.198 lecturaRES1(t3-t4)=0.344 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.925
+2026-11-02T13:20:31.396982 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:32.595447 | barrido | t1-t2=1.186s consultas=23 media=51.6ms max=102.1ms
+2026-11-02T13:20:33.295741 | tramos | barrido(t1-t2)=1.186 lecturaRES1(t3-t4)=0.326 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.895
+2026-11-02T13:20:40.659229 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:42.192014 | barrido | t1-t2=1.542s consultas=7 media=220.3ms max=307.6ms
+2026-11-02T13:20:42.928968 | tramos | barrido(t1-t2)=1.542 lecturaRES1(t3-t4)=0.349 lecturaRES2(t4-t5)=0.378 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.272
+2026-11-02T13:20:44.300165 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:45.495097 | barrido | t1-t2=1.186s consultas=23 media=51.6ms max=103.4ms
+2026-11-02T13:20:46.211655 | tramos | barrido(t1-t2)=1.186 lecturaRES1(t3-t4)=0.335 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.904
+2026-11-02T13:20:47.615001 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-02T13:20:48.795231 | barrido | t1-t2=1.178s consultas=23 media=51.2ms max=98.2ms
+2026-11-02T13:20:49.495342 | tramos | barrido(t1-t2)=1.178 lecturaRES1(t3-t4)=0.325 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.886

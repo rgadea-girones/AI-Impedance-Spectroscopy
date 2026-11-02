@@ -392,4 +392,15 @@ if __name__ == "__main__":
     window.addmpl_3(data.fig3)
     window.addmpl_4(data.fig4)
     window.show()
+
+    # Diagnostico de bloqueos: si el hilo de la interfaz no late en 15 s, vuelca la traza a cuelgue_traza.txt
+    import faulthandler
+    _traza = open("cuelgue_traza.txt", "w")
+    def _latido():
+        faulthandler.cancel_dump_traceback_later()
+        faulthandler.dump_traceback_later(15, repeat=False, file=_traza)
+    _timer = QtCore.QTimer()
+    _timer.timeout.connect(_latido)
+    _timer.start(1000)
+
     sys.exit(app.exec())

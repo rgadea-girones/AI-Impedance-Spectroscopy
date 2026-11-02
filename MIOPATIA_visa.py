@@ -1,5 +1,6 @@
 # import pyvisa as visa
 import socket
+from datetime import datetime
 import io
 import numpy as np
 import base64
@@ -73,6 +74,14 @@ class VISA(object):
         self.host    = host
         port    = self.port
         timeout= self.timeout
+
+        # Cierra el socket abierto en __init__: si no, queda una conexion SCPI huerfana
+        if self._socket is not None:
+            try:
+                self._socket.close()
+            except Exception:
+                pass
+            self._socket = None
 
         veamos = self._get_ssh()
         veamos.cwd.chdir("/usr/bin")
@@ -184,7 +193,13 @@ class VISA(object):
                 comando="./fpgautil -b " + bitstream
                 # print (comando)
                 r_back = veamos[comando]
-                r_back()
+                # Diagnostico: salida de fpgautil y estado del gestor de FPGA tras la carga
+                salida_fpgautil = r_back()
+                estado_fpga = veamos["cat"]("/sys/class/fpga_manager/fpga0/state").strip()
+                print("fpgautil ->", salida_fpgautil)
+                print("fpga_manager state ->", estado_fpga)
+                with open("diagnostico_fpga.txt", "a", encoding="utf-8") as f:
+                    f.write(f"{datetime.now().isoformat()} | fpgautil: {salida_fpgautil!r} | estado: {estado_fpga!r}\n")
                 # sizeh1=str('-sizeh1={0}'.format(individual[0]))
                 # sizeh2=str('-sizeh2={0}'.format(individual[1]))
                 # epochs=str('-epochs={0}'.format(epochs))
@@ -200,12 +215,12 @@ class VISA(object):
                 # sesión SSH se mantiene cacheada  
                 #IP = 'rp-f09cef.local'
                 IP=self.host
-                rp = scpi.scpi(IP)
                 #rp.rp_DpinSetState(rp.RP_LED5, rp.RP_HIGH)
                 #alternativa
                 #rp.rp_Init()
                 print('conexion establecida con redpitaya')
                 self.dv.append_plus("CONECTADO a redpitaya ="+ str(host))  
+                self.tx_txt('DIG:PIN LED0,0')
                 self.config_measurement()
 
         except socket.error as e:
@@ -1010,6 +1025,48 @@ class VISA(object):
 
 
 
+
+    def _volcar_estado(self, etiqueta):
+        """Diagnostico: escribe en diagnostico_fpga.txt el estado de la placa. No altera la medida."""
+        info = {}
+        timeout_previo = self._socket.gettimeout()
+        try:
+            self._socket.settimeout(3)
+            for nombre, cmd in [('LED0', 'DIG:PIN? LED0'), ('LED1', 'DIG:PIN? LED1'),
+                                ('LED2', 'DIG:PIN? LED2'), ('LED3', 'DIG:PIN? LED3'),
+                                ('LED4', 'DIG:PIN? LED4'), ('DIO7_P', 'DIG:PIN? DIO7_P'),
+                                ('ERR', 'SYST:ERR:NEXT?')]:
+                try:
+                    self.tx_txt(cmd)
+                    info[nombre] = self.rx_txt()
+                except Exception as e:
+                    info[nombre] = 'ERROR ' + repr(e)
+                    break
+        finally:
+            self._socket.settimeout(timeout_previo)
+        try:
+            veamos = self._get_ssh()
+            info['n_ciclos'] = veamos["monitor"]("0x40200018").strip()
+            info['muestras'] = veamos["monitor"]("0x4020001C").strip()
+            info['scpi_service'] = veamos["systemctl"]("is-active", "redpitaya_scpi").strip()
+        except Exception as e:
+            info['ssh'] = 'ERROR ' + repr(e)
+        with open("diagnostico_fpga.txt", "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat()} | {etiqueta} | {info}\n")
+
+    def _registrar_barrido(self, duracion, n_consultas, t_consulta_max):
+        """Diagnostico: duracion de la espera de fin de barrido y numero de consultas SCPI."""
+        media = duracion / n_consultas if n_consultas else 0.0
+        with open("diagnostico_fpga.txt", "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat()} | barrido | t1-t2={duracion:.3f}s consultas={n_consultas} "
+                    f"media={media*1000:.1f}ms max={t_consulta_max*1000:.1f}ms\n")
+
+    def _registrar_tramos(self, t1, t2, t3, t4, t5, t10, t11):
+        """Diagnostico: tiempo de cada tramo de la medida, para localizar las medidas lentas."""
+        with open("diagnostico_fpga.txt", "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat()} | tramos | barrido(t1-t2)={t2-t1:.3f} "
+                    f"lecturaRES1(t3-t4)={t4-t3:.3f} lecturaRES2(t4-t5)={t5-t4:.3f} "
+                    f"calculo(t5-t10)={t10-t5:.3f} final(t10-t11)={t11-t10:.3f} total={t11-t1:.3f}\n")
 
     def measure(self):
         error=0
@@ -3657,17 +3714,30 @@ class VISA(object):
             decimation=1
             if (self.sd.def_cfg['post_procesado']['value']==0):
                 self.dv.append_plus("Midiendo Z=R+iX")
+                self._volcar_estado('inicio')
                 t1=pc()
                 #ya no utilizo chip on sino el control[0] como start
             #       self.tx_txt('CHIRP ON')
                 self.tx_txt('DIG:PIN LED'+str(0)+','+str(1)) #activo el start
+                t_espera=pc()
+                n_consultas=0
+                t_consulta_max=0.0
                 try:
                     while 1 :
                         #    rp_s.tx_txt('FIN:RAF:STAT? 1')
+                        t_c=pc()
                         self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
                         state = self.rx_txt()
+                        n_consultas+=1
+                        t_consulta_max=max(t_consulta_max, pc()-t_c)
                         if state == '1':
                             break
+                        if pc()-t_espera > 20:
+                            # la FPGA no termina: la dejamos en reposo en vez de bloquear la interfaz
+                            self.tx_txt('DIG:PIN LED'+str(0)+','+str(0))
+                            self._volcar_estado('TIMEOUT')
+                            self.dv.append_plus("Timeout esperando fin de barrido (DIO7_P)")
+                            return 1
                 except Exception as e:
                     print(e)
                     error=1
@@ -3680,7 +3750,8 @@ class VISA(object):
                 # EMPEZAMOS CON LA ADQUISION
                 #cambio 2026 : ya no utilizo chip on y off
                 # self.tx_txt('CHIRP OFF')
-
+                t2=pc()
+                self._registrar_barrido(t2-t1, n_consultas, t_consulta_max)
                 self.tx_txt('DIG:PIN LED'+str(0)+','+str(0)) #dseactivo el start
                     # Lectura directa de memoria desde 0x40210000
                 t3=pc()
@@ -3708,7 +3779,7 @@ class VISA(object):
                 my_array2 =my_array2[:-decimation:decimation]
                 muestras=round(self.muestras/decimation)
                 t5=pc()
-                print('t5-t1:',t5-t1)
+
 
 
                 smooth=self.sd.def_cfg['smooth']['value']
@@ -3861,6 +3932,8 @@ class VISA(object):
                 t11=pc()
 
                 total=t11-t1
+                self._registrar_tramos(t1, t2, t3, t4, t5, t10, t11)
+                print('t2-t1:',t2-t1)
                 print ('total:',total)
                 absolute_val_array = np.abs(self.sd.freq - 1000)
                 smallest_difference_index = absolute_val_array.argmin()
@@ -3877,17 +3950,30 @@ class VISA(object):
             elif (self.sd.def_cfg['post_procesado']['value']==1):
             
                 self.dv.append_plus("Midiendo Z=R+iX")
+                self._volcar_estado('inicio')
                 t1=pc()
                 #ya no utilizo chip on sino el control[0] como start
             #       self.tx_txt('CHIRP ON')
                 self.tx_txt('DIG:PIN LED'+str(0)+','+str(1)) #activo el start
+                t_espera=pc()
+                n_consultas=0
+                t_consulta_max=0.0
                 try:
                     while 1 :
                         #    rp_s.tx_txt('FIN:RAF:STAT? 1')
+                        t_c=pc()
                         self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
                         state = self.rx_txt()
+                        n_consultas+=1
+                        t_consulta_max=max(t_consulta_max, pc()-t_c)
                         if state == '1':
                             break
+                        if pc()-t_espera > 20:
+                            # la FPGA no termina: la dejamos en reposo en vez de bloquear la interfaz
+                            self.tx_txt('DIG:PIN LED'+str(0)+','+str(0))
+                            self._volcar_estado('TIMEOUT')
+                            self.dv.append_plus("Timeout esperando fin de barrido (DIO7_P)")
+                            return 1
                 except Exception as e:
                     print(e)
                     error=1
@@ -3896,6 +3982,8 @@ class VISA(object):
             #    # print(rp_s.rx_txt())
                 # rp_s.tx_txt('DIG:PIN? DIO'+str(7)+'_N')
                 # state = rp_s.rx_txt()
+                t2=pc()
+                self._registrar_barrido(t2-t1, n_consultas, t_consulta_max)
                 print(state)
                 # EMPEZAMOS CON LA ADQUISION
                 #cambio 2026 : ya no utilizo chip on y off
@@ -3928,7 +4016,7 @@ class VISA(object):
                 my_array2 =my_array2[:-decimation:decimation]
                 muestras=round(self.muestras/decimation)
                 t5=pc()
-                print('t5-t1:',t5-t1)
+
 
 
                 smooth=self.sd.def_cfg['smooth']['value']
@@ -4081,8 +4169,11 @@ class VISA(object):
                 self.sd.Er_mod_data  = np.abs(E_data);
                 self.sd.Er_fase_data = np.angle(E_data);
                 t11=pc()
-
+                print('t5-t1:',t5-t1)
+                print('t2-t1:',t2-t1)
+                
                 total=t11-t1
+                self._registrar_tramos(t1, t2, t3, t4, t5, t10, t11)
                 print ('total:',total)
                 absolute_val_array = np.abs(self.sd.freq - 1000)
                 smallest_difference_index = absolute_val_array.argmin()

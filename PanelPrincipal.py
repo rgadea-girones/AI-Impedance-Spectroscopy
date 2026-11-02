@@ -624,7 +624,7 @@ class Ui_Form(object):
         self.textBrowser_4.setGeometry(QRect(850, 520, 421, 121))
         self.groupBox_61 = QGroupBox(self.analisis)
         self.groupBox_61.setObjectName(u"groupBox_61")
-        self.groupBox_61.setGeometry(QRect(190, 510, 421, 161))
+        self.groupBox_61.setGeometry(QRect(190, 540, 421, 161))
         self.load_path_18 = QLineEdit(self.groupBox_61)
         self.load_path_18.setObjectName(u"load_path_18")
         self.load_path_18.setGeometry(QRect(140, 40, 211, 20))
