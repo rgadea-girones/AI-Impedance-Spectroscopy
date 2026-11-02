@@ -3,22 +3,18 @@ import os
 import warnings
 import numpy as np
 
-# Fuerza a matplotlib a usar PySide6 en lugar de PyQt5 para evitar el import fallido en debugpy
+# Fuerza a matplotlib a usar PySide6
 os.environ.setdefault("QT_API", "pyside6")
 os.environ.setdefault("MPLBACKEND", "QtAgg")
 
 import matplotlib
 matplotlib.use('QtAgg')
 from PySide6 import QtCore, QtWidgets, QtGui
-# Compat: algunos hooks de debugpy/ipython buscan QtGui.QApplication (Qt4 style)
-# En PySide6 está en QtWidgets; exponemos alias para evitar AttributeError.
-if not hasattr(QtGui, "QApplication"):
-    QtGui.QApplication = QtWidgets.QApplication
 from PySide6.QtUiTools import QUiLoader
 from PanelPrincipal import Ui_Form as Ui_PanelPrincipal
 from qfluentwidgets import FluentWindow, FluentIcon, NavigationItemPosition
 
-from matplotlib.backends.backend_qt5agg import (
+from matplotlib.backends.backend_qtagg import (
     FigureCanvasQTAgg as FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar)
 from matplotlib.figure import Figure
@@ -356,9 +352,9 @@ class MyApp(FluentWindow):
     def closeEvent(self, event):
         quit_msg = "¿Seguro que quiere salir del programa?"
         reply = QMessageBox.question(self, 'Cuidado!',
-                         quit_msg, QMessageBox.Yes, QMessageBox.No)
+                         quit_msg, QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
 
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             event.accept()
         else:
             event.ignore()

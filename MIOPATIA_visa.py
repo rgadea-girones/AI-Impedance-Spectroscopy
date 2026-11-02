@@ -1696,7 +1696,6 @@ class VISA(object):
 
                 total=t11-t1
                 self._registrar_tramos(t1, t2, t3, t4, t5, t10, t11)
-                print('t2-t1:',t2-t1)
                 print ('total:',total)
                 absolute_val_array = np.abs(self.sd.freq - 1000)
                 smallest_difference_index = absolute_val_array.argmin()
@@ -1932,9 +1931,6 @@ class VISA(object):
                 self.sd.Er_mod_data  = np.abs(E_data);
                 self.sd.Er_fase_data = np.angle(E_data);
                 t11=pc()
-                print('t5-t1:',t5-t1)
-                print('t2-t1:',t2-t1)
-                
                 total=t11-t1
                 self._registrar_tramos(t1, t2, t3, t4, t5, t10, t11)
                 print ('total:',total)
@@ -2127,12 +2123,12 @@ class VISA(object):
 
     def message_box(self,title,text):
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
+        msg.setIcon(QMessageBox.Icon.Warning)
         msg.setText(text)
         # msg.setInformativeText(text)
         msg.setWindowTitle(title)
         #msg.setDetailedText("")
-        retval = msg.exec_()
+        retval = msg.exec()
 
 
     def AdapterCorrection(self, type):
