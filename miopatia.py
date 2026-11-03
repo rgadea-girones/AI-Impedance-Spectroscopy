@@ -64,14 +64,10 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
         ######### Combos Initialization and RadiButton Groups creation #########
         # Button groups creation
         def Rbutton_group(button_array):
-            bg_config_cal = QtWidgets.QButtonGroup()
-            radioButton = button_array
-            j=0
-            for i in radioButton:
-                bg_config_cal.addButton(i)
-                bg_config_cal.setId(i,j)
-                j+=1
-            return bg_config_cal
+            bg = QtWidgets.QButtonGroup(self)
+            for j, btn in enumerate(button_array):
+                bg.addButton(btn, j)
+            return bg
 
         self.comboBox_trazaA.addItems(self.sd.def_cfg['comboxA'])
         self.comboBox_trazaB.addItems(self.sd.def_cfg['comboxB'])
@@ -201,8 +197,8 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
                     {'wdg':self.SAVE_DB,           'func':self.be.save_measure_to_DB}]
 
         # Fit calls
-        for i in self.fit_param.keys():
-            eval("self." + self.fit_param[i]['array'] +".editingFinished").connect(self.be.store_fit)
+        for param in self.fit_param.values():
+            getattr(self, param['array']).editingFinished.connect(self.be.store_fit)
         for i in clicked:
             i['wdg'].clicked.connect(i['func'])
 
@@ -214,28 +210,29 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
         self.last_medida_2.display(0)         
 
         # Mirrored calls
-        for i in self.mirror.keys():
-            if self.mirror[i]['qt'] == 'QLineEdit':
-                event = 'editingFinished'
-            elif self.mirror[i]['qt'] == 'QButtonGroup':
-                event = 'buttonClicked'
-            elif self.mirror[i]['qt'] == 'QCheckBox':
-                event = 'stateChanged'
+        for cfg in self.mirror.values():
+            for name in cfg['array']:
+                widget = getattr(self, name)
+                if cfg['qt'] == 'QLineEdit':
+                    widget.editingFinished.connect(self.be.store_data)
+                elif cfg['qt'] == 'QButtonGroup':
+                    widget.buttonClicked.connect(self.be.store_data)
+                elif cfg['qt'] == 'QCheckBox':
+                    widget.stateChanged.connect(self.be.store_data)
 
-            for j in self.mirror[i]['array']:
-                eval("self." + j + "." + event).connect(self.be.store_data)
         # Other widgets calls
-        for i in self.others.keys():
-            if self.others[i]['qt'] == 'QLineEdit':
-                event = 'editingFinished'
-            elif self.others[i]['qt'] == 'QButtonGroup':
-                event = 'buttonClicked'
-            elif self.others[i]['qt'] == 'QCheckBox':
-                event = 'stateChanged'
-            eval("self." + self.others[i]['array'] + "." + event).connect(self.be.store_data)
+        for cfg in self.others.values():
+            widget = getattr(self, cfg['array'])
+            if cfg['qt'] == 'QLineEdit':
+                widget.editingFinished.connect(self.be.store_data)
+            elif cfg['qt'] == 'QButtonGroup':
+                widget.buttonClicked.connect(self.be.store_data)
+            elif cfg['qt'] == 'QCheckBox':
+                widget.stateChanged.connect(self.be.store_data)
+
         # Path edit calls
-        for i in self.paths.keys():
-            eval("self." + self.paths[i] + "." + 'editingFinished').connect(self.be.store_data)
+        for path_attr in self.paths.values():
+            getattr(self, path_attr).editingFinished.connect(self.be.store_data)
 
 
     # MatplotLib Widgets

@@ -36,26 +36,33 @@ class BACK_END(object):
      # Controlled casting to avoid data intro errors. Read text or button_ID
     def value_control(self,objeto,limits=[0,1E12],type='int',qt_obj="QLineEdit"):
         try:
+            cast_type = int if type == 'int' else (float if type == 'float' else (bool if type == 'bool' else str))
+            if callable(type):
+                cast_type = type
+
             if qt_obj == "QLineEdit":
-                aux = eval(type)(objeto.text())
+                aux = cast_type(objeto.text())
             elif qt_obj == "QButtonGroup":
-                aux = eval(type)(objeto.checkedId())
+                aux = cast_type(objeto.checkedId())
             elif qt_obj == "QCheckBox":
-                aux = eval(type)(objeto.isChecked())
+                aux = cast_type(objeto.isChecked())
 
             if ((aux >= limits[0]) and (aux <= limits[1])):
-                return eval(type)(aux)
+                return cast_type(aux)
             else:
                 if (aux > limits[1]):
-                    objeto.setText(str(limits[1]))
-                    return eval(type)(limits[1])
+                    if hasattr(objeto, 'setText'):
+                        objeto.setText(str(limits[1]))
+                    return cast_type(limits[1])
                 else:
                     if (aux < limits[0]):
-                        objeto.setText(str(limits[0]))
-                        return eval(type)(limits[0])
+                        if hasattr(objeto, 'setText'):
+                            objeto.setText(str(limits[0]))
+                        return cast_type(limits[0])
         except ValueError:
             self.dv.append_plus("ERROR EN VALOR")
-            objeto.setText(str(limits[0]))
+            if hasattr(objeto, 'setText'):
+                objeto.setText(str(limits[0]))
             return limits[0]
 
     def save_config(self):
@@ -633,37 +640,45 @@ class BACK_END(object):
 
         for i in self.pw.mirror.keys():
             for j in self.pw.mirror[i]['array']:
+                widget = getattr(self.pw, j)
+                val = self.sd.def_cfg[i]['value']
                 if self.pw.mirror[i]['qt'] == 'QLineEdit':
-                    eval("self.pw."+j).setText(str(self.sd.def_cfg[i]['value']))
+                    widget.setText(str(val))
                 elif self.pw.mirror[i]['qt'] == 'QButtonGroup':
-                    eval("self.pw."+j).button(self.sd.def_cfg[i]['value']).setChecked(True)
+                    btn = widget.button(val)
+                    if btn is not None:
+                        btn.setChecked(True)
                 elif self.pw.mirror[i]['qt'] == 'QCheckBox':
-                    eval("self.pw."+j).setChecked(self.sd.def_cfg[i]['value'])
+                    widget.setChecked(val)
 
         for i in self.pw.paths.keys():
             aux = self.pw.paths[i]
-            eval("self.pw." + aux).setText(str(self.sd.def_cfg[i]))
+            getattr(self.pw, aux).setText(str(self.sd.def_cfg[i]))
 
         for i in self.pw.others.keys():
             aux = self.pw.others[i]['array']
+            widget = getattr(self.pw, aux)
+            val = self.sd.def_cfg[i]['value']
             if self.pw.others[i]['qt'] == 'QLineEdit':
-                eval("self.pw." + aux).setText(str(self.sd.def_cfg[i]['value']))
+                widget.setText(str(val))
             elif self.pw.others[i]['qt'] == 'QButtonGroup':
-                eval("self.pw." + aux).button(self.sd.def_cfg[i]['value']).setChecked(True)
+                btn = widget.button(val)
+                if btn is not None:
+                    btn.setChecked(True)
             elif self.pw.others[i]['qt'] == 'QCheckBox':
-                eval("self.pw." + aux).setChecked(self.sd.def_cfg[i]['value'])
+                widget.setChecked(val)
 
         for i in self.pw.fit_param.keys():
             if i[0:6] == 'lparam':
                 pass
             elif i[0:5] == 'param':
                 pos = np.argwhere(np.array(self.sd.def_cfg['param_fit']['names'])==i)[0][0]
-                eval("self.pw." + self.pw.fit_param[i]['array'] + "_L").setText(str(self.sd.def_cfg['param_fit']['limits'][pos][0]))
-                eval("self.pw." + self.pw.fit_param[i]['array'] + "_H").setText(str(self.sd.def_cfg['param_fit']['limits'][pos][1]))
-                eval("self.pw." + self.pw.fit_param[i]['array']).setText(str(self.sd.def_cfg['param_fit']['value'][pos]))
+                getattr(self.pw, self.pw.fit_param[i]['array'] + "_L").setText(str(self.sd.def_cfg['param_fit']['limits'][pos][0]))
+                getattr(self.pw, self.pw.fit_param[i]['array'] + "_H").setText(str(self.sd.def_cfg['param_fit']['limits'][pos][1]))
+                getattr(self.pw, self.pw.fit_param[i]['array']).setText(str(self.sd.def_cfg['param_fit']['value'][pos]))
             else:
                 pos = np.argwhere(np.array(self.sd.def_cfg['param_fit']['names'])==i)[0][0]
-                eval("self.pw." + self.pw.fit_param[i]['array']).setText(str(self.sd.def_cfg['param_fit']['value'][pos]))
+                getattr(self.pw, self.pw.fit_param[i]['array']).setText(str(self.sd.def_cfg['param_fit']['value'][pos]))
 
 
         # Default fit magnitude ABS(EPSILON)
@@ -690,7 +705,7 @@ class BACK_END(object):
             else:
                 pos = np.argwhere(np.array(self.sd.def_cfg['param_fit']['names'])==i)[0][0]
                 aux = self.pw.fit_param[i]['array']
-                new_data = self.value_control(eval("self.pw."+ aux ), self.sd.def_cfg['param_fit']['limits'][pos],
+                new_data = self.value_control(getattr(self.pw, aux), self.sd.def_cfg['param_fit']['limits'][pos],
                                             type = self.sd.def_cfg['param_fit']['type'][pos],
                                             qt_obj = self.pw.fit_param[i]['qt'])
                 self.sd.def_cfg['param_fit']['value'][pos] = new_data
@@ -700,10 +715,10 @@ class BACK_END(object):
             if i[0:5] == 'param':
                 pos = np.argwhere(np.array(self.sd.def_cfg['param_fit']['names'])==i)[0][0]
                 aux = self.pw.fit_param[i]['array']
-                new_data_L = self.value_control(eval("self.pw."+ aux +"_L" ), [-1E12,1E12],
+                new_data_L = self.value_control(getattr(self.pw, aux +"_L"), [-1E12,1E12],
                                               type = self.sd.def_cfg['param_fit']['type'][pos],
                                               qt_obj = self.pw.fit_param[i]['qt'])
-                new_data_H = self.value_control(eval("self.pw."+ aux +"_H" ), [-1E12,1E12],
+                new_data_H = self.value_control(getattr(self.pw, aux +"_H"), [-1E12,1E12],
                                               type = self.sd.def_cfg['param_fit']['type'][pos],
                                               qt_obj = self.pw.fit_param[i]['qt'])
                 self.sd.def_cfg['param_fit']['limits'][pos] = [new_data_L, new_data_H]
@@ -713,7 +728,7 @@ class BACK_END(object):
     def store_data(self):
         for i in self.pw.mirror.keys():
             for j in self.pw.mirror[i]['array']:
-                new_data = self.value_control(eval("self.pw."+j), self.sd.def_cfg[i]['limits'],
+                new_data = self.value_control(getattr(self.pw, j), self.sd.def_cfg[i]['limits'],
                                               type = self.sd.def_cfg[i]['type'],
                                               qt_obj = self.pw.mirror[i]['qt'])
                 def_data = self.sd.def_cfg[i]['value']
@@ -724,12 +739,12 @@ class BACK_END(object):
         # self.vi.config_measurement() 
 
         for i in self.pw.paths.keys():
-            new_data = eval("self.pw."+self.pw.paths[i]).text()
+            new_data = getattr(self.pw, self.pw.paths[i]).text()
             self.sd.def_cfg[i] = new_data
 
         for i in self.pw.others.keys():
             aux = self.pw.others[i]['array']
-            new_data = self.value_control(eval("self.pw." + aux), self.sd.def_cfg[i]['limits'],
+            new_data = self.value_control(getattr(self.pw, aux), self.sd.def_cfg[i]['limits'],
                                           type = self.sd.def_cfg[i]['type'],
                                           qt_obj = self.pw.others[i]['qt'])
             self.sd.def_cfg[i]['value'] = new_data
@@ -737,12 +752,16 @@ class BACK_END(object):
         # UPDATE
         for i in self.pw.mirror.keys():
             for j in self.pw.mirror[i]['array']:
+                widget = getattr(self.pw, j)
+                val = self.sd.def_cfg[i]['value']
                 if self.pw.mirror[i]['qt'] == 'QLineEdit':
-                    eval("self.pw."+j).setText(str(self.sd.def_cfg[i]['value']))
+                    widget.setText(str(val))
                 elif self.pw.mirror[i]['qt'] == 'QButtonGroup':
-                    eval("self.pw."+j).button(self.sd.def_cfg[i]['value']).setChecked(True)
+                    btn = widget.button(val)
+                    if btn is not None:
+                        btn.setChecked(True)
                 elif self.pw.mirror[i]['qt'] == 'QCheckBox':
-                    eval("self.pw."+j).setChecked(self.sd.def_cfg[i]['value'])
+                    widget.setChecked(val)
 
     def save_measure_to_DB(self):
         file_name = self.sd.def_cfg['io_h5file_name']

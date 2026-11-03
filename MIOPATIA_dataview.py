@@ -53,9 +53,9 @@ class DATA_VIEW(object):
             string_B = self.switch({0:'plot', 1:'plot', 2:'plot',
                                     3:'plot', 4:'semilogy', 5:'plot'},
                                     comboBox_trazaB)
-            eval("self.sd.axes['ax0']." + string_A + "(self.sd.freq, traza_A, color='red')")
+            getattr(self.sd.axes['ax0'], string_A)(self.sd.freq, traza_A, color='red')
             self.sd.axes['ax0'].tick_params(axis='y', colors='red')
-            eval("self.sd.axes['ax1']." + string_B + "(self.sd.freq, traza_B, color='blue')")
+            getattr(self.sd.axes['ax1'], string_B)(self.sd.freq, traza_B, color='blue')
             self.sd.axes['ax1'].grid(True)
             self.sd.axes['ax1'].tick_params(axis='y',colors='blue')
 
@@ -66,9 +66,9 @@ class DATA_VIEW(object):
             string_B = self.switch({0:'semilogx', 1:'semilogx', 2:'semilogx',
                                     3:'semilogx', 4:'loglog', 5:'semilogx'},
                                     comboBox_trazaB)
-            eval("self.sd.axes['ax0']." + string_A + "(self.sd.freq, traza_A, color='red')")
+            getattr(self.sd.axes['ax0'], string_A)(self.sd.freq, traza_A, color='red')
             self.sd.axes['ax0'].tick_params(axis='y',colors='red')
-            eval("self.sd.axes['ax1']." + string_B + "(self.sd.freq, traza_B, color='blue')")
+            getattr(self.sd.axes['ax1'], string_B)(self.sd.freq, traza_B, color='blue')
             self.sd.axes['ax1'].grid(True)
             self.sd.axes['ax1'].tick_params(axis='y', colors='blue')
 
@@ -110,9 +110,9 @@ class DATA_VIEW(object):
                                     3:'plot', 4:'semilogy', 5:'plot'},
                                     comboBox_trazaB)
 
-            eval("self.sd.axes['ax2']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax2'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax2'].tick_params(axis='y', colors='red')
-            eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
+            getattr(self.sd.axes['ax3'], string_B)(data['Freq'], traza_B, color='blue')
             self.sd.axes['ax3'].grid(True)
             self.sd.axes['ax3'].tick_params(axis='y',colors='blue')
 
@@ -123,9 +123,9 @@ class DATA_VIEW(object):
             string_B = self.switch({0:'semilogx', 1:'semilogx', 2:'semilogx',
                                     3:'semilogx', 4:'loglog', 5:'semilogx'},
                                     comboBox_trazaB)
-            eval("self.sd.axes['ax2']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax2'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax2'].tick_params(axis='y',colors='red')
-            eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
+            getattr(self.sd.axes['ax3'], string_B)(data['Freq'], traza_B, color='blue')
             self.sd.axes['ax3'].grid(True)
             self.sd.axes['ax3'].tick_params(axis='y', colors='blue')
 
@@ -305,7 +305,7 @@ class DATA_VIEW(object):
             #                         3:'plot', 4:'semilogy', 5:'plot'},
             #                         comboBox_trazaB)
 
-            eval("self.sd.axes['ax5']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax5'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax5'].tick_params(axis='y', colors='red')
             # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
             self.sd.axes['ax5'].grid(True)
@@ -319,11 +319,11 @@ class DATA_VIEW(object):
             #                         3:'semilogx', 4:'loglog', 5:'semilogx'},
             #                         comboBox_trazaB)
       
-            eval("self.sd.axes['ax5']." + string_A + "(data['Freq'], traza_A, color='green', label='vacio')")
+            getattr(self.sd.axes['ax5'], string_A)(data['Freq'], traza_A, color='green', label='vacio')
             self.sd.axes['ax5'].tick_params(axis='y',colors='red')
-            eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='blue', label='agua')")
-            eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='orange', label='zumo')")       
-            eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='purple', label='sal')")       
+            getattr(self.sd.axes['ax5'], string_A)(data1['Freq'], traza_B, color='blue', label='agua')
+            getattr(self.sd.axes['ax5'], string_A)(data2['Freq'], traza_C, color='orange', label='zumo')       
+            getattr(self.sd.axes['ax5'], string_A)(data3['Freq'], traza_D, color='purple', label='sal')
 
             self.sd.axes['ax5'].legend()     
             self.sd.axes['ax5'].grid(True)
@@ -380,7 +380,7 @@ class DATA_VIEW(object):
             #                         3:'plot', 4:'semilogy', 5:'plot'},
             #                         comboBox_trazaB)
 
-            eval("self.sd.axes['ax6']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax6'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax5'].tick_params(axis='y', colors='red')
             # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
             self.sd.axes['ax5'].grid(True)
@@ -394,11 +394,11 @@ class DATA_VIEW(object):
             #                         3:'semilogx', 4:'loglog', 5:'semilogx'},
             #                         comboBox_trazaB)
             
-            eval("self.sd.axes['ax5']." + string_A + "(data['Freq'], traza_A, color='black', label='0.0 %')")
-            eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
-            eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")
-            eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='orange', label='1.5 %')")       
-            eval("self.sd.axes['ax5']." + string_A + "(data4['Freq'], traza_E, color='purple', label='5.0 %')")       
+            getattr(self.sd.axes['ax5'], string_A)(data['Freq'], traza_A, color='black', label='0.0 %')
+            getattr(self.sd.axes['ax5'], string_A)(data1['Freq'], traza_B, color='green', label='0.2 %')
+            getattr(self.sd.axes['ax5'], string_A)(data2['Freq'], traza_C, color='blue', label='0.9 %')
+            getattr(self.sd.axes['ax5'], string_A)(data3['Freq'], traza_D, color='orange', label='1.5 %')       
+            getattr(self.sd.axes['ax5'], string_A)(data4['Freq'], traza_E, color='purple', label='5.0 %')
             self.sd.axes['ax5'].tick_params(axis='y',colors='red')
             self.sd.axes['ax5'].legend()     
             self.sd.axes['ax5'].grid(True)
@@ -466,7 +466,7 @@ class DATA_VIEW(object):
             #                         3:'plot', 4:'semilogy', 5:'plot'},
             #                         comboBox_trazaB)
 
-            eval("self.sd.axes['ax6']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax6'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax5'].tick_params(axis='y', colors='red')
             # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
             self.sd.axes['ax5'].grid(True)
@@ -481,7 +481,7 @@ class DATA_VIEW(object):
             #                         comboBox_trazaB)
             ejex=data[0]['Freq']
             for x, traza in enumerate(traza_A):             
-                eval("self.sd.axes['ax5']." + string_A + "(ejex, traza,  label='sujeto_'+ str(legends[x]))")
+                getattr(self.sd.axes['ax5'], string_A)(ejex, traza,  label='sujeto_'+ str(legends[x]))
                 # eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='orange', label='1.5 %')")       
@@ -559,7 +559,7 @@ class DATA_VIEW(object):
             #                         3:'plot', 4:'semilogy', 5:'plot'},
             #                         comboBox_trazaB)
 
-            eval("self.sd.axes['ax6']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax6'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax5'].tick_params(axis='y', colors='red')
             # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
             self.sd.axes['ax5'].grid(True)
@@ -587,7 +587,7 @@ class DATA_VIEW(object):
                 else:
                     color = 'red'             
                     instrumentos[x]='Agilent' 
-                eval("self.sd.axes['ax5']." + string_A + "(ejex, traza, color=color, label='sujeto_'+ str(int(legends[x]))+'_estado_'+str(estado[x]))")
+                getattr(self.sd.axes['ax5'], string_A)(ejex, traza, color=color, label='sujeto_'+ str(int(legends[x]))+'_estado_'+str(estado[x]))
                 # eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='orange', label='1.5 %')")       
@@ -667,7 +667,7 @@ class DATA_VIEW(object):
             #                         3:'plot', 4:'semilogy', 5:'plot'},
             #                         comboBox_trazaB)
 
-            eval("self.sd.axes['ax5']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax5'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax5'].tick_params(axis='y', colors='red')
             # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
             self.sd.axes['ax5'].grid(True)
@@ -687,12 +687,12 @@ class DATA_VIEW(object):
                 # elif estado[x] ==1:
                 #     color = 'seagreen'
                 # elif estado[x] == 2:
-                #     color = 'blue'
+                    # color = 'blue'
                 # elif estads[x] == 3:
                 #     color = 'purple'
                 else:
                     color = 'red'                 
-                eval("self.sd.axes['ax5']." + string_A + "(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_estado_'+str(estado[x]))")
+                getattr(self.sd.axes['ax5'], string_A)(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_estado_'+str(estado[x]))
                 # eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='orange', label='1.5 %')")       
@@ -777,7 +777,7 @@ class DATA_VIEW(object):
             #                         3:'plot', 4:'semilogy', 5:'plot'},
             #                         comboBox_trazaB)
 
-            eval("self.sd.axes['ax6']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax6'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax5'].tick_params(axis='y', colors='red')
             # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
             self.sd.axes['ax5'].grid(True)
@@ -802,7 +802,7 @@ class DATA_VIEW(object):
 
             for x, traza in enumerate(traza_A):
                 color = colormap((medida[x] - min_medida) / (max_medida - min_medida))
-                eval("self.sd.axes['ax5']." + string_A + "(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_estado_'+str(estado[x]))")
+                getattr(self.sd.axes['ax5'], string_A)(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_estado_'+str(estado[x]))
                 # eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='orange', label='1.5 %')")       
@@ -884,7 +884,7 @@ class DATA_VIEW(object):
             #                         3:'plot', 4:'semilogy', 5:'plot'},
             #                         comboBox_trazaB)
 
-            eval("self.sd.axes['ax6']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax6'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax5'].tick_params(axis='y', colors='red')
             # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
             self.sd.axes['ax5'].grid(True)
@@ -912,7 +912,7 @@ class DATA_VIEW(object):
                 else:
                     color = 'red'   
                     instrumento='Agilent'       
-                eval("self.sd.axes['ax5']." + string_A + "(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_instrumento_'+ instrumento)")
+                getattr(self.sd.axes['ax5'], string_A)(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_instrumento_'+ instrumento)
                 # eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='orange', label='1.5 %')")       
@@ -991,7 +991,7 @@ class DATA_VIEW(object):
             #                         3:'plot', 4:'semilogy', 5:'plot'},
             #                         comboBox_trazaB)
 
-            eval("self.sd.axes['ax6']." + string_A + "(data['Freq'], traza_A, color='red')")
+            getattr(self.sd.axes['ax6'], string_A)(data['Freq'], traza_A, color='red')
             self.sd.axes['ax5'].tick_params(axis='y', colors='red')
             # eval("self.sd.axes['ax3']." + string_B + "(data['Freq'], traza_B, color='blue')")
             self.sd.axes['ax5'].grid(True)
@@ -1027,7 +1027,7 @@ class DATA_VIEW(object):
                 else:
                     color = 'yellow' 
                     instrumento='congelado3'     
-                eval("self.sd.axes['ax5']." + string_A + "(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_estado_'+ instrumento)")
+                getattr(self.sd.axes['ax5'], string_A)(ejex, traza, color=color, label='sujeto_'+ str(int(sujeto[x]))+'_medida_'+str(medida[x])+'_estado_'+ instrumento)
                 # eval("self.sd.axes['ax5']." + string_A + "(data1['Freq'], traza_B, color='green', label='0.2 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data2['Freq'], traza_C, color='blue', label='0.9 %')")
                 # eval("self.sd.axes['ax5']." + string_A + "(data3['Freq'], traza_D, color='orange', label='1.5 %')")       
