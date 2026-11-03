@@ -5,6 +5,24 @@ from MIOPATIA_db import DB_management as DB
 from PySide6 import QtCore, QtWidgets,  QtGui
 
 
+class MedidaThread(QtCore.QThread):
+    """Ejecuta la medida fuera del hilo de la GUI. Solo emite señales."""
+    mensaje = QtCore.Signal(str)
+    terminada = QtCore.Signal(int)
+
+    def __init__(self, visa, parent=None):
+        super().__init__(parent)
+        self.vi = visa
+
+    def run(self):
+        try:
+            error = self.vi.measure(log=self.mensaje.emit)
+        except Exception as e:
+            self.mensaje.emit("Error en la medida: " + str(e))
+            error = 1
+        self.terminada.emit(error)
+
+
 class BACK_END(object):
     """ Code associatted to controls, buttons, text boxes etc.
     """
@@ -54,20 +72,22 @@ class BACK_END(object):
 
     def medir(self):
         self.pw.MEDIR.setEnabled(False)
-        self.pw.progressBar.setValue(10)        
-        #app.processEvents()
-        #self.dv.append_plus("MEDIR")
-        # self.vi.config_measurement()
-        error=self.vi.measure()
+        self.pw.CONEXION_1.setEnabled(False)
+        self.pw.progressBar.setValue(10)
+        self.hilo_medida = MedidaThread(self.vi)
+        self.hilo_medida.mensaje.connect(self.dv.append_plus)
+        self.hilo_medida.terminada.connect(self._medida_terminada)
+        self.hilo_medida.start()
+
+    def _medida_terminada(self, error):
         if error==0:
-            self.pw.progressBar.setValue(50)            
+            self.pw.progressBar.setValue(50)
             self.dv.show_measurement(self.pw.comboBox_trazaA.currentIndex(),
                                     self.pw.comboBox_trazaB.currentIndex())
             self.pw.canvas1.draw()
-            self.pw.progressBar.setValue(100)  
-            self.pw.MEDIR.setEnabled(True)   
-        else:      
-            self.pw.MEDIR.setEnabled(True)
+            self.pw.progressBar.setValue(100)
+        self.pw.MEDIR.setEnabled(True)
+        self.pw.CONEXION_1.setEnabled(True)
 
     def load_m(self):
         self.dv.append_plus("CARGA MEDIDA")

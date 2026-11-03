@@ -534,8 +534,10 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                     f"lecturaRES1(t3-t4)={t4-t3:.3f} lecturaRES2(t4-t5)={t5-t4:.3f} "
                     f"calculo(t5-t10)={t10-t5:.3f} final(t10-t11)={t11-t10:.3f} total={t11-t1:.3f}\n")
 
-    def measure(self):
+    def measure(self, log=None):
         error=0
+        if log is None:
+            log = self.dv.append_plus
     #     if (self.sd.def_cfg['post_procesado']['value']==0):
     #         if self.sd.def_cfg['modelo']['value']==0:
     #             shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
@@ -1052,7 +1054,7 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
         if True:  # plataforma 0: unico modelo soportado
             decimation=1
             if (self.sd.def_cfg['post_procesado']['value']==0):
-                self.dv.append_plus("Midiendo Z=R+iX")
+                log("Midiendo Z=R+iX")
                 self._volcar_estado('inicio')
                 t1=pc()
                 #ya no utilizo chip on sino el control[0] como start
@@ -1075,7 +1077,7 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                             # la FPGA no termina: la dejamos en reposo en vez de bloquear la interfaz
                             self.tx_txt('DIG:PIN LED'+str(0)+','+str(0))
                             self._volcar_estado('TIMEOUT')
-                            self.dv.append_plus("Timeout esperando fin de barrido (DIO7_P)")
+                            log("Timeout esperando fin de barrido (DIO7_P)")
                             return 1
                 except Exception as e:
                     print(e)
@@ -1278,16 +1280,16 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                 print ('R_data =', self.sd.R_data[smallest_difference_index])        
                 print ('X_data=', self.sd.X_data[smallest_difference_index])
                 print ('resistencia shunt=auto')
-                self.dv.append_plus("He finalizado de medir")
-                self.dv.append_plus("tiempo transcurrido:" + str(total))  
-                self.dv.append_plus("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
-                self.dv.append_plus("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
-                self.dv.append_plus("resistencia shunt = auto")       
+                log("He finalizado de medir")
+                log("tiempo transcurrido:" + str(total))  
+                log("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
+                log("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
+                log("resistencia shunt = auto")       
             
 
             elif (self.sd.def_cfg['post_procesado']['value']==1):
             
-                self.dv.append_plus("Midiendo Z=R+iX")
+                log("Midiendo Z=R+iX")
                 self._volcar_estado('inicio')
                 t1=pc()
                 #ya no utilizo chip on sino el control[0] como start
@@ -1310,7 +1312,7 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                             # la FPGA no termina: la dejamos en reposo en vez de bloquear la interfaz
                             self.tx_txt('DIG:PIN LED'+str(0)+','+str(0))
                             self._volcar_estado('TIMEOUT')
-                            self.dv.append_plus("Timeout esperando fin de barrido (DIO7_P)")
+                            log("Timeout esperando fin de barrido (DIO7_P)")
                             return 1
                 except Exception as e:
                     print(e)
@@ -1515,11 +1517,11 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                 print ('R_data =', self.sd.R_data[smallest_difference_index])        
                 print ('X_data=', self.sd.X_data[smallest_difference_index])
                 print ('resistencia shunt=auto')
-                self.dv.append_plus("He finalizado de medir")
-                self.dv.append_plus("tiempo transcurrido:" + str(total))  
-                self.dv.append_plus("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
-                self.dv.append_plus("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
-                self.dv.append_plus("resistencia shunt =auto")       
+                log("He finalizado de medir")
+                log("tiempo transcurrido:" + str(total))  
+                log("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
+                log("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
+                log("resistencia shunt =auto")
           
         return error
 
