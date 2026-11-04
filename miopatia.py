@@ -76,15 +76,13 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
         self.comboBox_fit_alg.addItems(self.sd.def_cfg['combox_fit'])
         self.bg_xaxis      = Rbutton_group([self.radioButton_lineal, self.radioButton_log])
         self.bg_xaxis_2    = Rbutton_group([self.radioButton_lineal_2, self.radioButton_log_2])
-        self.bg_DC         = Rbutton_group([self.radioButton_DC_ON, self.radioButton_DC_OFF])
         self.bg_DC_2       = Rbutton_group([self.radioButton_DC_ON_2, self.radioButton_DC_OFF_2])
         self.post_pro      = Rbutton_group([self.radioButton_Corre, self.radioButton_F_Corre ])   
         self.post_pro_2    = Rbutton_group([self.radioButton_Corre_2, self.radioButton_F_Corre_2 ])  
         self.tipo_analisis = Rbutton_group([self.radioButton_tipoanalisis_3,self.radioButton_tipoanalisis_4 ])  
         self.sel_smooth    = Rbutton_group([self.SMOOTH_ON,self.SMOOTH_OFF ])  
         self.sel_smooth_2  = Rbutton_group([self.SMOOTH_ON_2,self.SMOOTH_OFF_2 ])     
-        self.sel_modelo    = Rbutton_group([self.MODELO_1,self.MODELO_2,self.MODELO_3,self.MODELO_4])          
-        self.sel_RANGO     = Rbutton_group([self.RANGO_OBJETO,self.RANGO_MEDIDA ])                
+        self.sel_RANGO     = Rbutton_group([self.RANGO_OBJETO,self.RANGO_MEDIDA ])
         
         self.bg_config_cal = Rbutton_group([self.radioButton_config_cal_1, self.radioButton_config_cal_2])
         self.bg_pto_cal    = Rbutton_group([self.radioButton_pto_cal_medidor, self.radioButton_pto_cal_usuario])
@@ -101,8 +99,8 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
                         'k_factor':    {'array':['k_factor','k_factor_2'],  'qt':'QLineEdit'},                         
                         'vosc':        {'array':['vosc',        'vosc_2'],   'qt':'QLineEdit'},
                         'tipo_barrido':{'array':['bg_xaxis', 'bg_xaxis_2'],  'qt':'QButtonGroup'},
-                        'DC_bias':     {'array':['bg_DC',    'bg_DC_2'],     'qt':'QButtonGroup'},
-                        'nivel_DC':    {'array':['nivel_DC', 'nivel_DC_2'],  'qt':'QLineEdit'},
+                        'DC_bias':     {'array':['bg_DC_2'],          'qt':'QButtonGroup'},
+                        'nivel_DC':    {'array':['nivel_DC_2'],       'qt':'QLineEdit'},
                         'post_procesado':{'array':['post_pro', 'post_pro_2'],  'qt':'QButtonGroup'}}
         # Paths
         self.paths = {'load_mfile_name':'load_path',
@@ -118,7 +116,6 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
                        'c_load':{'array':'c_load', 'qt':'QLineEdit'},
                        'g_load':{'array':'g_load', 'qt':'QLineEdit'},
                        'pto_cal':{'array':'bg_pto_cal', 'qt':'QButtonGroup'},
-                       'modelo':{'array':'sel_modelo', 'qt':'QButtonGroup'},  
                        'RANGO':{'array':'sel_RANGO', 'qt':'QButtonGroup'},                    
                     #    'smooth':{'array':'sel_filtrado', 'qt':'QButtonGroup'},
                     #    'k_factor':{'array':'k_factor',  'qt':'QLineEdit'},                       
@@ -192,7 +189,8 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
                     {'wdg':self.LOAD_fit_data_2,   'func':self.be.load_h5_fit},
                     {'wdg':self.VER_ANALISIS,      'func':self.be.load_h5_analisis_selector},  
                     {'wdg':self.CONEXION_1,        'func':self.vi.conectar},    
-                    {'wdg':self.GUARDAR_EXCEL,      'func':self.be.load_h5_to_excel},                                                            
+                    {'wdg':self.CONFIGURAR,        'func':self.be.configurar},
+                    {'wdg':self.GUARDAR_EXCEL,      'func':self.be.load_h5_to_excel},
                     {'wdg':self.SAVE_fit,          'func':self.be.save_fit},
                     {'wdg':self.SAVE_DB,           'func':self.be.save_measure_to_DB}]
 
@@ -341,7 +339,10 @@ class MyApp(FluentWindow):
         self.panel = LogicPanel(data)
         self.config_panel = ConfigPanel(data)
 
-        self.addSubInterface(self.panel, FluentIcon.HOME, "Principal")
+        self.addSubInterface(self.panel.datos, FluentIcon.APPLICATION, "Medida")
+        self.addSubInterface(self.panel.calibracion, FluentIcon.SYNC, "Calibración")
+        self.addSubInterface(self.panel.analisis, FluentIcon.DOCUMENT, "Análisis")
+        self.addSubInterface(self.panel.fit, FluentIcon.EDIT, "Ajuste Gompertz")
         self.addSubInterface(self.config_panel, FluentIcon.SETTING, "Configuración", position=NavigationItemPosition.BOTTOM)
         self.showFullScreen()
 

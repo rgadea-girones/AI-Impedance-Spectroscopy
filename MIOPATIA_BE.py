@@ -77,6 +77,15 @@ class BACK_END(object):
             self.dv.append_plus("NO HAY DATOS QUE MOSTRAR")
         self.pw.canvas1.draw()
 
+    def configurar(self):
+        self.store_data()
+        self.dv.append_plus("Configurando medida...")
+        try:
+            self.vi.config_measurement()
+            self.dv.append_plus("Configuración completada")
+        except Exception as e:
+            self.dv.append_plus("Error al configurar: " + str(e))
+
     def medir(self):
         self.pw.MEDIR.setEnabled(False)
         self.pw.CONEXION_1.setEnabled(False)
