@@ -103,8 +103,8 @@
         ],
         "type": "float"
     },
-    "post_procesado": {
-        "value": 1,
+    "modo_barrido": {
+        "value": 0,
         "limits": [
             0,
             1

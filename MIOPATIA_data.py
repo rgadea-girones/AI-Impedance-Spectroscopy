@@ -41,8 +41,11 @@ class DATA(object):
                             'RANGO':{'value':0, 'limits':[0,1],'type':'int'},                                                                                    
                             'k_factor':{'value':9, 'limits':[1,9],'type':'int'},                            
                             'nivel_DC':{'value':0.016, 'limits':[-40.0,40.0],'type':'float'},
+                            'filtro_senales':{'value':1, 'limits':[0,1],'type':'int'},
+                            'modo_shunt':{'value':0, 'limits':[0,1],'type':'int'},
+                            'shunt_fijo_idx':{'value':4, 'limits':[0,7],'type':'int'},
                             #'avg':{'value':0, 'limits':[0,1],'type':'int'},
-                            'post_procesado':{'value':1, 'limits':[0,1],'type':'int'},
+                            'modo_barrido':{'value':0, 'limits':[0,1],'type':'int'},
                             'pto_tip':{'value':0, 'limits':[0,3],'type':'int'},
                             'ultimo_pollo':{'value':0, 'limits':[0,99],'type':'int'},
                             'ultima_medida':{'value':0, 'limits':[0,9],'type':'int'},
@@ -195,5 +198,13 @@ class DATA(object):
         try:
             with open(self.filename,'r') as infile:
                 self.def_cfg = json.load(infile)
+            if 'modo_barrido' not in self.def_cfg:
+                self.def_cfg['modo_barrido'] = {'value': 0, 'limits': [0, 1], 'type': 'int'}
+            if 'filtro_senales' not in self.def_cfg:
+                self.def_cfg['filtro_senales'] = {'value': 1, 'limits': [0, 1], 'type': 'int'}
+            if 'modo_shunt' not in self.def_cfg:
+                self.def_cfg['modo_shunt'] = {'value': 0, 'limits': [0, 1], 'type': 'int'}
+            if 'shunt_fijo_idx' not in self.def_cfg:
+                self.def_cfg['shunt_fijo_idx'] = {'value': 4, 'limits': [0, 7], 'type': 'int'}
         except IOError as e:
             print(e)

@@ -96,7 +96,8 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                  self._socket.settimeout(timeout)
 
             self._socket.connect((host, port))
-            bitstream="/root/nuevas_imagenes_fpga/idea3.bin"
+            #bitstream="/root/nuevas_imagenes_fpga/idea3.bin"
+            bitstream="/root/nuevas_imagenes_fpga/ciaico_2p_version2.bin"
             veamos = self._get_ssh()
             veamos.cwd.chdir("/opt/redpitaya/bin")
             comando="./fpgautil -b " + bitstream
@@ -533,6 +534,29 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
             f.write(f"{datetime.now().isoformat()} | tramos | barrido(t1-t2)={t2-t1:.3f} "
                     f"lecturaRES1(t3-t4)={t4-t3:.3f} lecturaRES2(t4-t5)={t5-t4:.3f} "
                     f"calculo(t5-t10)={t10-t5:.3f} final(t10-t11)={t11-t10:.3f} total={t11-t1:.3f}\n")
+
+    def _resistencia_shunt_fija(self):
+        """Resistencia (ohm) de la fila elegida en la caja de shunt fijo; misma tabla que la GUI."""
+        valores = [90.9, 100.0, 285.71, 333.33, 500.0, 666.67, 1000.0, 2000.0]
+        idx = int(self.sd.def_cfg.get('shunt_fijo_idx', {}).get('value', 4))
+        return valores[idx]
+
+    def _compensar_autoshunt(self, my_array, muestras):
+        """Z por tramos con la compensacion de autoshunt: la FPGA cambia de resistencia en las muestras 20, 70, 120 y 170."""
+        idea1=(my_array[20]*self.shunt[4])/16  -(my_array[19]*self.shunt[5])/16
+        idea2=(my_array[70]*self.shunt[3])/16  -(my_array[69]*self.shunt[4])/16
+        idea3=(my_array[120]*self.shunt[2])/16  -(my_array[119]*self.shunt[3])/16
+        idea4=(my_array[170]*self.shunt[1])/16  -(my_array[169]*self.shunt[2])/16
+        return np.array([(val*self.shunt[5])/16 if i < 20
+                         else (val*self.shunt[4])/16 -idea1 if 20 <= i < 70
+                         else (val*self.shunt[3])/16 -idea2-idea1 if 70 <= i < 120
+                         else (val*self.shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170
+                         else (val*self.shunt[1])/16 -idea1-idea2-idea3-idea4 if 170 <= i < 270
+                         else (val*self.shunt[2])/16 -idea1-idea2-idea3 if 270 <= i < 320
+                         else (val*self.shunt[3])/16 -idea1-idea2 if 320 <= i < 370
+                         else (val*self.shunt[4])/16 -idea1 if 370 <= i < 420
+                         else (val*self.shunt[5])/16
+                         for i, val in enumerate(my_array[0:muestras])])
 
     def measure(self, log=None):
         error=0
@@ -1053,7 +1077,7 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
         # signal.alarm(5)
         if True:  # plataforma 0: unico modelo soportado
             decimation=1
-            if (self.sd.def_cfg['post_procesado']['value']==0):
+            if (self.sd.def_cfg['modo_barrido']['value']==1):
                 log("Midiendo Z=R+iX")
                 self._volcar_estado('inicio')
                 t1=pc()
@@ -1129,65 +1153,11 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
 
                 #Enable output
                 iteracion=1
-                # ZA=interp1d(frecuencias[0:muestras],my_array[0:muestras])
-                # ZB=interp1d(frecuencias,my_array[256: 256+225])
-                # Z=(ZA(frecuencias))*shunt[R_shunt_k]/32
-                ## solucion con shunt fija
-                #Z_sin_comprimir=(my_array[0:muestras]*shunt[R_shunt_k])/16
-
-                    # idea1=0
-                # idea2=0
-                # idea3=0
-                # idea4=0
-                # Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
-                #                 else (val*shunt[4])/16  if 20 <= i < 70 
-                #                 else (val*shunt[3])/16  if 70 <= i < 120 
-                #                 else (val*shunt[2])/16  if 120 <= i < 170 
-                #                 else (val*shunt[1])/16  if 170 <= i < 270
-                #                 else (val*shunt[2])/16  if 270 <= i < 320
-                #                 else (val*shunt[3])/16  if 320 <= i < 370
-                #                 else (val*shunt[4])/16  if 370 <= i < 420
-                #                 else (val*shunt[5])/16  
-                #                for i, val in enumerate(my_array[0:muestras])])
-                idea1=(my_array[20]*self.shunt[4])/16  -(my_array[19]*self.shunt[5])/16
-                idea2=(my_array[70]*self.shunt[3])/16  -(my_array[69]*self.shunt[4])/16
-                idea3=(my_array[120]*self.shunt[2])/16  -(my_array[119]*self.shunt[3])/16
-                idea4=(my_array[170]*self.shunt[1])/16  -(my_array[169]*self.shunt[2])/16
-                Z_sin_comprimir = np.array([(val*self.shunt[5])/16 if i < 20 
-                                    else (val*self.shunt[4])/16 -idea1 if 20 <= i < 70 
-                                    else (val*self.shunt[3])/16 -idea2-idea1 if 70 <= i < 120 
-                                    else (val*self.shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170 
-                                    else (val*self.shunt[1])/16 -idea1-idea2-idea3-idea4 if 170 <= i < 270
-                                    else (val*self.shunt[2])/16 -idea1-idea2-idea3 if 270 <= i < 320
-                                    else (val*self.shunt[3])/16 -idea1-idea2 if 320 <= i < 370
-                                    else (val*self.shunt[4])/16 -idea1 if 370 <= i < 420
-                                    else (val*self.shunt[5])/16 
-                                    for i, val in enumerate(my_array[0:muestras])])            
-                
-                from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
-
-                # Identificar los índices de los escalones
-                step_indices = [20, 70, 120, 170]
-
-                # Identificar los valores en los índices de los escalones
-                step_values = [Z_sin_comprimir[i] for i in step_indices]
-
-                # Crear una función de interpolación
-                # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
-                # Crear una función de interpolación spline cúbica
-                spline_func = PchipInterpolator(step_indices, step_values)            
-
-                # Aplicar la función de interpolación a todo el array
-                # Z_sin_comprimir2 = interp_func
-                Z_sin_comprimir2 = spline_func(np.arange(muestras))
-                from scipy.signal import savgol_filter
-
-                # Definir el tamaño de la ventana y el grado del polinomio
-                window_size = 11
-                poly_degree = 3
-
-                # Aplicar el filtro Savitzky-Golay
-                Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
+                modo_shunt=int(self.sd.def_cfg.get('modo_shunt', {}).get('value', 0))
+                if modo_shunt==1:
+                    Z_sin_comprimir=(my_array[0:muestras]*self._resistencia_shunt_fija())/16
+                else:
+                    Z_sin_comprimir=self._compensar_autoshunt(my_array, muestras)
 
                 # en principio el calculo en verilog es suponiendo una resistencia de 1k. Con esto lo ajusto a la resistencia de shunt exacta
 
@@ -1279,15 +1249,16 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                 smallest_difference_index = absolute_val_array.argmin()
                 print ('R_data =', self.sd.R_data[smallest_difference_index])        
                 print ('X_data=', self.sd.X_data[smallest_difference_index])
-                print ('resistencia shunt=auto')
+                etiqueta_shunt='auto' if int(self.sd.def_cfg.get('modo_shunt', {}).get('value', 0))==0 else f"{self._resistencia_shunt_fija()} ohm"
+                print (f'resistencia shunt={etiqueta_shunt}')
                 log("He finalizado de medir")
                 log("tiempo transcurrido:" + str(total))  
                 log("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
                 log("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
-                log("resistencia shunt = auto")       
+                log(f"resistencia shunt = {etiqueta_shunt}")
             
 
-            elif (self.sd.def_cfg['post_procesado']['value']==1):
+            elif (self.sd.def_cfg['modo_barrido']['value']==0):
             
                 log("Midiendo Z=R+iX")
                 self._volcar_estado('inicio')
@@ -1365,67 +1336,11 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
 
                 #Enable output
                 iteracion=1
-                # ZA=interp1d(frecuencias[0:muestras],my_array[0:muestras])
-                # ZB=interp1d(frecuencias,my_array[256: 256+225])
-                # Z=(ZA(frecuencias))*shunt[R_shunt_k]/32
-                ## solucion con shunt fija
-                #Z_sin_comprimir=(my_array[0:muestras]*shunt[R_shunt_k])/16
-
-
-
-                # idea1=0
-                # idea2=0
-                # idea3=0
-                # idea4=0
-                # Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
-                #                 else (val*shunt[4])/16  if 20 <= i < 70 
-                #                 else (val*shunt[3])/16  if 70 <= i < 120 
-                #                 else (val*shunt[2])/16  if 120 <= i < 170 
-                #                 else (val*shunt[1])/16  if 170 <= i < 270
-                #                 else (val*shunt[2])/16  if 270 <= i < 320
-                #                 else (val*shunt[3])/16  if 320 <= i < 370
-                #                 else (val*shunt[4])/16  if 370 <= i < 420
-                #                 else (val*shunt[5])/16  
-                #                for i, val in enumerate(my_array[0:muestras])])
-                idea1=(my_array[20]*self.shunt[4])/16  -(my_array[19]*self.shunt[5])/16
-                idea2=(my_array[70]*self.shunt[3])/16  -(my_array[69]*self.shunt[4])/16
-                idea3=(my_array[120]*self.shunt[2])/16  -(my_array[119]*self.shunt[3])/16
-                idea4=(my_array[170]*self.shunt[1])/16  -(my_array[169]*self.shunt[2])/16
-                Z_sin_comprimir = np.array([(val*self.shunt[5])/16 if i < 20 
-                                    else (val*self.shunt[4])/16 -idea1 if 20 <= i < 70 
-                                    else (val*self.shunt[3])/16 -idea2-idea1 if 70 <= i < 120 
-                                    else (val*self.shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170 
-                                    else (val*self.shunt[1])/16 -idea1-idea2-idea3-idea4 if 170 <= i < 270
-                                    else (val*self.shunt[2])/16 -idea1-idea2-idea3 if 270 <= i < 320
-                                    else (val*self.shunt[3])/16 -idea1-idea2 if 320 <= i < 370
-                                    else (val*self.shunt[4])/16 -idea1 if 370 <= i < 420
-                                    else (val*self.shunt[5])/16 
-                                    for i, val in enumerate(my_array[0:muestras])])            
-                
-                from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
-
-                # Identificar los índices de los escalones
-                step_indices = [20, 70, 120, 170]
-
-                # Identificar los valores en los índices de los escalones
-                step_values = [Z_sin_comprimir[i] for i in step_indices]
-
-                # Crear una función de interpolación
-                # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
-                # Crear una función de interpolación spline cúbica
-                spline_func = PchipInterpolator(step_indices, step_values)            
-
-                # Aplicar la función de interpolación a todo el array
-                # Z_sin_comprimir2 = interp_func
-                Z_sin_comprimir2 = spline_func(np.arange(muestras))
-                from scipy.signal import savgol_filter
-
-                # Definir el tamaño de la ventana y el grado del polinomio
-                window_size = 11
-                poly_degree = 3
-
-                # Aplicar el filtro Savitzky-Golay
-                Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
+                modo_shunt=int(self.sd.def_cfg.get('modo_shunt', {}).get('value', 0))
+                if modo_shunt==1:
+                    Z_sin_comprimir=(my_array[0:muestras]*self._resistencia_shunt_fija())/16
+                else:
+                    Z_sin_comprimir=self._compensar_autoshunt(my_array, muestras)
 
                 # en principio el calculo en verilog es suponiendo una resistencia de 1k. Con esto lo ajusto a la resistencia de shunt exacta
 
@@ -1516,12 +1431,13 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                 smallest_difference_index = absolute_val_array.argmin()
                 print ('R_data =', self.sd.R_data[smallest_difference_index])        
                 print ('X_data=', self.sd.X_data[smallest_difference_index])
-                print ('resistencia shunt=auto')
+                etiqueta_shunt='auto' if int(self.sd.def_cfg.get('modo_shunt', {}).get('value', 0))==0 else f"{self._resistencia_shunt_fija()} ohm"
+                print (f'resistencia shunt={etiqueta_shunt}')
                 log("He finalizado de medir")
                 log("tiempo transcurrido:" + str(total))  
                 log("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
                 log("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
-                log("resistencia shunt =auto")
+                log(f"resistencia shunt = {etiqueta_shunt}")
           
         return error
 

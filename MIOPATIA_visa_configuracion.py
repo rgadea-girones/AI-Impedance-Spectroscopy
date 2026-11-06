@@ -6,8 +6,35 @@ from time import perf_counter as pc
 class ConfiguracionMixin(object):
     """Configuración de la FPGA y del barrido antes de cada medida (modelo 0)."""
 
+    def _configurar_shunt_2p(self):
+        """Aplica la configuración de shunt para el modelo de 2 puntas (2P)."""
+        # LED3 (autoshunt/shunt fijo) se fija en config_measurement; aquí solo se configuran los pines DIO
+        modo = int(self.sd.def_cfg.get('modo_shunt', {}).get('value', 0))
+        if modo == 1:
+            self.tx_txt('DIG:PIN:DIR OUT,DIO0_N')
+            self.tx_txt('DIG:PIN:DIR OUT,DIO1_N')
+            self.tx_txt('DIG:PIN:DIR OUT,DIO2_N')
+            self.tx_txt('DIG:PIN:DIR OUT,DIO3_N')
+            tab_pines = {
+                0: (1, 0, 0, 1),  # 90.9 Ω (100 || 1k)
+                1: (1, 1, 0, 1),  # 100 Ω
+                2: (0, 0, 1, 0),  # 285.7 Ω (500 || 1k || 2k)
+                3: (0, 0, 0, 0),  # 333.3 Ω (500 || 1k)
+                4: (0, 1, 0, 0),  # 500 Ω
+                5: (1, 0, 1, 0),  # 666.7 Ω (1k || 2k)
+                6: (1, 0, 0, 0),  # 1000 Ω
+                7: (1, 1, 1, 0),  # 2000 Ω
+            }
+            idx = int(self.sd.def_cfg.get('shunt_fijo_idx', {}).get('value', 4))
+            pines = tab_pines.get(idx, (0, 1, 0, 0))
+            self.tx_txt('DIG:PIN DIO0_N,' + str(pines[0]))
+            self.tx_txt('DIG:PIN DIO1_N,' + str(pines[1]))
+            self.tx_txt('DIG:PIN DIO2_N,' + str(pines[2]))
+            self.tx_txt('DIG:PIN DIO3_N,' + str(pines[3]))
+
     def config_measurement(self):
-        if (self.sd.def_cfg['post_procesado']['value']==0):
+        # modo_barrido: 0 -> Single sweep (LED1=0), 1 -> Up-down sweep (LED1=1)
+        if (self.sd.def_cfg['modo_barrido']['value']==1):
             # configuramos la FPGA con diseño verilog propio de DSD
             # adaptado para el autoshunt
             self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
@@ -35,8 +62,10 @@ class ConfiguracionMixin(object):
             try:
                 self.tx_txt('DIG:PIN LED'+str(1)+','+str(1))  # 1->sweep on                          0->sweep off
                 self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # 1->debugueo memoria de incrementos   0->no debugueo
-                self.tx_txt('DIG:PIN LED'+str(3)+','+str(1))  # 1->numero de frecuencias variable on 0-> numero fij a 225
-                self.tx_txt('DIG:PIN LED'+str(4)+','+str(0))  # 1-> filtros on                       0-> filtros bypaseados
+                shunt_fijo_val = 1 if int(self.sd.def_cfg.get('modo_shunt', {}).get('value', 0)) == 1 else 0
+                self.tx_txt('DIG:PIN LED3,' + str(shunt_fijo_val))  # 0-> autoshunt (defecto), 1-> shunt fijo
+                filtro_val = int(self.sd.def_cfg.get('filtro_senales', {}).get('value', 1))
+                self.tx_txt('DIG:PIN LED4,' + str(filtro_val))  # 1-> filtros on, 0-> filtros bypaseados
 
                 self.tx_txt('SOUR1:FUNC ARBITRARY')
             except BrokenPipeError:
@@ -142,6 +171,8 @@ class ConfiguracionMixin(object):
                 #activo a nivel bajo: desactivo
                 self.tx_txt('DIG:PIN DIO7_N,1')
 
+                self._configurar_shunt_2p()
+
                 # #elegimos el cable amarillo , conector j3
                 # #activo a nivel bajo: desactivo
                 # self.tx_txt('DIG:PIN DIO4_N,1')
@@ -210,9 +241,8 @@ class ConfiguracionMixin(object):
                 self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
 
                 #self.tx_txt('DIG:PIN LED'+str(2)+','+str(procedimiento_fase))  # desbloqueo finalizacion state1, tambien genera inicio
-                self.tx_txt('DIG:PIN LED'+str(3)+','+str(1))  #activacion del led3 absolutamente necesario para que el numero de ciclos sea configurable y el numero de frecuencias y los umbrales
 
-        elif (self.sd.def_cfg['post_procesado']['value']==1):
+        elif (self.sd.def_cfg['modo_barrido']['value']==0):
             # configuramos la FPGA con diseño verilog propio de DSD
             # adaptado para el autoshunt
             self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
@@ -241,8 +271,10 @@ class ConfiguracionMixin(object):
             try:
                 self.tx_txt('DIG:PIN LED'+str(1)+','+str(0))  # 1->sweep on                          0->sweep off
                 self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # 1->debugueo memoria de incrementos   0->no debugueo
-                self.tx_txt('DIG:PIN LED'+str(3)+','+str(1))  # 1->numero de frecuencias variable on 0-> numero fij a 225
-                self.tx_txt('DIG:PIN LED'+str(4)+','+str(1))  # 1-> filtros on                       0-> filtros bypaseados
+                shunt_fijo_val = 1 if int(self.sd.def_cfg.get('modo_shunt', {}).get('value', 0)) == 1 else 0
+                self.tx_txt('DIG:PIN LED3,' + str(shunt_fijo_val))  # 0-> autoshunt (defecto), 1-> shunt fijo
+                filtro_val = int(self.sd.def_cfg.get('filtro_senales', {}).get('value', 1))
+                self.tx_txt('DIG:PIN LED4,' + str(filtro_val))  # 1-> filtros on, 0-> filtros bypaseados
 
                 self.tx_txt('SOUR1:FUNC ARBITRARY')
             except BrokenPipeError:
@@ -324,6 +356,8 @@ class ConfiguracionMixin(object):
                 self.tx_txt('DIG:PIN DIO6_N,0')
                 #activo a nivel bajo: desactivo
                 self.tx_txt('DIG:PIN DIO7_N,1')
+
+                self._configurar_shunt_2p()
 
                 self.frecuencias=self.frecuencias[0:muestras]
                 muestras_ampliadas=muestras+1

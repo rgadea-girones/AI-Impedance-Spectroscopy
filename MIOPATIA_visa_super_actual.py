@@ -1,0 +1,1531 @@
+# import pyvisa as visa
+import socket
+from datetime import datetime
+import numpy as np
+import base64
+import signal
+import redpitaya_scpi as scpi
+from time import perf_counter as pc
+from time import sleep
+from scipy.fft import fft, fftfreq, fftshift
+from scipy.interpolate import interp1d, make_interp_spline
+import fit_library as fit
+import pandas as pd
+from plumbum import SshMachine
+from plumbum.machines.paramiko_machine import ParamikoMachine
+from MIOPATIA_visa_configuracion import ConfiguracionMixin
+from MIOPATIA_visa_calibracion import CalibracionMixin
+
+
+
+class VISA(ConfiguracionMixin, CalibracionMixin):
+    delimiter = '\r\n'
+    def __init__(self, shared_data, dataview, timeout=None, port=5000):
+        self.sd = shared_data
+        #self.tb = txt_browser
+        #self.fit_browser = fit_browser
+        self.dv = dataview
+        self.muestras=None
+        self.shunt=None
+
+        # Visa initializationg
+        # self.rm = visa.ResourceManager()
+        # self.lor = self.rm.list_resources()
+        # ("Lista de dispositivos encontrados:") 
+        # self.dv.append_plus(str(self.lor)) 
+
+        """Initialize object and open IP connection.
+        Host IP should be a string in parentheses, like '192.168.1.100'.
+        """
+        host=self.sd.def_cfg['direccion_redpitaya']
+        self.host    = host
+        self.port    = port
+        self.timeout = timeout
+        self._ssh    = None  # cache de sesión SSH para lecturas rápidas
+
+        try:
+             self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+             if timeout is not None:
+                 self._socket.settimeout(timeout)
+
+             self._socket.connect((self.host, port))
+             print('conexion establecida con redpitaya')
+
+        except socket.error as e:
+            self.dv.append_plus("no se puede conectar a la redpitaya ="+ str(host))     
+            # print('SCPI >> connect({:s}:{:d}) failed: {:s}'.format(host, port, e))
+    def conectar(self):
+        # self.sd = shared_data
+        # #self.tb = txt_browser
+        # #self.fit_browser = fit_browser
+        # self.dv = dataview
+
+        # Visa initializationg
+        # self.rm = visa.ResourceManager()
+        # self.lor = self.rm.list_resources()
+        # ("Lista de dispositivos encontrados:") 
+        # self.dv.append_plus(str(self.lor)) 
+
+        """Initialize object and open IP connection.
+        Host IP should be a string in parentheses, like '192.168.1.100'.
+        """
+        host=self.sd.def_cfg['direccion_redpitaya']
+        self.host    = host
+        port    = self.port
+        timeout= self.timeout
+
+        # Cierra el socket abierto en __init__: si no, queda una conexion SCPI huerfana
+        if self._socket is not None:
+            try:
+                self._socket.close()
+            except Exception:
+                pass
+            self._socket = None
+
+        veamos = self._get_ssh()
+        veamos.cwd.chdir("/usr/bin")
+        comando="./systemctl start redpitaya_scpi &" 
+        r_back = veamos[comando]
+        r_back()
+
+        try:
+            self._socket = None
+            self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)            
+            if timeout is not None:
+                 self._socket.settimeout(timeout)
+
+            self._socket.connect((host, port))
+            bitstream="/root/nuevas_imagenes_fpga/idea3.bin"
+            veamos = self._get_ssh()
+            veamos.cwd.chdir("/opt/redpitaya/bin")
+            comando="./fpgautil -b " + bitstream
+            r_back = veamos[comando]
+            # Diagnostico: salida de fpgautil y estado del gestor de FPGA tras la carga
+            salida_fpgautil = r_back()
+            estado_fpga = veamos["cat"]("/sys/class/fpga_manager/fpga0/state").strip()
+            print("fpgautil ->", salida_fpgautil)
+            print("fpga_manager state ->", estado_fpga)
+            with open("diagnostico_fpga.txt", "a", encoding="utf-8") as f:
+                f.write(f"{datetime.now().isoformat()} | fpgautil: {salida_fpgautil!r} | estado: {estado_fpga!r}\n")
+            print('conexion establecida con redpitaya')
+            self.dv.append_plus("CONECTADO a redpitaya ="+ str(host))  
+            self.tx_txt('DIG:PIN LED0,0')
+            self.config_measurement()
+
+        except socket.error as e:
+            self.dv.append_plus("no se puede conectar a la redpitaya ="+ str(host))     
+            # print('SCPI >> connect({:s}:{:d}) failed: {:s}'.format(host, port, e))
+    def __del__(self):
+        if self._socket is not None:
+            self._socket.close()
+        self._socket = None
+        # Cerrar sesión SSH cacheada si existe
+        if self._ssh is not None:
+            try:
+                self._ssh.close()
+            except Exception:
+                pass
+            self._ssh = None
+
+    def close(self):
+        """Close IP connection."""
+        self.__del__()
+
+    def close_ssh(self):
+        """Cerrar explícitamente la sesión SSH cacheada."""
+        if self._ssh is not None:
+            try:
+                self._ssh.close()
+            except Exception:
+                pass
+            self._ssh = None
+
+    def rx_txt(self, chunksize = 4096):
+        """Receive text string and return it after removing the delimiter."""
+        msg = ''
+        while 1:
+            chunk = self._socket.recv(chunksize + len(self.delimiter)).decode('utf-8') # Receive chunk size of 2^n preferably
+            msg += chunk
+            if (len(chunk) and chunk[-2:] == self.delimiter):
+                break
+        return msg[:-2]
+
+    def rx_arb(self):
+        numOfBytes = 0
+        """ Recieve binary data from scpi server"""
+        str=''
+        while (len(str) != 1):
+            str = (self._socket.recv(1))
+        if not (str == '#'):
+            return False
+        str=''
+        while (len(str) != 1):
+            str = (self._socket.recv(1))
+        numOfNumBytes = int(str)
+        if not (numOfNumBytes > 0):
+            return False
+        str=''
+        while (len(str) != numOfNumBytes):
+            str += (self._socket.recv(1))
+        numOfBytes = int(str)
+        str=''
+        while (len(str) != numOfBytes):
+            str += (self._socket.recv(1))
+        return str
+
+    def tx_txt(self, msg):
+        """Send text string ending and append delimiter."""
+        try:
+            return self._socket.send((msg + self.delimiter).encode('utf-8'))
+        except (OSError, socket.error) as e:
+            # Socket desconectado, intentar reconectar una vez
+            print(f"[WARNING] Socket SCPI desconectado, reconectando...")
+            try:
+                self._socket.close()
+            except:
+                pass
+            try:
+                self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                if self.timeout is not None:
+                    self._socket.settimeout(self.timeout)
+                self._socket.connect((self.host, self.port))
+                return self._socket.send((msg + self.delimiter).encode('utf-8'))
+            except Exception as reconnect_error:
+                print(f"[ERROR] No se pudo reconectar: {reconnect_error}")
+                raise e
+
+    def txrx_txt(self, msg):
+        """Send/receive text string."""
+        self.tx_txt(msg)
+        return self.rx_txt()
+
+    def _get_ssh(self):
+        """Devuelve una sesión SSH cacheada; reconecta si no existe O si se ha caído."""
+        
+        # 1. MEJORA: Comprobar no solo si es None, sino si la sesión sigue viva
+        # Si usamos Plumbum, el objeto tiene un atributo .session que es el cliente Paramiko
+        try:
+            if self._ssh is not None:
+                # Intentamos enviar un comando "dummy" o verificar el transporte
+                # Si esto falla, saltará al except y reconectará
+                if not self._ssh._client.get_transport().is_active():
+                    raise ConnectionError("Sesión muerta")
+        except:
+            # Si da error al chequear, forzamos reinicio
+            self._ssh = None
+
+        # 2. Creación de la conexión
+        if self._ssh is None:
+            print("Iniciando nueva conexión SSH...")
+            self._ssh = ParamikoMachine(
+                self.host,
+                user="root",
+                password="root",
+                connect_timeout=8,
+            )
+            
+            # 3. EL TRUCO DEL KEEPALIVE
+            # ParamikoMachine (Plumbum) guarda el cliente real en self._ssh._client
+            # Configuramos el envío de paquetes vacíos cada 30 segundos
+            if hasattr(self._ssh, '_client'):
+                transport = self._ssh._client.get_transport()
+                if transport:
+                    transport.set_keepalive(30)
+
+            # Configuración de entorno
+            self._ssh.env["LD_LIBRARY_PATH"] = "/opt/redpitaya/lib"
+            self._ssh.env["PATH"] = "/usr/local/bin:/usr/bin:/bin:/opt/redpitaya/bin:/opt/redpitaya/sbin"
+
+        return self._ssh
+
+    def _get_ssh_old(self):
+        """Devuelve una sesión SSH cacheada; crea una nueva si está cerrada."""
+        if self._ssh is None:
+            self._ssh = ParamikoMachine(
+                self.host,
+                user="root",
+                password="root",
+                connect_timeout=8,
+            )
+            # Configuración de entorno común
+            self._ssh.env["LD_LIBRARY_PATH"] = "/opt/redpitaya/lib"
+            self._ssh.env["PATH"] = "/usr/local/bin:/usr/bin:/bin:/opt/redpitaya/bin:/opt/redpitaya/sbin"
+        return self._ssh        
+
+    def read_memory_direct(self, address=0x40210000, num_samples=256, word_bytes=4):
+        """
+        Versión estable: usa únicamente el binario `monitor` (sin dd/od ni Python).
+        Devuelve np.int32.
+        """
+        print(f"[DEBUG] Iniciando lectura memoria: addr={hex(address)}, samples={num_samples}")
+        veamos = None
+        try:
+            veamos = self._get_ssh()
+            # Entorno remoto para localizar monitor
+            veamos.env["PATH"] = "/usr/local/bin:/usr/bin:/bin:/opt/redpitaya/bin"
+            veamos.env["LD_LIBRARY_PATH"] = "/opt/redpitaya/lib"
+            veamos.cwd.chdir("/usr/bin")
+            print(f"[DEBUG] Conexión SSH establecida con {self.host}")
+
+            monitor_cmd = (
+                f"ADDR={address}; N={num_samples}; STEP={word_bytes}; "
+                "i=0; while [ $i -lt $N ]; do cur=$((ADDR + i*STEP)); "
+                "monitor $(printf '0x%X' $cur); i=$((i+1)); done"
+            )
+
+            print("[DEBUG] Leyendo con monitor (estable)...")
+            raw = veamos["sh"](
+                "-c",
+                "set -e; if command -v timeout >/dev/null 2>&1; then "
+                "timeout 10s sh -c '" + monitor_cmd.replace("'", "'\"'\"'") + "' 2>&1; "
+                "else sh -c '" + monitor_cmd.replace("'", "'\"'\"'") + "' 2>&1; fi",
+            )
+
+            lines = str(raw).splitlines()
+            vals_hex = []
+            vals_dec = []
+            for ln in lines:
+                toks = ln.replace(',', ' ').split()
+                for t in toks:
+                    ts = t.strip().rstrip(':,')
+                    if ts.lower().startswith('0x'):
+                        try:
+                            vals_hex.append(int(ts, 16))
+                        except Exception:
+                            pass
+                    elif ts.isdigit() or (ts.startswith('-') and ts[1:].isdigit()):
+                        vals_dec.append(ts)
+
+            if vals_hex:
+                data_int = np.array(vals_hex[:num_samples], dtype=np.uint32).astype(np.int32)
+            elif vals_dec:
+                data_int = np.array([int(x) for x in vals_dec[:num_samples]], dtype=np.int32)
+            else:
+                raise ValueError("No se pudieron parsear valores de salida de monitor")
+
+            print(f"[DEBUG] Array final (estable): shape={data_int.shape}, dtype={data_int.dtype}")
+            return data_int
+
+        except Exception as e:
+            print(f"Error leyendo memoria directa (estable): {e}")
+            import traceback
+            traceback.print_exc()
+            return np.array([], dtype=np.int32)
+        finally:
+            # mantenemos la sesión SSH cacheada para velocidad
+            pass
+
+    def read_memory_direct_fast(self, address=0x40210000, num_samples=256, word_bytes=4):
+        """
+        Versión rápida: usa binario read_mem compilado en C.
+        Escribe a archivo temporal y lo descarga en base64 para evitar problemas de utf-8.
+        Devuelve np.int32.
+        """
+        READ_MEM_PATH = "/root/nuevas_aplicaciones_2026/read_mem"
+        
+        try:
+            veamos = self._get_ssh()
+            
+            # Verificar que el binario existe
+            print(f"[FAST] Verificando binario...")
+            test_result = veamos["test"]("-f", READ_MEM_PATH)
+            print(f"[FAST] Binario existe: OK")
+            
+            # Generar nombre de archivo temporal
+            temp_file = f"/tmp/mem_{address:x}.bin"
+
+            # Ejecutar read_mem para escribir al archivo
+            cmd = f"{READ_MEM_PATH} 0x{address:x} {num_samples} {temp_file}"
+            print(f"[FAST] Ejecutando: {cmd}")
+            veamos["sh"](["-c", cmd])
+
+            # Descargar archivo en base64 (evita problemas de utf-8)
+            print(f"[FAST] Descargando {temp_file} en base64...")
+            retcode, stdout_b64, stderr = veamos["sh"].run(["-c", f"base64 {temp_file}"], timeout=5, retcode=None)
+
+            # Limpiar archivo temporal
+            veamos["rm"]("-f", temp_file)
+
+            if retcode not in (0, None):
+                raise Exception(f"base64 fallo retcode={retcode}, stderr={stderr}")
+
+            if isinstance(stdout_b64, bytes):
+                stdout_b64 = stdout_b64.decode('ascii', errors='ignore')
+
+            data_bytes = base64.b64decode(stdout_b64)
+
+            print(f"[FAST] Recibidos {len(data_bytes)} bytes (esperados {num_samples * 4})")
+            
+            if len(data_bytes) < num_samples * 4:
+                raise Exception(f"Datos insuficientes: {len(data_bytes)}/{num_samples * 4}")
+            
+            # Convertir a numpy array
+            data_int = np.frombuffer(data_bytes, dtype=np.uint32, count=num_samples).astype(np.int32)
+            print(f"[FAST] OK: {len(data_int)} muestras")
+            return data_int
+            
+        except Exception as e:
+            print(f"[FAST] Error con binario: {e}")
+            print(f"[FAST] Usando monitor como fallback...")
+            
+            # Fallback a monitor
+            veamos = self._get_ssh()
+            veamos.env["PATH"] = "/usr/local/bin:/usr/bin:/bin:/opt/redpitaya/bin"
+            veamos.env["LD_LIBRARY_PATH"] = "/opt/redpitaya/lib"
+            veamos.cwd.chdir("/usr/bin")
+            
+            monitor_cmd = (
+                f"ADDR={address}; N={num_samples}; STEP={word_bytes}; "
+                "i=0; while [ $i -lt $N ]; do cur=$((ADDR + i*STEP)); "
+                "monitor $(printf '0x%X' $cur); i=$((i+1)); done"
+            )
+            
+            raw = veamos["sh"]("-c", "timeout 10s sh -c '" + monitor_cmd.replace("'", "'\"'\"'") + "' 2>&1")
+            
+            lines = str(raw).splitlines()
+            vals_hex = []
+            vals_dec = []
+            for ln in lines:
+                toks = ln.replace(',', ' ').split()
+                for t in toks:
+                    ts = t.strip().rstrip(':,')
+                    if ts.lower().startswith('0x'):
+                        try:
+                            vals_hex.append(int(ts, 16))
+                        except Exception:
+                            pass
+                    elif ts.isdigit() or (ts.startswith('-') and ts[1:].isdigit()):
+                        vals_dec.append(ts)
+            
+            if vals_hex:
+                return np.array(vals_hex[:num_samples], dtype=np.uint32).astype(np.int32)
+            elif vals_dec:
+                return np.array([int(x) for x in vals_dec[:num_samples]], dtype=np.int32)
+            else:
+                return np.array([], dtype=np.int32)
+
+# IEEE Mandated Commands
+
+    def cls(self):
+        """Clear Status Command"""
+        return self.tx_txt('*CLS')
+
+    def ese(self, value: int):
+        """Standard Event Status Enable Command"""
+        return self.tx_txt('*ESE {}'.format(value))
+
+    def ese_q(self):
+        """Standard Event Status Enable Query"""
+        return self.txrx_txt('*ESE?')
+
+    def esr_q(self):
+        """Standard Event Status Register Query"""
+        return self.txrx_txt('*ESR?')
+
+    def idn_q(self):
+        """Identification Query"""
+        return self.txrx_txt('*IDN?')
+
+    def opc(self):
+        """Operation Complete Command"""
+        return self.tx_txt('*OPC')
+
+    def opc_q(self):
+        """Operation Complete Query"""
+        return self.txrx_txt('*OPC?')
+
+    def rst(self):
+        """Reset Command"""
+        return self.tx_txt('*RST')
+
+    def sre(self):
+        """Service Request Enable Command"""
+        return self.tx_txt('*SRE')
+
+    def sre_q(self):
+        """Service Request Enable Query"""
+        return self.txrx_txt('*SRE?')
+
+    def stb_q(self):
+        """Read Status Byte Query"""
+        return self.txrx_txt('*STB?')
+
+# :SYSTem
+
+    def err_c(self):
+        """Error count."""
+        return rp.txrx_txt('SYST:ERR:COUN?')
+
+    def err_c(self):
+        """Error next."""
+        return rp.txrx_txt('SYST:ERR:NEXT?')
+
+
+    def switch(self,switcher,input):
+        #Switch case function
+         arg = switcher.get(input, "Error in Switch Operation")
+         return arg
+
+    def float_v(self,number):
+        # Limit float precision
+        try:
+            return float("{0:.2f}".format(float(number)))
+        except ValueError:
+            return 0.0
+
+
+            
+
+
+
+
+
+
+
+
+
+                
+
+
+
+
+
+
+    def _volcar_estado(self, etiqueta):
+        """Diagnostico: escribe en diagnostico_fpga.txt el estado de la placa. No altera la medida."""
+        info = {}
+        timeout_previo = self._socket.gettimeout()
+        try:
+            self._socket.settimeout(3)
+            for nombre, cmd in [('LED0', 'DIG:PIN? LED0'), ('LED1', 'DIG:PIN? LED1'),
+                                ('LED2', 'DIG:PIN? LED2'), ('LED3', 'DIG:PIN? LED3'),
+                                ('LED4', 'DIG:PIN? LED4'), ('DIO7_P', 'DIG:PIN? DIO7_P'),
+                                ('ERR', 'SYST:ERR:NEXT?')]:
+                try:
+                    self.tx_txt(cmd)
+                    info[nombre] = self.rx_txt()
+                except Exception as e:
+                    info[nombre] = 'ERROR ' + repr(e)
+                    break
+        finally:
+            self._socket.settimeout(timeout_previo)
+        try:
+            veamos = self._get_ssh()
+            info['n_ciclos'] = veamos["monitor"]("0x40200018").strip()
+            info['muestras'] = veamos["monitor"]("0x4020001C").strip()
+            info['scpi_service'] = veamos["systemctl"]("is-active", "redpitaya_scpi").strip()
+        except Exception as e:
+            info['ssh'] = 'ERROR ' + repr(e)
+        with open("diagnostico_fpga.txt", "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat()} | {etiqueta} | {info}\n")
+
+    def _registrar_barrido(self, duracion, n_consultas, t_consulta_max):
+        """Diagnostico: duracion de la espera de fin de barrido y numero de consultas SCPI."""
+        media = duracion / n_consultas if n_consultas else 0.0
+        with open("diagnostico_fpga.txt", "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat()} | barrido | t1-t2={duracion:.3f}s consultas={n_consultas} "
+                    f"media={media*1000:.1f}ms max={t_consulta_max*1000:.1f}ms\n")
+
+    def _registrar_tramos(self, t1, t2, t3, t4, t5, t10, t11):
+        """Diagnostico: tiempo de cada tramo de la medida, para localizar las medidas lentas."""
+        with open("diagnostico_fpga.txt", "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat()} | tramos | barrido(t1-t2)={t2-t1:.3f} "
+                    f"lecturaRES1(t3-t4)={t4-t3:.3f} lecturaRES2(t4-t5)={t5-t4:.3f} "
+                    f"calculo(t5-t10)={t10-t5:.3f} final(t10-t11)={t11-t10:.3f} total={t11-t1:.3f}\n")
+
+    def measure(self, log=None):
+        error=0
+        if log is None:
+            log = self.dv.append_plus
+    #     if (self.sd.def_cfg['post_procesado']['value']==0):
+    #         if self.sd.def_cfg['modelo']['value']==0:
+    #             shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]
+    #             self.tx_txt('RP:FPGABITREAM 0.94')
+    #         else:
+    #             shunt=[90.9,100.0,285.71,500.0,1000.0,2000.0]        
+    #             self.tx_txt('RP:FPGABITREAM 0.94')
+    #             bitstream="/opt/redpitaya//fpga/z20_125/v0.94/fpga.bit.bin"
+    #             veamos = ParamikoMachine(self.host, user = "root", password="root")
+    #             veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
+    #             veamos.cwd.chdir("/opt/redpitaya/bin")
+    #             comando="./fpgautil -b " + bitstream
+    #             # print (comando)
+    #             r_back = veamos[comando]
+    #             r_back()
+    #             # sizeh1=str('-sizeh1={0}'.format(individual[0]))
+    #             # sizeh2=str('-sizeh2={0}'.format(individual[1]))
+    #             # epochs=str('-epochs={0}'.format(epochs))
+    #             # decay=str('-decay={0}'.format(decay_value))
+    #             # step=str('-step={0}'.format(learning_step))
+    #             # minibatch=str('-batchsize={0}'.format(batchsize))
+    #             # idea=str(r_back[epochs, sizeh1,sizeh2, minibatch,decay,step]())
+    #             # for line in idea.split("\n"):
+    #             #     if "error_val" in line:
+    #             #     #print (line.strip())
+    #             #        error_rate_float=[float(s) for s in re.findall('\d+\.\d+',line)]
+    #             #        error_rate=error_rate_float[0]
+    #             veamos.close()
+    #         t0=pc()
+    #         frecuencia_min = np.log10(self.sd.def_cfg['f_inicial']['value'])
+    #         frecuencia_max= np.log10(self.sd.def_cfg['f_final']['value'])
+    #         puntos_decada= self.sd.def_cfg['n_puntos']['value']
+    #         ampl =self.sd.def_cfg['vosc']['value']
+    #         decimation=1*puntos_decada*[8192]+2*puntos_decada*[1024]+1*puntos_decada*[64]+2*puntos_decada*[1]
+    #         numero_valores=int((frecuencia_max-frecuencia_min)*puntos_decada)
+
+    #         if (self.sd.def_cfg['tipo_barrido']['value']==0):
+    #             self.sd.freq = np.linspace(self.sd.def_cfg['f_inicial']['value'],
+    #                                     self.sd.def_cfg['f_final']['value'],
+    #                                     self.sd.def_cfg['n_puntos']['value'])
+    #         elif(self.sd.def_cfg['tipo_barrido']['value']==1):
+    #             self.sd.freq = np.logspace(np.log10(self.sd.def_cfg['f_inicial']['value']),
+    #                                     np.log10(self.sd.def_cfg['f_final']['value']),
+    #                                     numero_valores,base=10)
+
+    #         #recortamos a 40 Hz
+
+    #         self.sd.freq=self.sd.freq[self.sd.freq>40]
+    #         numero_valores=len(self.sd.freq)
+    #         incrementos= (self.sd.freq*(2**32))/125e6;
+    #         #print(str(incrementos))
+    #         s = io.BytesIO()
+    #         np.savetxt(s, [incrementos], fmt='%d', delimiter=',')
+    #         #print(str(s))
+    #         outStr = s.getvalue().decode('UTF-8')
+    #         #print(outStr)
+    #         # valores no configurables desde el front-end
+    #         wave_form = 'sine'
+    #         Rs=1000
+    #         fm=125000000
+    #         numero_pulsos=10
+    #         ciclos=5
+    #         R_shunt_k = self.sd.def_cfg['shunt']['value'] #elijo 1000 
+            
+    #         # Postprocesamiento=self.sd.def_cfg['postprocesamiento']['value']
+    #         tipo_Postprocesamiento=self.sd.def_cfg['post_procesado']['value']
+    #         # print(R_shunt_k)
+    #         # # borra cuando quite la SOURCE 2
+    #         # amplreference=np.linspace(10,1,numero_valores)
+    #         # ampl2=1/amplreference
+    #         # phases=np.linspace(180,0,numero_valores)
+
+
+    #         ## shunt=[10.0,100.0,1000.0,10000.0,100000.0,1300000.0]
+
+    #         shunt =[100.0,1000.0,10000.0,100000.0]
+    #         #configuro via i2c la resistencia de shunt
+            
+    #         # veamos = SshMachine(self.host, user = "root")
+    #         ##veamos = ParamikoMachine(self.host, user = "root", password="root")
+    #         ##veamos.env["LD_LIBRARY_PATH"]="/opt/redpitaya/lib"
+    #         ##veamos.cwd.chdir("/opt/redpitaya/bin")
+    #         ##comando="./i2c_shunt " + str(R_shunt_k)
+    #         # print (comando)
+    #         ##r_back = veamos[comando]
+    #         ##r_back()
+    #         ##veamos.close()
+            
+    #         self.tx_txt('DIG:PIN:DIR OUT,DIO0_N')
+    #         self.tx_txt('DIG:PIN:DIR OUT,DIO1_N')
+    #         self.tx_txt('DIG:PIN:DIR OUT,DIO2_N')
+    #         self.tx_txt('DIG:PIN:DIR OUT,DIO3_N')
+    #         self.tx_txt('DIG:PIN:DIR OUT,DIO4_N')
+    #         self.tx_txt('DIG:PIN:DIR OUT,DIO5_N')
+    #         self.tx_txt('DIG:PIN:DIR OUT,DIO6_N')
+    #         self.tx_txt('DIG:PIN:DIR OUT,DIO7_N')
+
+    #         if (R_shunt_k==0):
+    #             # elegimos 90.9 
+    #             # activo a nivel bajo: activo
+    #             self.tx_txt('DIG:PIN DIO0_N,0') 
+    #             # activo a nivel bajo: desactivo
+    #             self.tx_txt('DIG:PIN DIO1_N,1')
+    #             # activo a nivel alto: desactivo            
+    #             self.tx_txt('DIG:PIN DIO2_N,0')
+    #             # activo a nivel alto: activo                
+    #             self.tx_txt('DIG:PIN DIO3_N,1')
+    #         else:
+    #             if (R_shunt_k==1):
+    #                 # elegimos 100 
+    #                 # activo a nivel bajo: desactivo
+    #                 self.tx_txt('DIG:PIN DIO0_N,1') 
+    #                 # activo a nivel bajo: desactivo
+    #                 self.tx_txt('DIG:PIN DIO1_N,1')
+    #                 # activo a nivel alto: desactivo            
+    #                 self.tx_txt('DIG:PIN DIO2_N,0')
+    #                 # activo a nivel alto: activo                
+    #                 self.tx_txt('DIG:PIN DIO3_N,1')
+    #             else:
+    #                 if (R_shunt_k==2):
+    #                     # elegimos 900.9 
+    #                     # activo a nivel bajo: activo
+    #                     self.tx_txt('DIG:PIN DIO0_N,0') 
+    #                     # activo a nivel bajo: activo
+    #                     self.tx_txt('DIG:PIN DIO1_N,0')
+    #                     # activo a nivel alto: activo            
+    #                     self.tx_txt('DIG:PIN DIO2_N,1')
+    #                     # activo a nivel alto: desactivo                
+    #                     self.tx_txt('DIG:PIN DIO3_N,0')
+    #                 else:
+    #                     if (R_shunt_k==3):
+    #                         # #elegimos 1K
+    #                         # #activo a nivel bajo: activo
+    #                         self.tx_txt('DIG:PIN DIO0_N,0') 
+    #                         # #activo a nivel bajo: desactivo
+    #                         self.tx_txt('DIG:PIN DIO1_N,1')
+    #                         # #activo a nivel alto: desactivo            
+    #                         self.tx_txt('DIG:PIN DIO2_N,0')
+    #                         # #activo a nivel alto: desactivo                
+    #                         self.tx_txt('DIG:PIN DIO3_N,0')  
+    #                     else:
+    #                         if (R_shunt_k==4):
+    #                             # elegimos 10K
+    #                             # activo a nivel bajo: desactivo
+    #                             self.tx_txt('DIG:PIN DIO0_N,1') 
+    #                             # activo a nivel bajo: activo
+    #                             self.tx_txt('DIG:PIN DIO1_N,0')
+    #                             # activo a nivel alto: desactivo            
+    #                             self.tx_txt('DIG:PIN DIO2_N,0')
+    #                             # activo a nivel alto: desactivo                
+    #                             self.tx_txt('DIG:PIN DIO3_N,0')
+    #                         else:
+    #                             # k==4 y K==0 y K==5
+    #                             # elegimos 100K
+    #                             # activo a nivel bajo: desactivo
+    #                             self.tx_txt('DIG:PIN DIO0_N,1') 
+    #                             # activo a nivel bajo: desactivo
+    #                             self.tx_txt('DIG:PIN DIO1_N,1')
+    #                             # activo a nivel alto: activo            
+    #                             self.tx_txt('DIG:PIN DIO2_N,1')
+    #                             # activo a nivel alto: desactivo                
+    #                             self.tx_txt('DIG:PIN DIO3_N,0')
+             
+
+    #         #elegimos el cable rojo , conector j1
+    #         #activo a nivel bajo: desactivo    
+    #         self.tx_txt('DIG:PIN DIO4_N,1')
+    #         #activo a nivel alto: activo    
+    #         self.tx_txt('DIG:PIN DIO5_N,1')
+    #         #activo a nivel alto: desactivo                
+    #         self.tx_txt('DIG:PIN DIO6_N,0')
+    #         #activo a nivel bajo: desactivo                
+    #         self.tx_txt('DIG:PIN DIO7_N,1')
+
+    #         # #elegimos el cable amarillo , conector j3
+    #         # #activo a nivel bajo: desactivo    
+    #         # self.tx_txt('DIG:PIN DIO4_N,1')
+    #         # #activo a nivel alto: desactivo    
+    #         # self.tx_txt('DIG:PIN DIO5_N,0')
+    #         # #activo a nivel alto: desactivo                
+    #         # self.tx_txt('DIG:PIN DIO6_N,0')
+    #         # #activo a nivel bajo: activo                
+    #         # self.tx_txt('DIG:PIN DIO7_N,0')
+
+
+    #         # #elegimos el cable verde , conector j2
+    #         # #activo a nivel bajo: activo    
+    #         # self.tx_txt('DIG:PIN DIO4_N,0')
+    #         # #activo a nivel alto: desactivo    
+    #         # self.tx_txt('DIG:PIN DIO5_N,0')
+    #         # #activo a nivel alto: desactivo                
+    #         # self.tx_txt('DIG:PIN DIO6_N,0')
+    #         # #activo a nivel bajo: desactivo                
+    #         # self.tx_txt('DIG:PIN DIO7_N,1')
+
+    #         # #elegimos el cable azul , conector j4
+    #         # #activo a nivel bajo: desactivo    
+    #         # self.tx_txt('DIG:PIN DIO4_N,1')
+    #         # #activo a nivel alto: desactivo    
+    #         # self.tx_txt('DIG:PIN DIO5_N,0')
+    #         # #activo a nivel alto: activo                
+    #         # self.tx_txt('DIG:PIN DIO6_N,1')
+    #         # #activo a nivel bajo: desactivo                
+    #         # self.tx_txt('DIG:PIN DIO7_N,1')
+
+
+
+
+    #         #ponemos la resistencia a 1k
+
+    #         # sizeh1=str('-sizeh1={0}'.format(individual[0]))
+    #         # sizeh2=str('-sizeh2={0}'.format(individual[1]))
+    #         # epochs=str('-epochs={0}'.format(epochs))
+    #         # decay=str('-decay={0}'.format(decay_value))
+    #         # step=str('-step={0}'.format(learning_step))
+    #         # minibatch=str('-batchsize={0}'.format(batchsize))
+    #         # idea=str(r_back[epochs, sizeh1,sizeh2, minibatch,decay,step]())
+    #         # for line in idea.split("\n"):
+    #         #     if "error_val" in line:
+    #         #     #print (line.strip())
+    #         #        error_rate_float=[float(s) for s in re.findall('\d+\.\d+',line)]
+    #         #        error_rate=error_rate_float[0]
+
+
+
+
+    #         self.dv.append_plus("Midiendo Z=R+iX")
+    #         iteracion=1
+    #         configuracion=0
+    #         adquisicion=0
+    #         postprocesamiento=0
+    #         espera_trigger=0
+    #         Z=np.zeros(numero_valores)
+    #         PHASE=np.zeros(numero_valores)
+    #         Phase_Z_rad=np.zeros(numero_valores)
+    #         Phase_U_rad=np.zeros(numero_valores)
+    #         Phase_I_rad=np.zeros(numero_valores)
+    #         for freq in (self.sd.freq):
+    #             t1=pc()
+    #             self.tx_txt('GEN:RST')
+    #             self.tx_txt('ACQ:RST')
+    #             self.tx_txt('ACQ:DATA:UNITS VOLTS')
+    #            # self.tx_txt('SOUR1:BURS:STAT BURST') # % Set burst mode to ON
+    #            # self.tx_txt('SOUR1:BURS:NCYC 10') # Set 10 pulses of sine wave
+            
+    #             self.tx_txt('SOUR1:FUNC ' + str(wave_form).upper())
+    #             self.tx_txt('SOUR1:VOLT ' + str(ampl))
+    #             self.tx_txt('SOUR1:FREQ:FIX ' + str(freq))
+    #             ## esta siguiente linea hace que se cuelgue
+    #             # self.tx_txt('SOUR1:VOLT:OFFS ' + str(self.sd.def_cfg['nivel_DC']['value'])) # esto lo utilizo para cambiar el offset de canal a
+    #             #rp_s.tx_txt('SOUR1:TRIG:SOUR INT')
+    #             #rp_s.tx_txt('SOUR1:TRIG:IMM')
+    # # esto habrá que borrarlo !!
+    #             # self.tx_txt('SOUR2:FUNC ' + str(wave_form).upper())
+    #             # self.tx_txt('SOUR2:VOLT ' + str(ampl2[iteracion-1]))
+    #             # self.tx_txt('SOUR2:FREQ:FIX ' + str(freq))
+    #             # self.tx_txt('SOUR2:BURS:STAT BURST') # % Set burst mode to ON
+    #             # self.tx_txt('SOUR2:BURS:NCYC 10') # Set 10 pulses of sine wave     
+    #             # self.tx_txt('SOUR2:PHAS ' + str(phases[iteracion-1]))    
+    # # hay que borrarlo
+
+    #             self.tx_txt('ACQ:DEC ' + str(decimation[iteracion-1]))
+    #             self.tx_txt('ACQ:START')
+    #             self.tx_txt('ACQ:TRIG CH1_PE')
+
+    #             self.tx_txt('OUTPUT:STATE ON')  #cuidado con cambiar esto
+    #             t2=pc()
+    #         # ESPERAMOS EL TRIGGER
+    #             # sleep(1)
+    #             if self.sd.def_cfg['modelo']['value']==0:
+    #                 while freq<100:
+    #                     self.tx_txt('ACQ:TRIG:STAT?')
+    #                     if self.rx_txt() == 'TD':
+    #                         break
+    #             else:
+    #                 while freq<100:
+    #                     self.tx_txt('ACQ:TRIG:FILL?')
+    #                     if self.rx_txt() == 'TD':
+    #                         break                
+    #             t2t=pc()
+    #             # self.dv.append_plus('iteracion:'+ str(iteracion))
+    #             # self.dv.append_plus('frecuencia:'+ str(freq))
+    #             print (iteracion)
+    #             print(freq)
+    #             sleep(0.2)
+    #             self.tx_txt('ACQ:TPOS?')
+    #             veamos= self.rx_txt()
+    #             posicion_trigger=int(veamos)
+    #             # self.dv.append_plus("posicion trigger:" + str(posicion_trigger))
+    #             print('posicion trigger:',veamos)
+    #             length=fm*(ciclos)/(freq*decimation[iteracion-1])
+    #             # print('decimation:',decimation[iteracion-1])
+    #             # LEEMOS Y REPRESENTAMOS 1
+                
+
+    #             self.tx_txt('ACQ:SOUR1:DATA:STA:N? ' + str(posicion_trigger)+','+ str(length))
+                
+    #             t3=pc()
+
+    #             buff_string = self.rx_txt()
+    #             buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
+    #             buff = list(map(float, buff_string))
+    #             t4=pc()
+    #             my_array = np.asarray(buff)
+    #             # super_buffer.append(buff)
+    #             # super_buffer_flat=sum(super_buffer, [])
+
+    #             t5=pc()
+
+
+
+    #             # LEEMOS Y REPRESENTAMOS2
+    #             self.tx_txt('ACQ:SOUR2:DATA:STA:N? ' + str(posicion_trigger)+','+ str(length))
+    #             t6=pc()
+    #             buff_string = self.rx_txt()
+    #             buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
+    #             buff = list(map(float, buff_string))
+    #             t7=pc()
+
+    #             my_array2 = np.asarray(buff)
+    #             dif=my_array-my_array2
+    #             #super_buffer2.append(buff)
+    #             #super_buffer_flat2=sum(super_buffer2, [])
+    #             ## lo hacia con FFT
+    #    #         if tipo_Postprocesamiento==1:
+    #    #             yf = fft(my_array)
+    #    #             yf2 = fft(my_array2)
+    #    #             yf3=fft(dif)
+    #    #             indice1=np.argmax(np.abs(yf))
+    #    #             indice2=np.argmax(np.abs(yf2))
+    #    #             indice3=np.argmax(np.abs(yf3))
+    # #            # Zq=np.max(np.abs(yf))
+    # #               # Zr=np.max(np.abs(yf2))
+    # #               # Z[iteracion-1]=np.max(np.abs(yf))/np.max(np.abs(yf2)) #  primera opcion
+    # #               #yf_dif=(yf2-yf)
+    # #                # indice3=np.argmax(np.abs(yf_dif))            
+    # #               ## Z[iteracion-1]=np.max(np.abs(yf_dif))*1000/np.max(np.abs(yf2)) # segunda opcion
+    # #                Z[iteracion-1]=np.max(np.abs(yf3))*shunt[R_shunt_k]/np.max(np.abs(yf2))    #tercera opcion         
+    # #                PHASE[iteracion-1]=((np.angle(yf2[indice2]/yf[indice1])))*180/np.pi   
+                           
+    #             # metodo alternativo
+    #             T=(1/125e6)*decimation[iteracion-1];           # Sampling time [seconds]                                 # time increment
+    #             w_out=freq*2*np.pi
+
+    #             U_dut=dif
+    #             I_dut=my_array2/shunt[R_shunt_k]
+                
+    #             N=int(length)
+    #             U_dut_sampled_X=np.zeros(N)
+    #             U_dut_sampled_Y=np.zeros(N)
+    #             I_dut_sampled_X=np.zeros(N)
+    #             I_dut_sampled_Y=np.zeros(N)
+    #             dT=np.zeros(N)
+    #             # Accurie  signals  U_in_1 and U_in_2 from RedPitaya for N-sampels time and Calculate for Lock in and save in vectors for sampels
+    #             for t in range(N):
+    #                 U_dut_sampled_X[t]=U_dut[t]*np.sin(t*T*w_out)
+    #                 U_dut_sampled_Y[t]=U_dut[t]*np.sin(t*T*w_out-np.pi/2)
+
+    #                 I_dut_sampled_X[t]=I_dut[t]*np.sin(t*T*w_out)
+    #                 I_dut_sampled_Y[t]=I_dut[t]*np.sin(t*T*w_out-np.pi/2)
+    #                 dT[t]=t*T
+    #             # Calculate two components of lock-in for both mesured voltage signals
+
+    #             X_component_lock_in_1=np.trapz(U_dut_sampled_X,x=dT)
+    #             Y_component_lock_in_1=np.trapz(U_dut_sampled_Y,dT)
+
+    #             X_component_lock_in_2=np.trapz(I_dut_sampled_X,dT)
+    #             Y_component_lock_in_2=np.trapz(I_dut_sampled_Y,dT)
+
+    #             U_dut_amp=(np.sqrt((X_component_lock_in_1)**2+(Y_component_lock_in_1)**2))*2
+    #             Phase_U_dut=np.arctan2(Y_component_lock_in_1,X_component_lock_in_1)
+    #             Phase_U_rad[iteracion-1]=Phase_U_dut
+    #             # Calculate amplitude and angle of I_dut
+
+    #             I_dut_amp=(np.sqrt((X_component_lock_in_2)**2+(Y_component_lock_in_2)**2))*2
+    #             Phase_I_dut=np.arctan2(Y_component_lock_in_2,X_component_lock_in_2)
+    #             Phase_I_rad[iteracion-1]=Phase_I_dut                
+    #             # Calculate amplitude of current trough impedance and amplitude of impedance
+
+    #             Z_amp=(U_dut_amp/I_dut_amp);            # Amplitude of impedance
+
+    #             Z[iteracion-1]=Z_amp
+
+    #             Phase_Z_rad[iteracion-1]=-(Phase_U_dut-Phase_I_dut)
+    #             Phase_check=-(Phase_U_dut-Phase_I_dut)*(180/np.pi)
+    #             if (Phase_check<=-180):
+    #                 Phase_Z=-(Phase_U_dut-Phase_I_dut)*(180/np.pi)+360
+    #             else:
+    #                 if (Phase_check>=180):
+    #                     Phase_Z=-(Phase_U_dut-Phase_I_dut)*(180/np.pi)-360
+    #                 else:
+    #                     Phase_Z=Phase_check
+    #             prefase=Phase_Z*(np.pi)/180
+
+    #             #while prefase>=2*np.pi:
+    #             #    prefase=prefase-2*np.pi
+    #             PHASE[iteracion-1]=prefase
+    #             #PHASE[iteracion-1]=Phase_Z_rad[iteracion-1]
+    #             t8=pc()
+    #             # N2=my_array2.shape[0]
+    #             # T=1/fm
+    #             # idea=N//2
+    #             # xf2 = fftfreq(N2, T)[:N2//2]
+    #             # plot2=plt.figure(2*(iteracion-1)+2)
+    #             # plt.plot(xf2, 2.0/N * np.abs(yf2[0:N2//2]))
+    #             # plt.plot(xf2, p[0:N2//2])    
+    #             # plt.xlabel('Frecuencia')
+    #             # plt.grid()
+                
+
+
+
+
+    #             iteracion=iteracion+1
+    #             self.tx_txt('OUTPUT:STATE OFF')
+    #             self.tx_txt('ACQ:STOP')
+    #             t9=pc()
+    #             postprocesamiento=postprocesamiento+(t5-t4)+(t8-t7)
+    #             configuracion=configuracion+(t2-t1)+(t9-t8)+(t6-t5)+(t3-t2t)
+    #             adquisicion=adquisicion+(t4-t3)+(t7-t6)  
+    #             espera_trigger=espera_trigger+ (t2t-t2)  
+
+
+    #         # # Service Request instead of using pulling
+    #         # event_type = visa.constants.EventType.service_request
+    #         # # Mechanism by which we want to be notified
+    #         # event_mech = visa.constants.EventMechanism.queue
+
+    #         # self.inst.write('TRGS INT')          # Internal Trigger Source
+    #         # self.inst.write('ESNB 1')            # Event_Status_Register[0]=1 // Enables Sweep Completion bit
+    #         # self.inst.write('*SRE 4')            # Service Request Enable = 1
+    #         # self.inst.write('*CLS')              # Clears Error queue
+
+
+    #         # self.inst.write('MEAS IRIM')         # Medida de R y X
+    #         # self.inst.write('HIDI OFF')          # Muestras la traza inactiva
+    #         # self.inst.write('SING')              # Iniciar un barrido único.
+
+    #         # self.dv.append_plus("ACK Instrumento = %s" % self.inst.query('*OPC?'))
+
+    #         # self.inst.enable_event(event_type, event_mech)
+    #         #
+    #         # #self.dv.append_plus(self.inst.query('*OPC?'))
+    #         # # Wait for the event to occur
+    #         # response = self.inst.wait_on_event(event_type, 10000)
+    #         #
+    #         # #if (response.event.event_type == event_type):
+    #         #     # response.timed_out = False
+    #         # self.inst.disable_event(event_type, event_mech)
+    #         # response.timed_out = False
+
+    #         # Recover Measured Data
+    #         # self.inst.write('TRAC A')           # Selecciona traza A
+    #         # self.inst.write('AUTO')             # Autoescala
+    #         # aux_R = np.fromstring(self.inst.query('OUTPDTRC?'), dtype=float, sep=',')
+
+    #         # self.inst.write('TRAC B')           # Selecciona traza A
+    #         # self.inst.write('AUTO')             # Autoescala
+    #         # aux_X = np.fromstring(self.inst.query('OUTPDTRC?'), dtype=float, sep=',')
+    #         t10=pc()
+    #         self.sd.R_data = Z*np.cos(PHASE*np.pi/180)
+    #         self.sd.X_data = Z*np.sin(PHASE*np.pi/180)
+
+    #         # Compute Err, Eri, Er_mod, Er_fase_data
+    #         # First create frequency array based on actual gui conditions
+    #         # The freq array will not be changed until next data acquisition even if GUI changes
+
+
+    #         complex_aux         = self.sd.R_data + self.sd.X_data*1j
+    #         self.sd.Z_mod_data  = Z
+    #         self.sd.Z_fase_data = PHASE
+
+    #         admitance_aux       = 1./complex_aux
+    #         G_data              = np.real(admitance_aux)
+    #         Cp_data             = np.imag(admitance_aux)/(2*np.pi*self.sd.freq)
+    #         self.sd.Err_data    = Cp_data/self.sd.Co
+    #         self.sd.Eri_data    = G_data/(self.sd.Co*(2*np.pi*self.sd.freq));
+    #         E_data              = self.sd.Err_data + -1*self.sd.Eri_data*1j;
+
+    #         self.sd.Er_mod_data  = np.abs(E_data);
+    #         self.sd.Er_fase_data = np.angle(E_data);
+    #         t11=pc()
+    #         # # Deactivate BIAS for security reasons
+    #         # self.inst.write('DCO OFF')
+    #         # self.inst.write('DCRNG M1')
+    #         postprocesamiento=postprocesamiento+(t11-t10)
+    #         print('espera_trigger:',espera_trigger)
+    #         print('configuracion:',configuracion)
+    #         print('adquisicion:',adquisicion)
+    #         print('postprocesamiento:',postprocesamiento)
+    #         total=t11-t0
+    #         print ('total:',total)
+    #         absolute_val_array = np.abs(self.sd.freq - 1000)
+    #         smallest_difference_index = absolute_val_array.argmin()
+    #         print ('R_data =', self.sd.R_data[smallest_difference_index])        
+    #         print ('X_data=', self.sd.X_data[smallest_difference_index])
+    #         print ('resistencia shunt=', shunt[R_shunt_k])
+    #         # self.inst.wait_for_srq(self.sd.def_cfg['GPIB_timeout'])
+    #         self.dv.append_plus("He finalizado de medir")
+    #         self.dv.append_plus("tiempo transcurrido:" + str(total))
+    #         #metodo aproximado por contadores, poco estable y un poco mas lento
+
+#nueva version con autoshunt, entrara en modo software
+
+        # # Definir la función que se llamará cuando se agote el tiempo
+        # def handler(signum, frame):
+        #     raise Exception("Timeout")
+
+        # # Establecer la función de manejo de la señal
+        # signal.signal(signal.SIGALRM, handler)
+
+        # # Establecer un temporizador de 5 segundos
+        # signal.alarm(5)
+        if True:  # plataforma 0: unico modelo soportado
+            decimation=1
+            if (self.sd.def_cfg['post_procesado']['value']==0):
+                log("Midiendo Z=R+iX")
+                self._volcar_estado('inicio')
+                t1=pc()
+                #ya no utilizo chip on sino el control[0] como start
+            #       self.tx_txt('CHIRP ON')
+                self.tx_txt('DIG:PIN LED'+str(0)+','+str(1)) #activo el start
+                t_espera=pc()
+                n_consultas=0
+                t_consulta_max=0.0
+                try:
+                    while 1 :
+                        #    rp_s.tx_txt('FIN:RAF:STAT? 1')
+                        t_c=pc()
+                        self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
+                        state = self.rx_txt()
+                        n_consultas+=1
+                        t_consulta_max=max(t_consulta_max, pc()-t_c)
+                        if state == '1':
+                            break
+                        if pc()-t_espera > 20:
+                            # la FPGA no termina: la dejamos en reposo en vez de bloquear la interfaz
+                            self.tx_txt('DIG:PIN LED'+str(0)+','+str(0))
+                            self._volcar_estado('TIMEOUT')
+                            log("Timeout esperando fin de barrido (DIO7_P)")
+                            return 1
+                except Exception as e:
+                    print(e)
+                    error=1
+                # Cancelar el temporizador
+                # signal.alarm(0)                lo he comentado porque en windows no existe esta alarma
+            #    # print(rp_s.rx_txt())
+                # rp_s.tx_txt('DIG:PIN? DIO'+str(7)+'_N')
+                # state = rp_s.rx_txt()
+                print(state)
+                # EMPEZAMOS CON LA ADQUISION
+                #cambio 2026 : ya no utilizo chip on y off
+                # self.tx_txt('CHIRP OFF')
+                t2=pc()
+                self._registrar_barrido(t2-t1, n_consultas, t_consulta_max)
+                self.tx_txt('DIG:PIN LED'+str(0)+','+str(0)) #dseactivo el start
+                    # Lectura directa de memoria desde 0x40210000
+                t3=pc()
+                # cambio 2026 : ya no utilizo SCPI normal sino lectura directa de memoria
+                # self.tx_txt('ACQ:RESULT1:DATA?')
+                self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # activo debug memoria de incrementos
+                buff = self.read_memory_direct_fast(address=0x40210000, num_samples=512)
+                #self.tx_txt('SOUR1:TRAC:DATA:DATA?')
+                #buff_string = self.rx_txt()
+                #buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
+                #buff = list(map(float, buff_string))                   
+                t4=pc()
+                my_array = buff
+                my_array =my_array[:-decimation:decimation]
+                # super_buffer.append(buff)
+                # super_buffer_flat=sum(super_buffer, [])
+                # Recupero RESULT2 con el comando SCPI habitual
+                buff2 = self.read_memory_direct_fast(address=0x40220000, num_samples=512)
+
+                #self.tx_txt('ACQ:RESULT2:DATA?')
+                #buff_string2 = self.rx_txt()
+                #buff_string2 = buff_string2.strip('{}\n\r').replace("  ", "").split(',')
+                #buff2 = list(map(float, buff_string2))
+                my_array2 = np.asarray(buff2)
+                my_array2 =my_array2[:-decimation:decimation]
+                muestras=round(self.muestras/decimation)
+                t5=pc()
+
+
+
+                smooth=self.sd.def_cfg['smooth']['value']
+                k=self.sd.def_cfg['k_factor']['value']
+
+
+                #Enable output
+                iteracion=1
+                # ZA=interp1d(frecuencias[0:muestras],my_array[0:muestras])
+                # ZB=interp1d(frecuencias,my_array[256: 256+225])
+                # Z=(ZA(frecuencias))*shunt[R_shunt_k]/32
+                ## solucion con shunt fija
+                #Z_sin_comprimir=(my_array[0:muestras]*shunt[R_shunt_k])/16
+
+                    # idea1=0
+                # idea2=0
+                # idea3=0
+                # idea4=0
+                # Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
+                #                 else (val*shunt[4])/16  if 20 <= i < 70 
+                #                 else (val*shunt[3])/16  if 70 <= i < 120 
+                #                 else (val*shunt[2])/16  if 120 <= i < 170 
+                #                 else (val*shunt[1])/16  if 170 <= i < 270
+                #                 else (val*shunt[2])/16  if 270 <= i < 320
+                #                 else (val*shunt[3])/16  if 320 <= i < 370
+                #                 else (val*shunt[4])/16  if 370 <= i < 420
+                #                 else (val*shunt[5])/16  
+                #                for i, val in enumerate(my_array[0:muestras])])
+                idea1=(my_array[20]*self.shunt[4])/16  -(my_array[19]*self.shunt[5])/16
+                idea2=(my_array[70]*self.shunt[3])/16  -(my_array[69]*self.shunt[4])/16
+                idea3=(my_array[120]*self.shunt[2])/16  -(my_array[119]*self.shunt[3])/16
+                idea4=(my_array[170]*self.shunt[1])/16  -(my_array[169]*self.shunt[2])/16
+                Z_sin_comprimir = np.array([(val*self.shunt[5])/16 if i < 20 
+                                    else (val*self.shunt[4])/16 -idea1 if 20 <= i < 70 
+                                    else (val*self.shunt[3])/16 -idea2-idea1 if 70 <= i < 120 
+                                    else (val*self.shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170 
+                                    else (val*self.shunt[1])/16 -idea1-idea2-idea3-idea4 if 170 <= i < 270
+                                    else (val*self.shunt[2])/16 -idea1-idea2-idea3 if 270 <= i < 320
+                                    else (val*self.shunt[3])/16 -idea1-idea2 if 320 <= i < 370
+                                    else (val*self.shunt[4])/16 -idea1 if 370 <= i < 420
+                                    else (val*self.shunt[5])/16 
+                                    for i, val in enumerate(my_array[0:muestras])])            
+                
+                from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
+
+                # Identificar los índices de los escalones
+                step_indices = [20, 70, 120, 170]
+
+                # Identificar los valores en los índices de los escalones
+                step_values = [Z_sin_comprimir[i] for i in step_indices]
+
+                # Crear una función de interpolación
+                # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
+                # Crear una función de interpolación spline cúbica
+                spline_func = PchipInterpolator(step_indices, step_values)            
+
+                # Aplicar la función de interpolación a todo el array
+                # Z_sin_comprimir2 = interp_func
+                Z_sin_comprimir2 = spline_func(np.arange(muestras))
+                from scipy.signal import savgol_filter
+
+                # Definir el tamaño de la ventana y el grado del polinomio
+                window_size = 11
+                poly_degree = 3
+
+                # Aplicar el filtro Savitzky-Golay
+                Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
+
+                # en principio el calculo en verilog es suponiendo una resistencia de 1k. Con esto lo ajusto a la resistencia de shunt exacta
+
+
+                # PhaseA=interp1d(frecuencias[0:muestras],my_array2[0:muestras])
+                # Phase_check=PhaseA(frecuencias)*frecuencias*360/125e6
+                # Phase_radianes=PhaseA(frecuencias)*frecuencias*2*np.pi/125e6
+
+                    # tangentea=my_array2[0:muestras]/(1024*64)
+                    # tangenteb=my_array2[256:256+muestras]/(1024*64)
+                    # arcoa=np.arctan(tangentea) 
+                    # arcob=np.arctan(tangenteb) 
+                    # Phase_radianes=(arcoa-arcob)
+                # Phase_escalada=-my_array2[0:muestras]/(2**29) 
+                Phase_escalada=-my_array2[0:muestras]/2 # porque las fases las calculo multiplicads por 2
+                #Phase_radianes=Phase_escalada*np.pi           
+                #Phase_check=Phase_radianes*360/(2*np.pi)
+
+                Phase_radianes=Phase_escalada*np.pi/180           
+                Phase_check=Phase_escalada            
+                PHASE_sin_comprimir_grados=np.zeros(muestras)
+                for fases in range(len(Phase_check)):
+                    if (Phase_check[fases]<=-90):
+                        PHASE_sin_comprimir_grados[fases]=Phase_check[fases]+180
+                    else:
+                        if (Phase_check[fases] >=90):
+                            PHASE_sin_comprimir_grados[fases]=Phase_check[fases]-180
+                        else:
+                            PHASE_sin_comprimir_grados[fases]=Phase_check[fases]                
+                # PHASE=my_array[256: 256+225]*frecuencias*360/125e6
+                # PHASE= Phase_check
+                PHASE_sin_comprimir=PHASE_sin_comprimir_grados*np.pi/180
+                PHASE=np.ma.masked_where((Z_sin_comprimir==0.0),PHASE_sin_comprimir) 
+                self.sd.freq=np.ma.masked_where((Z_sin_comprimir==0.0),self.frecuencias) 
+                Z = np.ma.masked_where((Z_sin_comprimir==0.0),Z_sin_comprimir) 
+
+                ##ATENCION NO HAGO NINGUNA INTERPOLACION DE LOS DATOS, SOLO LOS COMPRIMO
+
+                prePHASE=PHASE.compressed()
+                self.sd.freq=self.sd.freq.compressed()
+                preZ = Z.compressed()
+
+                            # ahora aplico una forma de smooth; pero mejor hacerlo en la imagen , no sobre los datos
+                # if (smooth==0):
+                #     PHASE = np.cumsum(prePHASE, dtype=float)
+                #     Z=np.cumsum(preZ, dtype=float)
+                #     PHASE[k:] = PHASE[k:] - PHASE[:-k]
+                #     Z[k:] = Z[k:] - Z[:-k]
+                #     PHASE=PHASE[k - 1:] / k
+
+                #     Z=Z[k - 1:] / k
+                #     self.sd.freq=self.sd.freq[k-1:]
+                # else:
+                #     PHASE=prePHASE
+                # # self.sd.freq=frecuencias
+                #     Z = preZ
+
+                PHASE=prePHASE
+                Z=preZ
+
+                t10=pc()
+                self.sd.R_data = Z*np.cos(PHASE*np.pi/180)
+                self.sd.X_data = Z*np.sin(PHASE*np.pi/180)
+
+                # Compute Err, Eri, Er_mod, Er_fase_data
+                # First create frequency array based on actual gui conditions
+                # The freq array will not be changed until next data acquisition even if GUI changes
+
+
+                complex_aux         = self.sd.R_data + self.sd.X_data*1j
+                self.sd.Z_mod_data  = Z
+                self.sd.Z_fase_data = PHASE
+                # las proximas lineas deben de descomentarse cuando haya eliminado los outliers
+                admitance_aux       = 1./complex_aux
+                G_data              = np.real(admitance_aux)
+                Cp_data             = np.imag(admitance_aux)/(2*np.pi*self.sd.freq)
+                self.sd.Err_data    = Cp_data/self.sd.Co
+                self.sd.Eri_data    = G_data/(self.sd.Co*(2*np.pi*self.sd.freq));
+                E_data              = self.sd.Err_data + -1*self.sd.Eri_data*1j;
+
+                self.sd.Er_mod_data  = np.abs(E_data);
+                self.sd.Er_fase_data = np.angle(E_data);
+                t11=pc()
+
+                total=t11-t1
+                self._registrar_tramos(t1, t2, t3, t4, t5, t10, t11)
+                print ('total:',total)
+                absolute_val_array = np.abs(self.sd.freq - 1000)
+                smallest_difference_index = absolute_val_array.argmin()
+                print ('R_data =', self.sd.R_data[smallest_difference_index])        
+                print ('X_data=', self.sd.X_data[smallest_difference_index])
+                print ('resistencia shunt=auto')
+                log("He finalizado de medir")
+                log("tiempo transcurrido:" + str(total))  
+                log("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
+                log("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
+                log("resistencia shunt = auto")       
+            
+
+            elif (self.sd.def_cfg['post_procesado']['value']==1):
+            
+                log("Midiendo Z=R+iX")
+                self._volcar_estado('inicio')
+                t1=pc()
+                #ya no utilizo chip on sino el control[0] como start
+            #       self.tx_txt('CHIRP ON')
+                self.tx_txt('DIG:PIN LED'+str(0)+','+str(1)) #activo el start
+                t_espera=pc()
+                n_consultas=0
+                t_consulta_max=0.0
+                try:
+                    while 1 :
+                        #    rp_s.tx_txt('FIN:RAF:STAT? 1')
+                        t_c=pc()
+                        self.tx_txt('DIG:PIN? DIO'+str(7)+'_P')
+                        state = self.rx_txt()
+                        n_consultas+=1
+                        t_consulta_max=max(t_consulta_max, pc()-t_c)
+                        if state == '1':
+                            break
+                        if pc()-t_espera > 20:
+                            # la FPGA no termina: la dejamos en reposo en vez de bloquear la interfaz
+                            self.tx_txt('DIG:PIN LED'+str(0)+','+str(0))
+                            self._volcar_estado('TIMEOUT')
+                            log("Timeout esperando fin de barrido (DIO7_P)")
+                            return 1
+                except Exception as e:
+                    print(e)
+                    error=1
+                # Cancelar el temporizador
+                # signal.alarm(0)                lo he comentado porque en windows no existe esta alarma
+            #    # print(rp_s.rx_txt())
+                # rp_s.tx_txt('DIG:PIN? DIO'+str(7)+'_N')
+                # state = rp_s.rx_txt()
+                t2=pc()
+                self._registrar_barrido(t2-t1, n_consultas, t_consulta_max)
+                print(state)
+                # EMPEZAMOS CON LA ADQUISION
+                #cambio 2026 : ya no utilizo chip on y off
+                # self.tx_txt('CHIRP OFF')
+
+                self.tx_txt('DIG:PIN LED'+str(0)+','+str(0)) #dseactivo el start
+                    # Lectura directa de memoria desde 0x40210000
+                t3=pc()
+                # cambio 2026 : ya no utilizo SCPI normal sino lectura directa de memoria
+                # self.tx_txt('ACQ:RESULT1:DATA?')
+                self.tx_txt('DIG:PIN LED'+str(2)+','+str(0))  # activo debug memoria de incrementos
+                buff = self.read_memory_direct_fast(address=0x40210000, num_samples=256)
+                #self.tx_txt('SOUR1:TRAC:DATA:DATA?')
+                #buff_string = self.rx_txt()
+                #buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
+                #buff = list(map(float, buff_string))                   
+                t4=pc()
+                my_array = buff
+                my_array =my_array[:-decimation:decimation]
+                # super_buffer.append(buff)
+                # super_buffer_flat=sum(super_buffer, [])
+                # Recupero RESULT2 con el comando SCPI habitual
+                buff2 = self.read_memory_direct_fast(address=0x40220000, num_samples=256)
+
+                #self.tx_txt('ACQ:RESULT2:DATA?')
+                #buff_string2 = self.rx_txt()
+                #buff_string2 = buff_string2.strip('{}\n\r').replace("  ", "").split(',')
+                #buff2 = list(map(float, buff_string2))
+                my_array2 = np.asarray(buff2)
+                my_array2 =my_array2[:-decimation:decimation]
+                muestras=round(self.muestras/decimation)
+                t5=pc()
+
+
+
+                smooth=self.sd.def_cfg['smooth']['value']
+                k=self.sd.def_cfg['k_factor']['value']
+
+
+                #Enable output
+                iteracion=1
+                # ZA=interp1d(frecuencias[0:muestras],my_array[0:muestras])
+                # ZB=interp1d(frecuencias,my_array[256: 256+225])
+                # Z=(ZA(frecuencias))*shunt[R_shunt_k]/32
+                ## solucion con shunt fija
+                #Z_sin_comprimir=(my_array[0:muestras]*shunt[R_shunt_k])/16
+
+
+
+                # idea1=0
+                # idea2=0
+                # idea3=0
+                # idea4=0
+                # Z_sin_comprimir = np.array([(val*shunt[5])/16 if i < 20 
+                #                 else (val*shunt[4])/16  if 20 <= i < 70 
+                #                 else (val*shunt[3])/16  if 70 <= i < 120 
+                #                 else (val*shunt[2])/16  if 120 <= i < 170 
+                #                 else (val*shunt[1])/16  if 170 <= i < 270
+                #                 else (val*shunt[2])/16  if 270 <= i < 320
+                #                 else (val*shunt[3])/16  if 320 <= i < 370
+                #                 else (val*shunt[4])/16  if 370 <= i < 420
+                #                 else (val*shunt[5])/16  
+                #                for i, val in enumerate(my_array[0:muestras])])
+                idea1=(my_array[20]*self.shunt[4])/16  -(my_array[19]*self.shunt[5])/16
+                idea2=(my_array[70]*self.shunt[3])/16  -(my_array[69]*self.shunt[4])/16
+                idea3=(my_array[120]*self.shunt[2])/16  -(my_array[119]*self.shunt[3])/16
+                idea4=(my_array[170]*self.shunt[1])/16  -(my_array[169]*self.shunt[2])/16
+                Z_sin_comprimir = np.array([(val*self.shunt[5])/16 if i < 20 
+                                    else (val*self.shunt[4])/16 -idea1 if 20 <= i < 70 
+                                    else (val*self.shunt[3])/16 -idea2-idea1 if 70 <= i < 120 
+                                    else (val*self.shunt[2])/16  -idea1-idea2-idea3 if 120 <= i < 170 
+                                    else (val*self.shunt[1])/16 -idea1-idea2-idea3-idea4 if 170 <= i < 270
+                                    else (val*self.shunt[2])/16 -idea1-idea2-idea3 if 270 <= i < 320
+                                    else (val*self.shunt[3])/16 -idea1-idea2 if 320 <= i < 370
+                                    else (val*self.shunt[4])/16 -idea1 if 370 <= i < 420
+                                    else (val*self.shunt[5])/16 
+                                    for i, val in enumerate(my_array[0:muestras])])            
+                
+                from scipy.interpolate import CubicSpline,PchipInterpolator,UnivariateSpline
+
+                # Identificar los índices de los escalones
+                step_indices = [20, 70, 120, 170]
+
+                # Identificar los valores en los índices de los escalones
+                step_values = [Z_sin_comprimir[i] for i in step_indices]
+
+                # Crear una función de interpolación
+                # interp_func = np.interp(np.arange(muestras), step_indices, step_values)
+                # Crear una función de interpolación spline cúbica
+                spline_func = PchipInterpolator(step_indices, step_values)            
+
+                # Aplicar la función de interpolación a todo el array
+                # Z_sin_comprimir2 = interp_func
+                Z_sin_comprimir2 = spline_func(np.arange(muestras))
+                from scipy.signal import savgol_filter
+
+                # Definir el tamaño de la ventana y el grado del polinomio
+                window_size = 11
+                poly_degree = 3
+
+                # Aplicar el filtro Savitzky-Golay
+                Z_sin_comprimir_3 = savgol_filter(Z_sin_comprimir2, window_size, poly_degree)
+
+                # en principio el calculo en verilog es suponiendo una resistencia de 1k. Con esto lo ajusto a la resistencia de shunt exacta
+
+
+                # PhaseA=interp1d(frecuencias[0:muestras],my_array2[0:muestras])
+                # Phase_check=PhaseA(frecuencias)*frecuencias*360/125e6
+                # Phase_radianes=PhaseA(frecuencias)*frecuencias*2*np.pi/125e6
+
+                    # tangentea=my_array2[0:muestras]/(1024*64)
+                    # tangenteb=my_array2[256:256+muestras]/(1024*64)
+                    # arcoa=np.arctan(tangentea) 
+                    # arcob=np.arctan(tangenteb) 
+                    # Phase_radianes=(arcoa-arcob)
+                # Phase_escalada=-my_array2[0:muestras]/(2**29) 
+                Phase_escalada=-my_array2[0:muestras]/2 # porque las fases las calculo multiplicads por 2
+                #Phase_radianes=Phase_escalada*np.pi           
+                #Phase_check=Phase_radianes*360/(2*np.pi)
+
+                Phase_radianes=Phase_escalada*np.pi/180           
+                Phase_check=Phase_escalada            
+                PHASE_sin_comprimir_grados=np.zeros(muestras)
+                for fases in range(len(Phase_check)):
+                    if (Phase_check[fases]<=-90):
+                        PHASE_sin_comprimir_grados[fases]=Phase_check[fases]+180
+                    else:
+                        if (Phase_check[fases] >=90):
+                            PHASE_sin_comprimir_grados[fases]=Phase_check[fases]-180
+                        else:
+                            PHASE_sin_comprimir_grados[fases]=Phase_check[fases]                
+                # PHASE=my_array[256: 256+225]*frecuencias*360/125e6
+                # PHASE= Phase_check
+                PHASE_sin_comprimir=PHASE_sin_comprimir_grados*np.pi/180
+                PHASE=np.ma.masked_where((Z_sin_comprimir==0.0),PHASE_sin_comprimir) 
+                self.sd.freq=np.ma.masked_where((Z_sin_comprimir==0.0),self.frecuencias) 
+                Z = np.ma.masked_where((Z_sin_comprimir==0.0),Z_sin_comprimir) 
+
+                ##ATENCION NO HAGO NINGUNA INTERPOLACION DE LOS DATOS, SOLO LOS COMPRIMO
+
+                prePHASE=PHASE.compressed()
+                self.sd.freq=self.sd.freq.compressed()
+                preZ = Z.compressed()
+
+                            # ahora aplico una forma de smooth; pero mejor hacerlo en la imagen , no sobre los datos
+                # if (smooth==0):
+                #     PHASE = np.cumsum(prePHASE, dtype=float)
+                #     Z=np.cumsum(preZ, dtype=float)
+                #     PHASE[k:] = PHASE[k:] - PHASE[:-k]
+                #     Z[k:] = Z[k:] - Z[:-k]
+                #     PHASE=PHASE[k - 1:] / k
+
+                #     Z=Z[k - 1:] / k
+                #     self.sd.freq=self.sd.freq[k-1:]
+                # else:
+                #     PHASE=prePHASE
+                # # self.sd.freq=frecuencias
+                #     Z = preZ
+
+                PHASE=prePHASE
+                Z=preZ
+
+                t10=pc()
+                self.sd.R_data = Z*np.cos(PHASE*np.pi/180)
+                self.sd.X_data = Z*np.sin(PHASE*np.pi/180)
+
+                # Compute Err, Eri, Er_mod, Er_fase_data
+                # First create frequency array based on actual gui conditions
+                # The freq array will not be changed until next data acquisition even if GUI changes
+
+
+                complex_aux         = self.sd.R_data + self.sd.X_data*1j
+                self.sd.Z_mod_data  = Z
+                self.sd.Z_fase_data = PHASE
+                # las proximas lineas deben de descomentarse cuando haya eliminado los outliers
+                admitance_aux       = 1./complex_aux
+                G_data              = np.real(admitance_aux)
+                Cp_data             = np.imag(admitance_aux)/(2*np.pi*self.sd.freq)
+                self.sd.Err_data    = Cp_data/self.sd.Co
+                self.sd.Eri_data    = G_data/(self.sd.Co*(2*np.pi*self.sd.freq));
+                E_data              = self.sd.Err_data + -1*self.sd.Eri_data*1j;
+
+                self.sd.Er_mod_data  = np.abs(E_data);
+                self.sd.Er_fase_data = np.angle(E_data);
+                t11=pc()
+                total=t11-t1
+                self._registrar_tramos(t1, t2, t3, t4, t5, t10, t11)
+                print ('total:',total)
+                absolute_val_array = np.abs(self.sd.freq - 1000)
+                smallest_difference_index = absolute_val_array.argmin()
+                print ('R_data =', self.sd.R_data[smallest_difference_index])        
+                print ('X_data=', self.sd.X_data[smallest_difference_index])
+                print ('resistencia shunt=auto')
+                log("He finalizado de medir")
+                log("tiempo transcurrido:" + str(total))  
+                log("R_data ="+ str(self.sd.R_data[smallest_difference_index]))
+                log("X_data ="+ str(self.sd.X_data[smallest_difference_index]))
+                log("resistencia shunt =auto")
+          
+        return error
+
+
+
+        
+

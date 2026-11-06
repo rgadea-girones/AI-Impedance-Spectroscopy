@@ -74,15 +74,29 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
         self.comboBox_trazaA_4.addItems(self.sd.def_cfg['comboxA'])
         self.comboBox_mag_fit.addItems(self.sd.def_cfg['comboxA'])
         self.comboBox_fit_alg.addItems(self.sd.def_cfg['combox_fit'])
+        self.comboBox_shunt_fijo.addItems([
+            "90.9 Ω (100 || 1k)",
+            "100 Ω",
+            "285.7 Ω (500 || 1k || 2k)",
+            "333.3 Ω (500 || 1k)",
+            "500 Ω",
+            "666.7 Ω (1k || 2k)",
+            "1000 Ω (1k)",
+            "2000 Ω (2k)"
+        ])
         self.bg_xaxis      = Rbutton_group([self.radioButton_lineal, self.radioButton_log])
         self.bg_xaxis_2    = Rbutton_group([self.radioButton_lineal_2, self.radioButton_log_2])
         self.bg_DC_2       = Rbutton_group([self.radioButton_DC_ON_2, self.radioButton_DC_OFF_2])
-        self.post_pro      = Rbutton_group([self.radioButton_Corre, self.radioButton_F_Corre ])   
-        self.post_pro_2    = Rbutton_group([self.radioButton_Corre_2, self.radioButton_F_Corre_2 ])  
+        self.bg_modo_barrido   = Rbutton_group([self.radioButton_single, self.radioButton_updown ])   
+        # 4P usa el mismo modo de barrido: índice 0 = Single, 1 = Up-down
+        self.bg_modo_barrido_2 = Rbutton_group([self.radioButton_F_Corre_2, self.radioButton_Corre_2 ])  
         self.tipo_analisis = Rbutton_group([self.radioButton_tipoanalisis_3,self.radioButton_tipoanalisis_4 ])  
         self.sel_smooth    = Rbutton_group([self.SMOOTH_ON,self.SMOOTH_OFF ])  
         self.sel_smooth_2  = Rbutton_group([self.SMOOTH_ON_2,self.SMOOTH_OFF_2 ])     
         self.sel_RANGO     = Rbutton_group([self.RANGO_OBJETO,self.RANGO_MEDIDA ])
+        self.bg_filtro     = Rbutton_group([self.radioButton_filtro_OFF, self.radioButton_filtro_ON])
+        self.bg_modo_shunt = Rbutton_group([self.radioButton_autoshunt, self.radioButton_shunt_fijo])
+        self.radioButton_shunt_fijo.toggled.connect(self.comboBox_shunt_fijo.setEnabled)
         
         self.bg_config_cal = Rbutton_group([self.radioButton_config_cal_1, self.radioButton_config_cal_2])
         self.bg_pto_cal    = Rbutton_group([self.radioButton_pto_cal_medidor, self.radioButton_pto_cal_usuario])
@@ -101,7 +115,7 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
                         'tipo_barrido':{'array':['bg_xaxis', 'bg_xaxis_2'],  'qt':'QButtonGroup'},
                         'DC_bias':     {'array':['bg_DC_2'],          'qt':'QButtonGroup'},
                         'nivel_DC':    {'array':['nivel_DC_2'],       'qt':'QLineEdit'},
-                        'post_procesado':{'array':['post_pro', 'post_pro_2'],  'qt':'QButtonGroup'}}
+                        'modo_barrido':{'array':['bg_modo_barrido', 'bg_modo_barrido_2'],  'qt':'QButtonGroup'}}
         # Paths
         self.paths = {'load_mfile_name':'load_path',
                       'save_mfile_name':'save_path',
@@ -117,6 +131,9 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
                        'g_load':{'array':'g_load', 'qt':'QLineEdit'},
                        'pto_cal':{'array':'bg_pto_cal', 'qt':'QButtonGroup'},
                        'RANGO':{'array':'sel_RANGO', 'qt':'QButtonGroup'},                    
+                       'filtro_senales':{'array':'bg_filtro', 'qt':'QButtonGroup'},
+                       'modo_shunt':{'array':'bg_modo_shunt', 'qt':'QButtonGroup'},
+                       'shunt_fijo_idx':{'array':'comboBox_shunt_fijo', 'qt':'QComboBox'},
                     #    'smooth':{'array':'sel_filtrado', 'qt':'QButtonGroup'},
                     #    'k_factor':{'array':'k_factor',  'qt':'QLineEdit'},                       
                        'pto_tip':{'array':'tipo_analisis', 'qt':'QButtonGroup'}
@@ -227,6 +244,8 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
                 widget.buttonClicked.connect(self.be.store_data)
             elif cfg['qt'] == 'QCheckBox':
                 widget.stateChanged.connect(self.be.store_data)
+            elif cfg['qt'] == 'QComboBox':
+                widget.currentIndexChanged.connect(self.be.store_data)
 
         # Path edit calls
         for path_attr in self.paths.values():

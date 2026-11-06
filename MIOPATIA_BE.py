@@ -46,6 +46,8 @@ class BACK_END(object):
                 aux = cast_type(objeto.checkedId())
             elif qt_obj == "QCheckBox":
                 aux = cast_type(objeto.isChecked())
+            elif qt_obj == "QComboBox":
+                aux = cast_type(objeto.currentIndex())
 
             if ((aux >= limits[0]) and (aux <= limits[1])):
                 return cast_type(aux)
@@ -676,6 +678,8 @@ class BACK_END(object):
                     btn.setChecked(True)
             elif self.pw.others[i]['qt'] == 'QCheckBox':
                 widget.setChecked(val)
+            elif self.pw.others[i]['qt'] == 'QComboBox':
+                widget.setCurrentIndex(int(val))
 
         for i in self.pw.fit_param.keys():
             if i[0:6] == 'lparam':
