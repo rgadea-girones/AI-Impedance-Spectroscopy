@@ -739,6 +739,7 @@ class BACK_END(object):
 
 
     def store_data(self):
+        self.pw.sincronizar_bloqueo_autoshunt()
         for i in self.pw.mirror.keys():
             for j in self.pw.mirror[i]['array']:
                 new_data = self.value_control(getattr(self.pw, j), self.sd.def_cfg[i]['limits'],

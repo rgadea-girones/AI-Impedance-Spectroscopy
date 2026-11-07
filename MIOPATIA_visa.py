@@ -97,7 +97,7 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
 
             self._socket.connect((host, port))
             #bitstream="/root/nuevas_imagenes_fpga/idea3.bin"
-            bitstream="/root/nuevas_imagenes_fpga/ciaico_2p_version2.bin"
+            bitstream="/root/nuevas_imagenes_fpga/ciaico_2p_version4.bin"
             veamos = self._get_ssh()
             veamos.cwd.chdir("/opt/redpitaya/bin")
             comando="./fpgautil -b " + bitstream
@@ -558,10 +558,25 @@ class VISA(ConfiguracionMixin, CalibracionMixin):
                          else (val*self.shunt[5])/16
                          for i, val in enumerate(my_array[0:muestras])])
 
+    def _vaciar_socket(self):
+        """Descarta respuestas SCPI pendientes para que las lecturas de la medida no se desfasen."""
+        timeout_previo = self._socket.gettimeout()
+        try:
+            self._socket.settimeout(0.2)
+            while True:
+                try:
+                    if not self._socket.recv(4096):
+                        break
+                except socket.timeout:
+                    break
+        finally:
+            self._socket.settimeout(timeout_previo)
+
     def measure(self, log=None):
         error=0
         if log is None:
             log = self.dv.append_plus
+        self._vaciar_socket()
     #     if (self.sd.def_cfg['post_procesado']['value']==0):
     #         if self.sd.def_cfg['modelo']['value']==0:
     #             shunt=[90.9,100.0,900.9,1000.0,10000.0,100000.0]

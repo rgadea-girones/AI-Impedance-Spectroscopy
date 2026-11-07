@@ -103,6 +103,8 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
 
         #                     'avg':         {'array':['avg',      'avg_2'],  'qt':'QCheckBox'},
         ############## Widget to internal variables assignment #################
+        # Autoshunt (2P) fixed frequency settings
+        self.autoshunt_fijos = {'f_inicial': '10', 'f_final': '1000000', 'n_puntos': '50'}
         # Data Mirroring through GUI
         self.mirror =  {'f_inicial':   {'array':['f_inicial', 'f_inicial_2'],'qt':'QLineEdit'},
                         'f_final':     {'array':['f_final',   'f_final_2'],  'qt':'QLineEdit'},
@@ -250,6 +252,18 @@ class LogicPanel(QtWidgets.QWidget, Ui_PanelPrincipal):
         # Path edit calls
         for path_attr in self.paths.values():
             getattr(self, path_attr).editingFinished.connect(self.be.store_data)
+
+        self.radioButton_autoshunt.toggled.connect(self.sincronizar_bloqueo_autoshunt)
+
+
+    # Autoshunt (2P) only works with a fixed frequency range; lock those fields
+    def sincronizar_bloqueo_autoshunt(self, *_):
+        autoshunt = self.radioButton_autoshunt.isChecked()
+        for nombre, valor in self.autoshunt_fijos.items():
+            widget = getattr(self, nombre)
+            widget.setReadOnly(autoshunt)
+            if autoshunt:
+                widget.setText(valor)
 
 
     # MatplotLib Widgets

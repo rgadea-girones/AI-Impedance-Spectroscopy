@@ -235,10 +235,11 @@ class ConfiguracionMixin(object):
                 veamos["monitor"]("0x40100048 ", ADC_canal2_filtroKK)
                 ADC_canal2_filtroPP="0x2666"      # filtro paso bajo aprox. Butterworth fc=20kHz
                 veamos["monitor"]("0x4010004C ", ADC_canal2_filtroPP)
-                self.tx_txt('SOUR1:BURS:NOR?')
-                cuantas_muestras= self.rx_txt()                     # # rp_s.tx_txt('SOUR2:BURS:INT:PER 30') # solo funciona si led3 esta activado, ancho detector
-                self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
-                self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
+                # con umbral 0 la FPGA rechaza el comando (ERR 9506) y su respuesta desfasa el socket
+                if umbral_horizontal_detector_cero>0:
+                    self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
+                if umbral_vertical_detector_cero>0:
+                    self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
 
                 #self.tx_txt('DIG:PIN LED'+str(2)+','+str(procedimiento_fase))  # desbloqueo finalizacion state1, tambien genera inicio
 
@@ -390,10 +391,11 @@ class ConfiguracionMixin(object):
                 veamos["monitor"]("0x40100048 ", ADC_canal2_filtroKK)
                 ADC_canal2_filtroPP="0x2666"      # filtro paso bajo aprox. Butterworth fc=20kHz
                 veamos["monitor"]("0x4010004C ", ADC_canal2_filtroPP)
-                self.tx_txt('SOUR1:BURS:NOR?')
-                cuantas_muestras= self.rx_txt()
-                self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
-                self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
+                # con umbral 0 la FPGA rechaza el comando (ERR 9506) y su respuesta desfasa el socket
+                if umbral_horizontal_detector_cero>0:
+                    self.tx_txt('SOUR2:BURS:NOR ' +str(umbral_horizontal_detector_cero))
+                if umbral_vertical_detector_cero>0:
+                    self.tx_txt('SOUR2:BURS:NCYC ' +str(umbral_vertical_detector_cero)) #controlo el numero de ciclos de ancho del deteccor de cero
 
                 #self.tx_txt('DIG:PIN LED'+str(2)+','+str(procedimiento_fase))  # desbloqueo finalizacion state1, tambien genera inicio
                 #self.tx_txt('DIG:PIN LED'+str(3)+','+str(0))  #activacion del led3 absolutamente necesario para que el numero de ciclos sea configurable y el numero de frecuencias y los umbrales

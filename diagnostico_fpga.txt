@@ -931,3 +931,285 @@
 2026-11-06T18:29:13.308305 | barrido | t1-t2=1.510s consultas=6 media=251.7ms max=307.3ms
 2026-11-06T18:29:13.873321 | diag_shunt | single | pines={'LED3': '1', 'DIO0_N': '1', 'DIO1_N': '0', 'DIO2_N': '0', 'DIO3_N': '0'} | muestras={5: 8267.0, 50: 1447.0, 100: 177.0, 200: 23.0} | media=1082.184 | n=255
 2026-11-06T18:29:14.235535 | tramos | barrido(t1-t2)=1.510 lecturaRES1(t3-t4)=0.325 lecturaRES2(t4-t5)=0.602 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.438
+2026-11-06T18:40:50.823738 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:41:12.948198 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:41:21.857279 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:41:23.307682 | barrido | t1-t2=1.450s consultas=5 media=290.0ms max=318.0ms
+2026-11-06T18:41:24.926018 | diag_shunt | single | pines={'LED3': '0', 'DIO0_N': '0', 'DIO1_N': '1', 'DIO2_N': '0', 'DIO3_N': '1'} | muestras={5: 74877.0, 50: 68216.0, 100: 38019.0, 200: 2420.0} | media=32589.365 | n=255
+2026-11-06T18:41:25.272742 | tramos | barrido(t1-t2)=1.450 lecturaRES1(t3-t4)=0.328 lecturaRES2(t4-t5)=1.636 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=3.415
+2026-11-06T18:41:31.069690 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:41:32.613574 | barrido | t1-t2=1.550s consultas=6 media=258.4ms max=321.3ms
+2026-11-06T18:41:33.635321 | diag_shunt | single | pines={'LED3': '0', 'DIO0_N': '0', 'DIO1_N': '1', 'DIO2_N': '0', 'DIO3_N': '1'} | muestras={5: 56946.0, 50: 61234.0, 100: 48381.0, 200: 2416.0} | media=30847.341 | n=255
+2026-11-06T18:41:33.993201 | tramos | barrido(t1-t2)=1.550 lecturaRES1(t3-t4)=0.322 lecturaRES2(t4-t5)=1.050 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.923
+2026-11-06T18:41:46.223879 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:42:08.849306 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:42:20.117451 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:42:21.589196 | barrido | t1-t2=1.471s consultas=7 media=210.2ms max=307.5ms
+2026-11-06T18:42:23.001218 | diag_shunt | single | pines={'LED3': '0', 'DIO0_N': '0', 'DIO1_N': '1', 'DIO2_N': '0', 'DIO3_N': '1'} | muestras={5: 55433.0, 50: 39786.0, 100: 47300.0, 200: 2412.0} | media=28749.890 | n=255
+2026-11-06T18:42:23.323348 | tramos | barrido(t1-t2)=1.471 lecturaRES1(t3-t4)=0.320 lecturaRES2(t4-t5)=1.412 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=3.206
+2026-11-06T18:42:42.643491 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T18:42:45.421178 | barrido | t1-t2=2.776s consultas=10 media=277.6ms max=317.8ms
+2026-11-06T18:42:46.947644 | diag_shunt | updown | pines={'LED3': '0', 'DIO0_N': '1', 'DIO1_N': '0', 'DIO2_N': '0', 'DIO3_N': '0'} | muestras={5: 54788.0, 50: 50901.0, 100: 47290.0, 200: 3221.0} | media=28705.035 | n=511
+2026-11-06T18:42:47.304338 | tramos | barrido(t1-t2)=2.776 lecturaRES1(t3-t4)=0.360 lecturaRES2(t4-t5)=1.517 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=4.654
+2026-11-06T18:42:52.478691 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NOR Failed to set burst repetitions: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T18:42:55.256286 | barrido | t1-t2=2.778s consultas=10 media=277.8ms max=319.9ms
+2026-11-06T18:42:56.483567 | diag_shunt | updown | pines={'LED3': '0', 'DIO0_N': '1', 'DIO1_N': '0', 'DIO2_N': '0', 'DIO3_N': '0'} | muestras={5: 64883.0, 50: 64284.0, 100: 29206.0, 200: 2412.0} | media=29228.939 | n=511
+2026-11-06T18:42:56.832891 | tramos | barrido(t1-t2)=2.778 lecturaRES1(t3-t4)=0.345 lecturaRES2(t4-t5)=1.241 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=4.365
+2026-11-06T18:43:01.706188 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '9506,"*SOUR2:BURS:NCYC Failed to set burst count parameter: Value out of range."', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T18:43:04.466962 | barrido | t1-t2=2.766s consultas=9 media=307.3ms max=349.2ms
+2026-11-06T18:43:05.700553 | diag_shunt | updown | pines={'LED3': '0', 'DIO0_N': '1', 'DIO1_N': '0', 'DIO2_N': '0', 'DIO3_N': '0'} | muestras={5: 58375.0, 50: 47521.0, 100: 38204.0, 200: 3221.0} | media=28817.783 | n=511
+2026-11-06T18:43:06.043561 | tramos | barrido(t1-t2)=2.766 lecturaRES1(t3-t4)=0.338 lecturaRES2(t4-t5)=1.230 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=4.336
+2026-11-06T18:56:39.692019 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T18:56:48.077677 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:57:10.303813 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:57:19.079467 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:57:34.527182 | barrido | t1-t2=15.450s consultas=84 media=183.9ms max=422.6ms
+2026-11-06T18:57:35.254524 | tramos | barrido(t1-t2)=15.450 lecturaRES1(t3-t4)=0.358 lecturaRES2(t4-t5)=0.365 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=16.175
+2026-11-06T18:57:45.849046 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:57:47.350121 | barrido | t1-t2=1.512s consultas=5 media=302.4ms max=307.6ms
+2026-11-06T18:57:48.046855 | tramos | barrido(t1-t2)=1.512 lecturaRES1(t3-t4)=0.322 lecturaRES2(t4-t5)=0.369 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.205
+2026-11-06T18:57:59.023075 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:58:00.570503 | barrido | t1-t2=1.547s consultas=6 media=257.9ms max=318.7ms
+2026-11-06T18:58:01.254467 | tramos | barrido(t1-t2)=1.547 lecturaRES1(t3-t4)=0.314 lecturaRES2(t4-t5)=0.369 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.231
+2026-11-06T18:58:16.595272 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:58:18.075483 | barrido | t1-t2=1.486s consultas=7 media=212.2ms max=307.6ms
+2026-11-06T18:58:18.768635 | tramos | barrido(t1-t2)=1.486 lecturaRES1(t3-t4)=0.334 lecturaRES2(t4-t5)=0.359 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.180
+2026-11-06T18:58:28.120602 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T18:58:29.302606 | barrido | t1-t2=1.182s consultas=24 media=49.2ms max=117.3ms
+2026-11-06T18:58:29.984468 | tramos | barrido(t1-t2)=1.182 lecturaRES1(t3-t4)=0.311 lecturaRES2(t4-t5)=0.369 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.863
+2026-11-06T18:58:44.180928 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T18:58:57.910215 | barrido | t1-t2=13.729s consultas=80 media=171.6ms max=318.8ms
+2026-11-06T18:58:58.615376 | tramos | barrido(t1-t2)=13.729 lecturaRES1(t3-t4)=0.332 lecturaRES2(t4-t5)=0.371 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=14.434
+2026-11-06T19:03:21.304318 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T19:03:25.795449 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:03:47.876143 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:04:07.657745 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:04:29.689120 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:08:36.145953 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:08:58.264152 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:09:14.254272 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:09:15.578053 | barrido | t1-t2=1.323s consultas=5 media=264.6ms max=310.8ms
+2026-11-06T19:09:16.310636 | tramos | barrido(t1-t2)=1.323 lecturaRES1(t3-t4)=0.349 lecturaRES2(t4-t5)=0.393 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.066
+2026-11-06T19:09:30.334173 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:09:31.510189 | barrido | t1-t2=1.176s consultas=5 media=235.1ms max=307.3ms
+2026-11-06T19:09:32.230176 | tramos | barrido(t1-t2)=1.176 lecturaRES1(t3-t4)=0.360 lecturaRES2(t4-t5)=0.359 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.896
+2026-11-06T19:09:44.975847 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:09:46.515298 | barrido | t1-t2=1.538s consultas=7 media=219.8ms max=309.3ms
+2026-11-06T19:09:47.710703 | tramos | barrido(t1-t2)=1.538 lecturaRES1(t3-t4)=0.754 lecturaRES2(t4-t5)=0.451 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.744
+2026-11-06T19:10:02.066245 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:10:20.848480 | barrido | t1-t2=18.782s consultas=114 media=164.8ms max=351.6ms
+2026-11-06T19:10:21.593202 | tramos | barrido(t1-t2)=18.782 lecturaRES1(t3-t4)=0.350 lecturaRES2(t4-t5)=0.393 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=19.527
+2026-11-06T19:19:06.343280 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T19:19:13.979607 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:19:34.700071 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:19:37.572451 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:22:55.145226 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T19:23:04.918124 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:23:27.031358 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:23:40.852031 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:24:51.882841 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T19:25:07.877906 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:25:30.519434 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:25:43.123957 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:25:44.364158 | barrido | t1-t2=1.239s consultas=7 media=177.0ms max=316.6ms
+2026-11-06T19:25:45.091808 | tramos | barrido(t1-t2)=1.239 lecturaRES1(t3-t4)=0.349 lecturaRES2(t4-t5)=0.383 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.971
+2026-11-06T19:25:58.491339 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:26:20.975092 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:26:32.902598 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:26:34.436001 | barrido | t1-t2=1.533s consultas=7 media=219.1ms max=307.3ms
+2026-11-06T19:26:35.159240 | tramos | barrido(t1-t2)=1.533 lecturaRES1(t3-t4)=0.349 lecturaRES2(t4-t5)=0.378 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.263
+2026-11-06T19:26:40.261749 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:26:41.572326 | barrido | t1-t2=1.309s consultas=5 media=261.9ms max=318.2ms
+2026-11-06T19:26:42.321891 | tramos | barrido(t1-t2)=1.309 lecturaRES1(t3-t4)=0.365 lecturaRES2(t4-t5)=0.388 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.064
+2026-11-06T19:26:44.251720 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:26:45.439440 | barrido | t1-t2=1.187s consultas=25 media=47.5ms max=93.6ms
+2026-11-06T19:26:46.146215 | tramos | barrido(t1-t2)=1.187 lecturaRES1(t3-t4)=0.336 lecturaRES2(t4-t5)=0.370 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.894
+2026-11-06T19:26:49.879484 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:26:51.333211 | barrido | t1-t2=1.453s consultas=5 media=290.6ms max=308.7ms
+2026-11-06T19:26:52.051763 | tramos | barrido(t1-t2)=1.453 lecturaRES1(t3-t4)=0.351 lecturaRES2(t4-t5)=0.369 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.175
+2026-11-06T19:27:06.678905 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:27:09.458138 | barrido | t1-t2=2.778s consultas=10 media=277.8ms max=349.3ms
+2026-11-06T19:27:10.179588 | tramos | barrido(t1-t2)=2.778 lecturaRES1(t3-t4)=0.347 lecturaRES2(t4-t5)=0.380 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=3.507
+2026-11-06T19:27:24.092054 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:27:26.661510 | barrido | t1-t2=2.569s consultas=12 media=214.1ms max=307.9ms
+2026-11-06T19:27:27.572030 | tramos | barrido(t1-t2)=2.569 lecturaRES1(t3-t4)=0.543 lecturaRES2(t4-t5)=0.380 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=3.494
+2026-11-06T19:27:41.784914 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:04.136579 | TIMEOUT | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:15.180035 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:17.643316 | barrido | t1-t2=2.476s consultas=12 media=206.3ms max=310.8ms
+2026-11-06T19:28:18.978246 | tramos | barrido(t1-t2)=2.476 lecturaRES1(t3-t4)=0.663 lecturaRES2(t4-t5)=0.664 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=3.804
+2026-11-06T19:28:23.487831 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:26.256288 | barrido | t1-t2=2.770s consultas=12 media=230.8ms max=308.7ms
+2026-11-06T19:28:27.000503 | tramos | barrido(t1-t2)=2.770 lecturaRES1(t3-t4)=0.347 lecturaRES2(t4-t5)=0.398 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=3.517
+2026-11-06T19:28:28.670638 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:30.974591 | barrido | t1-t2=2.303s consultas=48 media=48.0ms max=98.4ms
+2026-11-06T19:28:31.733857 | tramos | barrido(t1-t2)=2.303 lecturaRES1(t3-t4)=0.372 lecturaRES2(t4-t5)=0.387 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=3.063
+2026-11-06T19:28:33.840966 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:36.394774 | barrido | t1-t2=2.554s consultas=11 media=232.2ms max=310.0ms
+2026-11-06T19:28:37.124081 | tramos | barrido(t1-t2)=2.554 lecturaRES1(t3-t4)=0.350 lecturaRES2(t4-t5)=0.379 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=3.284
+2026-11-06T19:28:39.411423 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:42.231789 | barrido | t1-t2=2.820s consultas=14 media=201.4ms max=307.5ms
+2026-11-06T19:28:42.952011 | tramos | barrido(t1-t2)=2.820 lecturaRES1(t3-t4)=0.333 lecturaRES2(t4-t5)=0.389 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=3.543
+2026-11-06T19:28:44.820206 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:47.124957 | barrido | t1-t2=2.304s consultas=47 media=49.0ms max=104.0ms
+2026-11-06T19:28:47.868616 | tramos | barrido(t1-t2)=2.304 lecturaRES1(t3-t4)=0.365 lecturaRES2(t4-t5)=0.385 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=3.055
+2026-11-06T19:28:50.151069 | inicio | {'LED0': '0', 'LED1': '1', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000001b9', 'scpi_service': 'active'}
+2026-11-06T19:28:52.981713 | barrido | t1-t2=2.833s consultas=12 media=236.1ms max=368.3ms
+2026-11-06T19:28:53.916252 | tramos | barrido(t1-t2)=2.833 lecturaRES1(t3-t4)=0.551 lecturaRES2(t4-t5)=0.380 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=3.764
+2026-11-06T19:29:09.562164 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:29:11.104834 | barrido | t1-t2=1.546s consultas=7 media=220.8ms max=310.3ms
+2026-11-06T19:29:11.884795 | tramos | barrido(t1-t2)=1.546 lecturaRES1(t3-t4)=0.406 lecturaRES2(t4-t5)=0.371 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.324
+2026-11-06T19:29:15.910694 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:29:17.560082 | barrido | t1-t2=1.649s consultas=5 media=329.7ms max=419.9ms
+2026-11-06T19:29:18.882200 | tramos | barrido(t1-t2)=1.649 lecturaRES1(t3-t4)=0.684 lecturaRES2(t4-t5)=0.639 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.972
+2026-11-06T19:29:24.098132 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:29:25.543755 | barrido | t1-t2=1.447s consultas=6 media=241.2ms max=307.8ms
+2026-11-06T19:29:26.488028 | tramos | barrido(t1-t2)=1.447 lecturaRES1(t3-t4)=0.410 lecturaRES2(t4-t5)=0.536 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.394
+2026-11-06T19:29:41.201292 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:29:42.748597 | barrido | t1-t2=1.548s consultas=9 media=172.0ms max=307.4ms
+2026-11-06T19:29:43.418605 | tramos | barrido(t1-t2)=1.548 lecturaRES1(t3-t4)=0.313 lecturaRES2(t4-t5)=0.359 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.221
+2026-11-06T19:29:46.058577 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:29:47.571768 | barrido | t1-t2=1.512s consultas=6 media=252.0ms max=307.2ms
+2026-11-06T19:29:48.293360 | tramos | barrido(t1-t2)=1.512 lecturaRES1(t3-t4)=0.352 lecturaRES2(t4-t5)=0.369 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.234
+2026-11-06T19:30:04.548931 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:30:05.790095 | barrido | t1-t2=1.241s consultas=6 media=206.8ms max=319.3ms
+2026-11-06T19:30:06.502848 | tramos | barrido(t1-t2)=1.241 lecturaRES1(t3-t4)=0.342 lecturaRES2(t4-t5)=0.376 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.961
+2026-11-06T19:30:08.648029 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:30:09.828972 | barrido | t1-t2=1.180s consultas=24 media=49.2ms max=111.0ms
+2026-11-06T19:30:10.574227 | tramos | barrido(t1-t2)=1.180 lecturaRES1(t3-t4)=0.369 lecturaRES2(t4-t5)=0.375 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.926
+2026-11-06T19:30:24.527344 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:30:46.639168 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:30:57.389807 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:30:58.936073 | barrido | t1-t2=1.546s consultas=7 media=220.8ms max=307.7ms
+2026-11-06T19:30:59.650037 | tramos | barrido(t1-t2)=1.546 lecturaRES1(t3-t4)=0.337 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.265
+2026-11-06T19:31:03.531204 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T19:31:05.080050 | barrido | t1-t2=1.548s consultas=7 media=221.2ms max=307.7ms
+2026-11-06T19:31:05.780040 | tramos | barrido(t1-t2)=1.548 lecturaRES1(t3-t4)=0.324 lecturaRES2(t4-t5)=0.379 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.253
+2026-11-06T20:04:14.270150 | fpgautil: 'Time taken to load BIN is 293.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T20:04:30.169187 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:04:51.970723 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:05:11.841204 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:05:13.492355 | barrido | t1-t2=1.650s consultas=5 media=330.0ms max=421.0ms
+2026-11-06T20:05:15.071877 | tramos | barrido(t1-t2)=1.650 lecturaRES1(t3-t4)=0.401 lecturaRES2(t4-t5)=1.177 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=3.229
+2026-11-06T20:05:22.080890 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:05:23.483740 | barrido | t1-t2=1.402s consultas=5 media=280.4ms max=319.7ms
+2026-11-06T20:05:24.216487 | tramos | barrido(t1-t2)=1.402 lecturaRES1(t3-t4)=0.342 lecturaRES2(t4-t5)=0.390 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.135
+2026-11-06T20:05:42.983676 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000005', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:05:47.280568 | barrido | t1-t2=4.301s consultas=18 media=238.9ms max=307.9ms
+2026-11-06T20:05:47.996501 | tramos | barrido(t1-t2)=4.301 lecturaRES1(t3-t4)=0.332 lecturaRES2(t4-t5)=0.378 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=5.012
+2026-11-06T20:05:54.951704 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000005', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:05:59.265215 | barrido | t1-t2=4.314s consultas=17 media=253.8ms max=319.8ms
+2026-11-06T20:05:59.933992 | tramos | barrido(t1-t2)=4.314 lecturaRES1(t3-t4)=0.340 lecturaRES2(t4-t5)=0.330 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=4.984
+2026-11-06T20:06:08.161652 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000005', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:06:12.468152 | barrido | t1-t2=4.312s consultas=17 media=253.7ms max=350.4ms
+2026-11-06T20:06:13.766185 | tramos | barrido(t1-t2)=4.312 lecturaRES1(t3-t4)=0.813 lecturaRES2(t4-t5)=0.476 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=5.603
+2026-11-06T20:11:04.059039 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T20:11:09.939101 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:11:32.053400 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:29:37.042800 | fpgautil: 'Time taken to load BIN is 292.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T20:30:03.407965 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:30:04.028476 | barrido | t1-t2=0.620s consultas=4 media=155.0ms max=306.8ms
+2026-11-06T20:30:04.756831 | tramos | barrido(t1-t2)=0.620 lecturaRES1(t3-t4)=0.350 lecturaRES2(t4-t5)=0.383 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.354
+2026-11-06T20:30:19.386660 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:30:20.003052 | barrido | t1-t2=0.616s consultas=4 media=154.1ms max=307.3ms
+2026-11-06T20:30:20.712612 | tramos | barrido(t1-t2)=0.616 lecturaRES1(t3-t4)=0.337 lecturaRES2(t4-t5)=0.371 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.325
+2026-11-06T20:30:34.019823 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:30:43.764640 | barrido | t1-t2=9.755s consultas=46 media=212.1ms max=308.6ms
+2026-11-06T20:30:44.387353 | tramos | barrido(t1-t2)=9.755 lecturaRES1(t3-t4)=0.303 lecturaRES2(t4-t5)=0.308 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=10.367
+2026-11-06T20:31:01.157734 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:31:22.954287 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:31:53.568328 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:31:54.314033 | barrido | t1-t2=0.745s consultas=2 media=372.5ms max=437.6ms
+2026-11-06T20:31:55.089713 | tramos | barrido(t1-t2)=0.745 lecturaRES1(t3-t4)=0.397 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.523
+2026-11-06T20:32:01.776958 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:32:02.608040 | barrido | t1-t2=0.831s consultas=3 media=277.1ms max=307.3ms
+2026-11-06T20:32:03.303381 | tramos | barrido(t1-t2)=0.831 lecturaRES1(t3-t4)=0.312 lecturaRES2(t4-t5)=0.381 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.526
+2026-11-06T20:32:08.428222 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:32:09.059221 | barrido | t1-t2=0.631s consultas=2 media=315.4ms max=323.7ms
+2026-11-06T20:32:09.784832 | tramos | barrido(t1-t2)=0.631 lecturaRES1(t3-t4)=0.321 lecturaRES2(t4-t5)=0.404 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.357
+2026-11-06T20:32:20.566788 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:32:21.347137 | barrido | t1-t2=0.780s consultas=3 media=260.0ms max=307.1ms
+2026-11-06T20:32:22.040970 | tramos | barrido(t1-t2)=0.780 lecturaRES1(t3-t4)=0.324 lecturaRES2(t4-t5)=0.368 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.474
+2026-11-06T20:32:28.709903 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x0000002d', 'scpi_service': 'active'}
+2026-11-06T20:32:29.334723 | barrido | t1-t2=0.624s consultas=2 media=312.2ms max=317.1ms
+2026-11-06T20:32:30.054516 | tramos | barrido(t1-t2)=0.624 lecturaRES1(t3-t4)=0.337 lecturaRES2(t4-t5)=0.382 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.344
+2026-11-06T20:32:50.519258 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x00000017', 'scpi_service': 'active'}
+2026-11-06T20:45:11.471369 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T20:45:38.584384 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:46:00.322805 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:46:19.994555 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:46:21.535186 | barrido | t1-t2=1.547s consultas=5 media=309.3ms max=344.6ms
+2026-11-06T20:46:22.343506 | tramos | barrido(t1-t2)=1.547 lecturaRES1(t3-t4)=0.395 lecturaRES2(t4-t5)=0.412 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.356
+2026-11-06T20:46:32.487962 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:46:33.830069 | barrido | t1-t2=1.342s consultas=7 media=191.7ms max=307.6ms
+2026-11-06T20:46:35.108089 | tramos | barrido(t1-t2)=1.342 lecturaRES1(t3-t4)=0.438 lecturaRES2(t4-t5)=0.848 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.630
+2026-11-06T20:46:41.186855 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:46:42.730297 | barrido | t1-t2=1.552s consultas=9 media=172.5ms max=307.4ms
+2026-11-06T20:46:43.461940 | tramos | barrido(t1-t2)=1.552 lecturaRES1(t3-t4)=0.350 lecturaRES2(t4-t5)=0.370 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.275
+2026-11-06T20:47:12.825363 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x00000017', 'scpi_service': 'active'}
+2026-11-06T20:47:13.458968 | barrido | t1-t2=0.633s consultas=2 media=316.5ms max=325.6ms
+2026-11-06T20:47:14.110441 | tramos | barrido(t1-t2)=0.633 lecturaRES1(t3-t4)=0.330 lecturaRES2(t4-t5)=0.319 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.284
+2026-11-06T20:47:51.834999 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x00000017', 'scpi_service': 'active'}
+2026-11-06T20:47:52.462017 | barrido | t1-t2=0.628s consultas=2 media=313.9ms max=320.2ms
+2026-11-06T20:47:53.159920 | tramos | barrido(t1-t2)=0.628 lecturaRES1(t3-t4)=0.326 lecturaRES2(t4-t5)=0.359 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.314
+2026-11-06T20:48:16.014663 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:48:37.821660 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:48:45.294081 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:49:07.761461 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:49:24.614733 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:49:25.862321 | barrido | t1-t2=1.247s consultas=6 media=207.9ms max=325.6ms
+2026-11-06T20:49:26.592048 | tramos | barrido(t1-t2)=1.247 lecturaRES1(t3-t4)=0.357 lecturaRES2(t4-t5)=0.380 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=1.986
+2026-11-06T20:49:29.516893 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T20:49:31.084223 | barrido | t1-t2=1.566s consultas=7 media=223.8ms max=340.2ms
+2026-11-06T20:49:31.779992 | tramos | barrido(t1-t2)=1.566 lecturaRES1(t3-t4)=0.315 lecturaRES2(t4-t5)=0.379 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.261
+2026-11-06T22:36:57.506478 | fpgautil: 'Time taken to load BIN is 294.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-06T22:37:04.326981 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:37:26.149678 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:37:59.838814 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:38:01.472292 | barrido | t1-t2=1.633s consultas=5 media=326.5ms max=403.7ms
+2026-11-06T22:38:02.243731 | tramos | barrido(t1-t2)=1.633 lecturaRES1(t3-t4)=0.367 lecturaRES2(t4-t5)=0.402 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.404
+2026-11-06T22:38:17.428167 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:38:18.978509 | barrido | t1-t2=1.554s consultas=7 media=222.0ms max=307.3ms
+2026-11-06T22:38:19.695261 | tramos | barrido(t1-t2)=1.554 lecturaRES1(t3-t4)=0.340 lecturaRES2(t4-t5)=0.380 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.275
+2026-11-06T22:38:33.707828 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:38:56.038151 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:39:06.278023 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:39:28.090140 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:39:51.438746 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:39:52.985644 | barrido | t1-t2=1.547s consultas=7 media=220.9ms max=307.7ms
+2026-11-06T22:39:53.692063 | tramos | barrido(t1-t2)=1.547 lecturaRES1(t3-t4)=0.326 lecturaRES2(t4-t5)=0.379 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.253
+2026-11-06T22:40:13.458237 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:40:14.849844 | barrido | t1-t2=1.391s consultas=9 media=154.6ms max=307.4ms
+2026-11-06T22:40:15.761918 | tramos | barrido(t1-t2)=1.391 lecturaRES1(t3-t4)=0.350 lecturaRES2(t4-t5)=0.560 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.303
+2026-11-06T22:40:29.530952 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:40:31.078439 | barrido | t1-t2=1.547s consultas=6 media=257.9ms max=318.7ms
+2026-11-06T22:40:31.761923 | tramos | barrido(t1-t2)=1.547 lecturaRES1(t3-t4)=0.312 lecturaRES2(t4-t5)=0.370 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.230
+2026-11-06T22:40:39.047308 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:40:40.602858 | barrido | t1-t2=1.555s consultas=7 media=222.1ms max=325.7ms
+2026-11-06T22:40:41.303481 | tramos | barrido(t1-t2)=1.555 lecturaRES1(t3-t4)=0.340 lecturaRES2(t4-t5)=0.361 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.256
+2026-11-06T22:41:30.066893 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:41:31.469886 | barrido | t1-t2=1.402s consultas=5 media=280.3ms max=307.3ms
+2026-11-06T22:41:32.173544 | tramos | barrido(t1-t2)=1.402 lecturaRES1(t3-t4)=0.334 lecturaRES2(t4-t5)=0.369 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.105
+2026-11-06T22:41:37.928699 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:41:39.550722 | barrido | t1-t2=1.621s consultas=7 media=231.6ms max=307.2ms
+2026-11-06T22:41:40.263050 | tramos | barrido(t1-t2)=1.621 lecturaRES1(t3-t4)=0.341 lecturaRES2(t4-t5)=0.370 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.334
+2026-11-06T22:41:43.080129 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:41:44.258843 | barrido | t1-t2=1.178s consultas=24 media=49.1ms max=106.8ms
+2026-11-06T22:41:44.971973 | tramos | barrido(t1-t2)=1.178 lecturaRES1(t3-t4)=0.321 lecturaRES2(t4-t5)=0.390 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=1.892
+2026-11-06T22:42:20.428914 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-06T22:42:42.231810 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-07T12:50:58.108145 | fpgautil: 'Time taken to load BIN is 295.000000 Milli Seconds\n\rBIN FILE loaded through FPGA manager successfully\n\r' | estado: 'operating'
+2026-11-07T12:51:16.505569 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-07T12:51:18.037189 | barrido | t1-t2=1.531s consultas=6 media=255.2ms max=410.3ms
+2026-11-07T12:51:18.851338 | tramos | barrido(t1-t2)=1.531 lecturaRES1(t3-t4)=0.407 lecturaRES2(t4-t5)=0.408 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.348
+2026-11-07T12:51:30.017461 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-07T12:51:31.294735 | barrido | t1-t2=1.278s consultas=6 media=213.0ms max=307.7ms
+2026-11-07T12:51:32.068265 | tramos | barrido(t1-t2)=1.278 lecturaRES1(t3-t4)=0.363 lecturaRES2(t4-t5)=0.414 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.057
+2026-11-07T12:51:45.068282 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '1', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-07T12:51:46.602638 | barrido | t1-t2=1.538s consultas=6 media=256.3ms max=410.6ms
+2026-11-07T12:51:47.369236 | tramos | barrido(t1-t2)=1.538 lecturaRES1(t3-t4)=0.359 lecturaRES2(t4-t5)=0.406 calculo(t5-t10)=0.001 final(t10-t11)=0.000 total=2.304
+2026-11-07T12:52:01.559350 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '0', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-07T12:52:03.194705 | barrido | t1-t2=1.634s consultas=7 media=233.5ms max=308.3ms
+2026-11-07T12:52:03.962152 | tramos | barrido(t1-t2)=1.634 lecturaRES1(t3-t4)=0.356 lecturaRES2(t4-t5)=0.411 calculo(t5-t10)=0.000 final(t10-t11)=0.000 total=2.402
+2026-11-07T12:52:16.762689 | inicio | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}
+2026-11-07T12:52:38.522890 | TIMEOUT | {'LED0': '0', 'LED1': '0', 'LED2': '0', 'LED3': '1', 'LED4': '0', 'DIO7_P': '0', 'ERR': '0,"No error"', 'n_ciclos': '0x00000000', 'muestras': '0x000000dd', 'scpi_service': 'active'}

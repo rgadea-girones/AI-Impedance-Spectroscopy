@@ -119,22 +119,8 @@
         ],
         "type": "int"
     },
-    "ultimo_pollo": {
-        "value": 0,
-        "limits": [
-            0,
-            99
-        ],
-        "type": "int"
-    },
-    "ultima_medida": {
-        "value": 0,
-        "limits": [
-            0,
-            9
-        ],
-        "type": "int"
-    },
+    "ultimo_pollo": 0,
+    "ultima_medida": 0,
     "direccion_redpitaya": "192.168.137.200",
     "sujetos": "0-0",
     "load_mfile_name": "./COPIA_EXCELS/medida.csv",
@@ -154,7 +140,7 @@
         "type": "int"
     },
     "c_load": {
-        "value": 500,
+        "value": 500.0,
         "limits": [
             0,
             1000000.0
@@ -229,18 +215,18 @@
         ],
         "value": [
             1,
-            0,
+            0.0,
             100000000.0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
         ],
         "limits": [
             [
@@ -313,5 +299,29 @@
         ]
     },
     "VI_ADDRESS": "GPIB0::17::INSTR",
-    "GPIB_timeout": 12001
+    "GPIB_timeout": 12001,
+    "filtro_senales": {
+        "value": 1,
+        "limits": [
+            0,
+            1
+        ],
+        "type": "int"
+    },
+    "modo_shunt": {
+        "value": 0,
+        "limits": [
+            0,
+            1
+        ],
+        "type": "int"
+    },
+    "shunt_fijo_idx": {
+        "value": 4,
+        "limits": [
+            0,
+            7
+        ],
+        "type": "int"
+    }
 }
