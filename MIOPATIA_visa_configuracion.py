@@ -81,11 +81,23 @@ class ConfiguracionMixin(object):
                 modo = int(self.sd.def_cfg['tipo_barrido']['value'])  # 0 lineal, 1 log
                 num_puntos = int(self.sd.def_cfg['n_puntos']['value'])
                 fm = 125000000.0
+                self.tx_txt('DIG:PIN LED1,0')  # con sweep activo la tabla no es accesible desde el ARM: escribir y verificar con sweep desactivado
+                self.tx_txt('DIG:PIN LED2,1')  # 1-> bloque de memoria de incrementos accesible para el ARM
                 try:
                     veamos = self._get_ssh()
                     veamos.cwd.chdir("/root/nuevas_aplicaciones_2026")
                     cmd = "./raf_incr_writer_sweep {:.6f} {:.6f} {} {} {:.6f} {}".format(f1, f2, modo, num_puntos, fm, "on")
-                    salida = veamos[cmd]()
+                    primer_fallo = None
+                    for intento in range(2):  # la primera llamada tras arrancar la app puede fallar; se reintenta una vez
+                        try:
+                            salida = veamos[cmd]()
+                            break
+                        except Exception as e:
+                            salida = str(e)
+                            primer_fallo = primer_fallo or salida
+                    if primer_fallo is not None:
+                        self.dv.append_plus("AVISO: primer intento ARM (on) fallido, reintentado")
+                    self.dv.append_plus("ARM (on): " + salida.strip())
                     if salida.strip().rfind("OK") == 0:
                         remote_incr_loaded = True
                         self.dv.append_plus("Incrementos calculados en ARM y escritos en FPGA")
@@ -93,6 +105,8 @@ class ConfiguracionMixin(object):
                         self.dv.append_plus("ARM error: " + salida.strip())
                 except Exception as e:
                     self.dv.append_plus("Fallo ejecutando en ARM: " + str(e))
+                self.tx_txt('DIG:PIN LED2,0')  # 0-> bloque de resultados en 0x40210000
+                self.tx_txt('DIG:PIN LED1,1')  # restaurar sweep activo
 
                 outStr = None
                 frecuencias2=self.sd.freq[self.sd.freq>40]
@@ -102,9 +116,9 @@ class ConfiguracionMixin(object):
                     # Fallback local: reproducir cálculo Python y enviar traza
                     frecuencias2=self.sd.freq[self.sd.freq>40]
                     numero_valores=len(frecuencias2)*2
-                    incrementos2=np.ones(256-numero_valores)*34360000.0
                     incrementos1= (frecuencias2*(2**32))/125e6
-                    incrementos=np.concatenate((incrementos1, incrementos2), axis=None)
+                    incrementos2=np.ones(512-numero_valores)*34360000.0
+                    incrementos=np.concatenate((incrementos1, np.flip(incrementos1), incrementos2), axis=None)
                     s = io.BytesIO()
                     np.savetxt(s, [incrementos], fmt='%1.1f', delimiter=', ')
                     outStr = s.getvalue().decode('UTF-8')
@@ -291,11 +305,22 @@ class ConfiguracionMixin(object):
                 modo = int(self.sd.def_cfg['tipo_barrido']['value'])  # 0 lineal, 1 log
                 num_puntos = int(self.sd.def_cfg['n_puntos']['value'])
                 fm = 125000000.0
+                self.tx_txt('DIG:PIN LED2,1')  # 1-> bloque de memoria de incrementos accesible para el ARM
                 try:
                     veamos = self._get_ssh()
                     veamos.cwd.chdir("/root/nuevas_aplicaciones_2026")
                     cmd = "./raf_incr_writer_sweep {:.6f} {:.6f} {} {} {:.6f} {}".format(f1, f2, modo, num_puntos, fm, "off")
-                    salida = veamos[cmd]()
+                    primer_fallo = None
+                    for intento in range(2):  # la primera llamada tras arrancar la app puede fallar; se reintenta una vez
+                        try:
+                            salida = veamos[cmd]()
+                            break
+                        except Exception as e:
+                            salida = str(e)
+                            primer_fallo = primer_fallo or salida
+                    if primer_fallo is not None:
+                        self.dv.append_plus("AVISO: primer intento ARM (off) fallido, reintentado")
+                    self.dv.append_plus("ARM (off): " + salida.strip())
                     if salida.strip().rfind("OK") == 0:
                         remote_incr_loaded = True
                         self.dv.append_plus("Incrementos calculados en ARM y escritos en FPGA")
@@ -303,6 +328,7 @@ class ConfiguracionMixin(object):
                         self.dv.append_plus("ARM error: " + salida.strip())
                 except Exception as e:
                     self.dv.append_plus("Fallo ejecutando en ARM: " + str(e))
+                self.tx_txt('DIG:PIN LED2,0')  # 0-> bloque de resultados en 0x40210000
 
                 outStr = None
                 self.frecuencias=self.sd.freq[self.sd.freq>40]

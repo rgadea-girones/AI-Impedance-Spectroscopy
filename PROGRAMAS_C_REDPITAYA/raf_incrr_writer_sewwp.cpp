@@ -151,16 +151,28 @@ int main(int argc, char** argv) {
     __sync_synchronize();  // Barrera de memoria
     usleep(100000);        // Esperar 100ms
     
-    // Verificar que se escribió correctamente
-    std::cerr << "Verificando escritura...\n";
-    std::cerr << "ptr[0] leído: 0x" << std::hex << ptr[0] << std::dec << " (" << ptr[0] << ")\n";
-    if (inc.size() > 1) {
-        std::cerr << "ptr[" << (inc.size()-1) << "] leído: 0x" << std::hex << ptr[inc.size()-1] << std::dec << " (" << ptr[inc.size()-1] << ")\n";
+    // Verificar toda la tabla: discrepancias y ceros
+    size_t mismatches = 0, zeros = 0, first_bad = 0;
+    for (size_t i = 0; i < inc.size(); ++i) {
+        uint32_t esperado = static_cast<uint32_t>(inc[i]);
+        uint32_t leido = ptr[i];
+        if (leido == 0) ++zeros;
+        if (leido != esperado) {
+            if (mismatches == 0) first_bad = i;
+            ++mismatches;
+        }
     }
-    
+
     munmap(map, FPGA_MAP_SIZE);
     close(fd);
 
-    std::cout<<"OK\n";
+    if (mismatches > 0) {
+        std::cout << "ERROR verificacion: " << mismatches << " discrepancias (primera en indice "
+                  << first_bad << "), ceros=" << zeros << "\n";
+        return 5;
+    }
+
+    std::cout << "OK\n";
+    std::cout << "entradas=" << inc.size() << " validas=" << freq2.size() << " ceros=" << zeros << "\n";
     return 0;
 }
